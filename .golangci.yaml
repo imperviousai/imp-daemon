@@ -1,0 +1,7 @@
+linters:
+  enable: # Add the following additional linters to the default list
+    - gocritic
+    - goimports
+
+# https://github.com/golangci/golangci-lint/blob/master/.golangci.example.yml#L627
+# run 'golangci-lint linters' to see the list of enabled/disabled linters, customize as you see fit for your project.  

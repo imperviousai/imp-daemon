@@ -1,0 +1,48 @@
+name: Test and Build
+on:
+  push:
+    branches:
+      - main
+      - master
+      - staging
+      - development
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Check Out Code
+        uses: actions/checkout@v2
+
+      # Code coverage stuff
+      - name: Run coverage
+        run: go test -v -race -coverprofile=coverage.out -covermode=atomic -timeout=10m ./...
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Check Out Code
+        uses: actions/checkout@v2
+
+      # -ldflags="-s -w" which removes symbol table and debugging information.
+      - name: Build
+        run: GO111MODULE=on go build ./...

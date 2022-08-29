@@ -1,0 +1,507 @@
+package id
+
+var SwaggerJSON = `
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "ID Services",
+    "version": "1.0",
+    "contact": {
+      "name": "Impervious AI",
+      "url": "https://impervious.ai"
+    }
+  },
+  "tags": [
+    {
+      "name": "ID"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https",
+    "wss"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/id/createDID": {
+      "post": {
+        "summary": "*\nCreateDID creates a DID for the user with the given information.",
+        "operationId": "ID_CreateDID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idCreateDIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idCreateDIDRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ID"
+        ]
+      }
+    },
+    "/v1/id/importDID": {
+      "post": {
+        "summary": "*\nImportDID imports a DID document which belongs to the user.",
+        "operationId": "ID_ImportDID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idImportDIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idImportDIDRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ID"
+        ]
+      }
+    },
+    "/v1/id/listDID": {
+      "get": {
+        "summary": "*\nListDID lists all of the DIDs stored locally.",
+        "operationId": "ID_ListDID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idListDIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "ID"
+        ]
+      }
+    },
+    "/v1/id/recover": {
+      "post": {
+        "operationId": "ID_RecoverDID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idRecoverDIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idRecoverDIDRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ID"
+        ]
+      }
+    },
+    "/v1/id/resolveDID": {
+      "post": {
+        "summary": "*\nResolveDID resolves a DID URI and returns a DID document representing the identity.",
+        "operationId": "ID_ResolveDID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idResolveDIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idResolveDIDRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ID"
+        ]
+      }
+    },
+    "/v1/id/updateDID": {
+      "post": {
+        "summary": "*\nUpdateDID updates a DID document with a patch document.",
+        "operationId": "ID_UpdateDID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idUpdateDIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/idUpdateDIDRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ID"
+        ]
+      }
+    },
+    "/v1/id/{id}": {
+      "delete": {
+        "summary": "*\nDeleteDID will delete a specific did.",
+        "operationId": "ID_DeleteDID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idDeleteDIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ID"
+        ]
+      }
+    },
+    "/v1/id/{id}/backup": {
+      "post": {
+        "operationId": "ID_BackupDID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/idBackupDIDResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "description": "*\nRepresents a request to backup a did."
+            }
+          }
+        ],
+        "tags": [
+          "ID"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "idBackupDIDResponse": {
+      "type": "object",
+      "properties": {
+        "recoveryKit": {
+          "$ref": "#/definitions/idRecoveryKit"
+        }
+      },
+      "description": "*\nRepresents a response containing the did backup recovery kit."
+    },
+    "idCreateDIDRequest": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "serviceEndpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/idServiceEndpoint"
+          }
+        }
+      },
+      "description": "*\nRepresents a request to create a DID document."
+    },
+    "idCreateDIDResponse": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "string"
+        },
+        "longFormDid": {
+          "type": "string"
+        },
+        "recoveryKit": {
+          "$ref": "#/definitions/idRecoveryKit"
+        }
+      },
+      "description": "*\nRepresents a response the document for the created DID."
+    },
+    "idDeleteDIDResponse": {
+      "type": "object",
+      "description": "*\nRepresents a response containing the did deletion event."
+    },
+    "idImportDIDRequest": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "string"
+        },
+        "longFormDid": {
+          "type": "string"
+        }
+      },
+      "description": "*\nRepresents a request to import a user's DID document."
+    },
+    "idImportDIDResponse": {
+      "type": "object",
+      "description": "*\nRepresents a response after importing a user's DID document."
+    },
+    "idListDIDResponse": {
+      "type": "object",
+      "properties": {
+        "documents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "*\nRepresents a response containing a list of the stored DIDs."
+    },
+    "idRecoverDIDRequest": {
+      "type": "object",
+      "properties": {
+        "recoveryKit": {
+          "$ref": "#/definitions/idRecoveryKit"
+        },
+        "passphrase": {
+          "type": "string"
+        }
+      },
+      "description": "*\nRepresents a request to recover a did with the recovery kit."
+    },
+    "idRecoverDIDResponse": {
+      "type": "object",
+      "description": "*\nRepresents a response containing the did recovery result."
+    },
+    "idRecoveryKit": {
+      "type": "object",
+      "properties": {
+        "did": {
+          "type": "string"
+        },
+        "longFormDid": {
+          "type": "string"
+        },
+        "didDerivationPath": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "keyDerivations": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "seed": {
+          "type": "string"
+        }
+      },
+      "description": "*\nRepresents a DID recovery kit to back up and restore from later."
+    },
+    "idResolveDIDRequest": {
+      "type": "object",
+      "properties": {
+        "did": {
+          "type": "string"
+        }
+      },
+      "description": "*\nRepresents a request to resolve a DID into a DID document."
+    },
+    "idResolveDIDResponse": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "string"
+        },
+        "longFormDid": {
+          "type": "string"
+        }
+      },
+      "description": "*\nRepresents a response containing the resolved DID document of the passed in DID URI."
+    },
+    "idServiceEndpoint": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "serviceEndpoint": {
+          "type": "string"
+        }
+      }
+    },
+    "idUpdateDIDRequest": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "string"
+        }
+      },
+      "description": "*\nRepresents a request to update a DID document."
+    },
+    "idUpdateDIDResponse": {
+      "type": "object",
+      "properties": {
+        "document": {
+          "type": "string"
+        },
+        "longFormDid": {
+          "type": "string"
+        },
+        "recoveryKit": {
+          "$ref": "#/definitions/idRecoveryKit"
+        }
+      },
+      "description": "*\nRepresents a response after updating a DID document."
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "description": "An API key generated by the daemon for authentication",
+      "name": "Grpc-Metadata-X-API-KEY"
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "externalDocs": {
+    "description": "Documentation on IMP",
+    "url": "https://docs.impervious.ai"
+  }
+}
+`
