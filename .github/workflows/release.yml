@@ -1,0 +1,39 @@
+name: Release
+on:
+  release:
+    types: [created]
+
+jobs:
+  releases-matrix:
+    name: Release Go Binary
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # build and publish in parallel: linux/386, linux/amd64, windows/386, windows/amd64, darwin/amd64
+        goos: [linux, windows, darwin]
+        goarch: ["386", amd64, arm, arm64, "s390x"]
+        exclude:
+          - goarch: "386"
+            goos: darwin
+          - goarch: "arm"
+            goos: darwin
+          - goarch: "arm64"
+            goos: windows
+          - goarch: "arm"
+            goos: windows
+          - goarch: "s390x"
+            goos: windows
+          - goarch: "s390x"
+            goos: darwin
+    steps:
+    - uses: actions/checkout@v2
+    - uses: wangyoucao577/go-release-action@v1.19
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
+        project_path: "./cmd/impd"
+        binary_name: "impervious"
+        pre_command: "GO111MODULE=on" # latest requires go v0.17
+        build_command: "go build"
+        sha256sum: TRUE

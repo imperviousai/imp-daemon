@@ -1,0 +1,392 @@
+package contacts
+
+var SwaggerJSON = `
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Contacts Services",
+    "version": "1.0",
+    "contact": {
+      "name": "Impervious AI",
+      "url": "https://impervious.ai"
+    }
+  },
+  "tags": [
+    {
+      "name": "Contacts"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https",
+    "wss"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/contacts": {
+      "get": {
+        "summary": "*\nGetContactsList gets all of the contacts the user has saved.",
+        "operationId": "Contacts_GetContactsList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/contactsGetContactsListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Contacts"
+        ]
+      }
+    },
+    "/v1/contacts/create": {
+      "post": {
+        "summary": "*\nCreateContact will create a specific contact. If the contact DID has not been added to the ID database,\nit will be added first.",
+        "operationId": "Contacts_CreateContact",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/contactsCreateContactResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contactsCreateContactRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Contacts"
+        ]
+      }
+    },
+    "/v1/contacts/createMulti": {
+      "post": {
+        "summary": "*\nCreateContacts will create multiple contacts passed in. A batch version of CreateContact.",
+        "operationId": "Contacts_CreateContacts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/contactsCreateContactsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contactsCreateContactsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Contacts"
+        ]
+      }
+    },
+    "/v1/contacts/update": {
+      "post": {
+        "summary": "*\nUpdateContact will update a specific contact.",
+        "operationId": "Contacts_UpdateContact",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/contactsUpdateContactResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contactsUpdateContactRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Contacts"
+        ]
+      }
+    },
+    "/v1/contacts/{id}": {
+      "get": {
+        "summary": "*\nGetContact gets a specific contact the user has saved.",
+        "operationId": "Contacts_GetContact",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/contactsGetContactResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Contacts"
+        ]
+      },
+      "delete": {
+        "summary": "*\nDeleteContact will delete a specific contact.",
+        "operationId": "Contacts_DeleteContact",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/contactsDeleteContactResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Contacts"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "contactsContact": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "did": {
+          "type": "string"
+        },
+        "didDocument": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "userDID": {
+          "type": "string"
+        },
+        "hasContacted": {
+          "type": "boolean"
+        },
+        "metadata": {
+          "type": "string"
+        }
+      }
+    },
+    "contactsContactUpdate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "did": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "string"
+        }
+      }
+    },
+    "contactsCreateContactRequest": {
+      "type": "object",
+      "properties": {
+        "contact": {
+          "$ref": "#/definitions/contactsContact"
+        }
+      },
+      "description": "*\nRepresents a request to create a contact."
+    },
+    "contactsCreateContactResponse": {
+      "type": "object",
+      "properties": {
+        "contact": {
+          "$ref": "#/definitions/contactsContact"
+        }
+      },
+      "description": "*\nRepresents a response containing the contact created."
+    },
+    "contactsCreateContactsRequest": {
+      "type": "object",
+      "properties": {
+        "contacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contactsContact"
+          }
+        }
+      },
+      "description": "*\nRepresents a request to create multiple contacts."
+    },
+    "contactsCreateContactsResponse": {
+      "type": "object",
+      "properties": {
+        "contacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contactsContact"
+          }
+        }
+      },
+      "description": "*\nRepresents a response containing the contacts created."
+    },
+    "contactsDeleteContactResponse": {
+      "type": "object",
+      "description": "*\nRepresents a response containing the contact deletion event."
+    },
+    "contactsGetContactResponse": {
+      "type": "object",
+      "properties": {
+        "contact": {
+          "$ref": "#/definitions/contactsContact"
+        }
+      },
+      "description": "*\nRepresents a response containing the contact."
+    },
+    "contactsGetContactsListResponse": {
+      "type": "object",
+      "properties": {
+        "contacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contactsContact"
+          }
+        }
+      },
+      "description": "*\nRepresents a response containing the contact list."
+    },
+    "contactsUpdateContactRequest": {
+      "type": "object",
+      "properties": {
+        "contact": {
+          "$ref": "#/definitions/contactsContactUpdate"
+        }
+      },
+      "description": "*\nRepresents a request to update a contact."
+    },
+    "contactsUpdateContactResponse": {
+      "type": "object",
+      "properties": {
+        "contact": {
+          "$ref": "#/definitions/contactsContact"
+        }
+      },
+      "description": "*\nRepresents a response containing the contact updated."
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "description": "An API key generated by the daemon for authentication",
+      "name": "Grpc-Metadata-X-API-KEY"
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "externalDocs": {
+    "description": "Documentation on IMP",
+    "url": "https://docs.impervious.ai"
+  }
+}
+`
