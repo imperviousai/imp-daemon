@@ -1,0 +1,266 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Config Services",
+    "version": "1.0",
+    "contact": {
+      "name": "Impervious AI",
+      "url": "https://impervious.ai"
+    }
+  },
+  "tags": [
+    {
+      "name": "Config"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https",
+    "wss"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/config/ion": {
+      "get": {
+        "summary": "*\nGetIONConfig gets the ion configs for the daemon.",
+        "operationId": "Config_GetIONConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/configsGetIONConfigResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Config"
+        ]
+      },
+      "post": {
+        "summary": "*\nSaveIONConfig will save the ion config and restart the daemon.",
+        "operationId": "Config_SaveIONConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/configsSaveIONConfigResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/configsSaveIONConfigRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Config"
+        ]
+      }
+    },
+    "/v1/config/lightning": {
+      "get": {
+        "summary": "*\nGetLightningConfig gets the lightning configs for the daemon.",
+        "operationId": "Config_GetLightningConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/configsGetLightningConfigResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Config"
+        ]
+      },
+      "post": {
+        "summary": "*\nSaveLightningConfig save the lightning config and restart the daemon.",
+        "operationId": "Config_SaveLightningConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/configsSaveLightningConfigResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/configsSaveLightningConfigRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Config"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "configsGetIONConfigResponse": {
+      "type": "object",
+      "properties": {
+        "ionConfig": {
+          "$ref": "#/definitions/configsIONConfig"
+        }
+      },
+      "description": "*\nRepresents a response containing the ion config."
+    },
+    "configsGetLightningConfigResponse": {
+      "type": "object",
+      "properties": {
+        "lightningConfig": {
+          "$ref": "#/definitions/configsLightningConfig"
+        }
+      },
+      "description": "*\nRepresents a response containing the lightning config."
+    },
+    "configsIONConfig": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        }
+      }
+    },
+    "configsLightningConfig": {
+      "type": "object",
+      "properties": {
+        "ip": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        },
+        "pubkey": {
+          "type": "string"
+        },
+        "tlsCert": {
+          "type": "string"
+        },
+        "adminMacaroon": {
+          "type": "string"
+        },
+        "listening": {
+          "type": "boolean"
+        },
+        "tlsCertHex": {
+          "type": "string"
+        },
+        "adminMacaroonHex": {
+          "type": "string"
+        }
+      }
+    },
+    "configsSaveIONConfigRequest": {
+      "type": "object",
+      "properties": {
+        "ionConfig": {
+          "$ref": "#/definitions/configsIONConfig"
+        }
+      },
+      "description": "*\nRepresents a request to save the ion config."
+    },
+    "configsSaveIONConfigResponse": {
+      "type": "object",
+      "description": "*\nRepresents a response containing the ion save config results."
+    },
+    "configsSaveLightningConfigRequest": {
+      "type": "object",
+      "properties": {
+        "lightningConfig": {
+          "$ref": "#/definitions/configsLightningConfig"
+        }
+      },
+      "description": "*\nRepresents a request to save the lightning config."
+    },
+    "configsSaveLightningConfigResponse": {
+      "type": "object",
+      "description": "*\nRepresents a response containing the lightning save config results."
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "description": "An API key generated by the daemon for authentication",
+      "name": "Grpc-Metadata-X-API-KEY"
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "externalDocs": {
+    "description": "Documentation on IMP",
+    "url": "https://docs.impervious.ai"
+  }
+}
