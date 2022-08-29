@@ -1,6 +1,6 @@
 package core
 
-import auth_state "github.com/imperviousai/freeimp/auth/state"
+import auth_state "github.com/imperviousai/imp-daemon/auth/state"
 
 func (c *core) GenerateNewKey(name, description string) (*auth_state.AuthStateModel, error) {
 	return c.auth.GenerateNewKey(name, description)

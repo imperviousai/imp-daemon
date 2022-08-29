@@ -14,17 +14,17 @@ import (
 	"github.com/hyperledger/aries-framework-go/pkg/doc/did"
 	"github.com/hyperledger/aries-framework-go/pkg/framework/aries/api/vdr"
 	"github.com/hyperledger/aries-framework-go/pkg/vdr/peer"
-	mockable_http "github.com/imperviousai/freeimp/http"
-	"github.com/imperviousai/freeimp/id/ion"
-	id_state "github.com/imperviousai/freeimp/id/state"
-	"github.com/imperviousai/freeimp/key"
-	"github.com/imperviousai/freeimp/state"
+	mockable_http "github.com/imperviousai/imp-daemon/http"
+	"github.com/imperviousai/imp-daemon/id/ion"
+	id_state "github.com/imperviousai/imp-daemon/id/state"
+	"github.com/imperviousai/imp-daemon/key"
+	"github.com/imperviousai/imp-daemon/state"
 	jsonpatch_create "github.com/mattbaird/jsonpatch"
 	"go.uber.org/zap"
 	"gopkg.in/square/go-jose.v2"
 )
 
-//go:generate mockgen --destination=./mock/identity_mock.go --package=mock github.com/imperviousai/freeimp/id Identity
+//go:generate mockgen --destination=./mock/identity_mock.go --package=mock github.com/imperviousai/imp-daemon/id Identity
 
 type Identity interface {
 	ResolveDID(did string) (*did.Doc, string, error)

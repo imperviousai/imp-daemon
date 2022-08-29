@@ -3,8 +3,8 @@ package ipfs
 import (
 	"context"
 
-	"github.com/imperviousai/freeimp/core"
-	ipfs_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/ipfs"
+	"github.com/imperviousai/imp-daemon/core"
+	ipfs_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/ipfs"
 	"go.uber.org/zap"
 )
 

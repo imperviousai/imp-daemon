@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/imperviousai/freeimp/state"
+	"github.com/imperviousai/imp-daemon/state"
 )
 
-//go:generate mockgen --destination=./mock/message_state_mock.go --package=mock github.com/imperviousai/freeimp/messages/state MessagesState
+//go:generate mockgen --destination=./mock/message_state_mock.go --package=mock github.com/imperviousai/imp-daemon/messages/state MessagesState
 
 type MessagesState interface {
 	SaveMessage(*MessageState) error

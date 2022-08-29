@@ -5,12 +5,12 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/imperviousai/freeimp/comm"
-	"github.com/imperviousai/freeimp/lightning/node"
+	"github.com/imperviousai/imp-daemon/comm"
+	"github.com/imperviousai/imp-daemon/lightning/node"
 	"go.uber.org/zap"
 )
 
-//go:generate mockgen --destination=./mock/lightning_manager_mock.go --package=mock github.com/imperviousai/freeimp/lightning LightningManager
+//go:generate mockgen --destination=./mock/lightning_manager_mock.go --package=mock github.com/imperviousai/imp-daemon/lightning LightningManager
 
 // LightningManager is the manager in charge of subscribing to and
 // managing multiple lightning nodes. Data transfer happens via channels

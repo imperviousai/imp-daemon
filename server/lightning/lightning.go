@@ -3,8 +3,8 @@ package lightning
 import (
 	"context"
 
-	"github.com/imperviousai/freeimp/core"
-	lightning_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/lightning"
+	"github.com/imperviousai/imp-daemon/core"
+	lightning_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/lightning"
 	"go.uber.org/zap"
 )
 

@@ -1,6 +1,6 @@
 package core
 
-import "github.com/imperviousai/freeimp/config"
+import "github.com/imperviousai/imp-daemon/config"
 
 func (c *core) SaveLightningNodeConfig(node config.Lnd) error {
 	cfg := c.globalConfig.GetConfig()

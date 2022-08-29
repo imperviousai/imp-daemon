@@ -1,8 +1,8 @@
 package node
 
-import "github.com/imperviousai/freeimp/comm"
+import "github.com/imperviousai/imp-daemon/comm"
 
-//go:generate mockgen --destination=./mock/node_mock.go --package=mock github.com/imperviousai/freeimp/lightning/node Node
+//go:generate mockgen --destination=./mock/node_mock.go --package=mock github.com/imperviousai/imp-daemon/lightning/node Node
 
 // Node is an implementation of a single lightning node with only the
 // functionality that the LightningManager needs to worry about.

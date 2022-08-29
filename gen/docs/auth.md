@@ -14,9 +14,9 @@
     - [GetAuthKeysResponse](#auth.GetAuthKeysResponse)
     - [UpdateAuthKeyRequest](#auth.UpdateAuthKeyRequest)
     - [UpdateAuthKeyResponse](#auth.UpdateAuthKeyResponse)
-
+  
     - [Auth](#auth.Auth)
-
+  
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -204,3 +204,4 @@ Represents a response containing the update results.
 | <a name="bool" /> bool | bool | boolean | boolean | bool | bool | boolean | TrueClass/FalseClass |
 | <a name="string" /> string | string | String | str/unicode | string | string | string | String (UTF-8) |
 | <a name="bytes" /> bytes | string | ByteString | str | []byte | ByteString | string | String (ASCII-8BIT) |
+

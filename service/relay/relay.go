@@ -7,15 +7,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/imperviousai/freeimp/comm"
-	"github.com/imperviousai/freeimp/id"
-	relay_state "github.com/imperviousai/freeimp/service/relay/state"
-	"github.com/imperviousai/freeimp/service/service"
-	"github.com/imperviousai/freeimp/state"
+	"github.com/imperviousai/imp-daemon/comm"
+	"github.com/imperviousai/imp-daemon/id"
+	relay_state "github.com/imperviousai/imp-daemon/service/relay/state"
+	"github.com/imperviousai/imp-daemon/service/service"
+	"github.com/imperviousai/imp-daemon/state"
 	"go.uber.org/zap"
 )
 
-//go:generate mockgen --destination=./mock/relay_mock.go --package=mock github.com/imperviousai/freeimp/service/relay RelayService
+//go:generate mockgen --destination=./mock/relay_mock.go --package=mock github.com/imperviousai/imp-daemon/service/relay RelayService
 
 type RelayService interface {
 	service.Service

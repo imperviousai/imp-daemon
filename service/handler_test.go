@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/imperviousai/freeimp/service/service"
-	mock_service "github.com/imperviousai/freeimp/service/service/mock"
+	"github.com/imperviousai/imp-daemon/service/service"
+	mock_service "github.com/imperviousai/imp-daemon/service/service/mock"
 	"github.com/stretchr/testify/suite"
 )
 

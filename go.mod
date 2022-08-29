@@ -1,4 +1,4 @@
-module github.com/imperviousai/freeimp
+module github.com/imperviousai/imp-daemon
 
 require (
 	github.com/decred/dcrd/lru v1.1.1 // indirect

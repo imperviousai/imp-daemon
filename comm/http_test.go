@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/imperviousai/freeimp/http/mock"
+	"github.com/imperviousai/imp-daemon/http/mock"
 	"github.com/stretchr/testify/suite"
 )
 

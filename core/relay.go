@@ -3,7 +3,7 @@ package core
 import (
 	"errors"
 
-	"github.com/imperviousai/freeimp/service/relay"
+	"github.com/imperviousai/imp-daemon/service/relay"
 	"go.uber.org/zap"
 )
 

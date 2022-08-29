@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/imperviousai/freeimp/core"
-	id_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/id"
-	"github.com/imperviousai/freeimp/id"
+	"github.com/imperviousai/imp-daemon/core"
+	id_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/id"
+	"github.com/imperviousai/imp-daemon/id"
 	"go.uber.org/zap"
 )
 

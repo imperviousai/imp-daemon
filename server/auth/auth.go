@@ -3,9 +3,9 @@ package auth
 import (
 	"context"
 
-	auth_state "github.com/imperviousai/freeimp/auth/state"
-	"github.com/imperviousai/freeimp/core"
-	auth_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/auth"
+	auth_state "github.com/imperviousai/imp-daemon/auth/state"
+	"github.com/imperviousai/imp-daemon/core"
+	auth_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/auth"
 	"go.uber.org/zap"
 )
 

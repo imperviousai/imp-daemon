@@ -16,7 +16,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-//go:generate mockgen --destination=./mock/db_mock.go --package=mock github.com/imperviousai/freeimp/state DBManager
+//go:generate mockgen --destination=./mock/db_mock.go --package=mock github.com/imperviousai/imp-daemon/state DBManager
 
 type DBManager interface {
 	/// IsReady will indicate if the SQL connection is ready

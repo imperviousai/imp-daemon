@@ -2,9 +2,9 @@ package state
 
 import "database/sql"
 
-//go:generate mockgen --destination=./mock/rows_mock.go --package=mock github.com/imperviousai/freeimp/state Rows
+//go:generate mockgen --destination=./mock/rows_mock.go --package=mock github.com/imperviousai/imp-daemon/state Rows
 
-//go:generate mockgen --destination=./mock/result_mock.go --package=mock github.com/imperviousai/freeimp/state Result
+//go:generate mockgen --destination=./mock/result_mock.go --package=mock github.com/imperviousai/imp-daemon/state Result
 
 // Create a passthrough interface for db.Rows to allow for mocking
 type Rows interface {

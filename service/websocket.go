@@ -4,10 +4,10 @@ import (
 	"sync"
 
 	"github.com/google/uuid"
-	"github.com/imperviousai/freeimp/comm"
+	"github.com/imperviousai/imp-daemon/comm"
 )
 
-//go:generate mockgen --destination=./mock/websocket_mock.go --package=mock github.com/imperviousai/freeimp/service Websocket
+//go:generate mockgen --destination=./mock/websocket_mock.go --package=mock github.com/imperviousai/imp-daemon/service Websocket
 
 type Websocket interface {
 	PublishData(comm.DIDCommMsg)

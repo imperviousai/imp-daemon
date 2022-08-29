@@ -14,7 +14,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/imperviousai/freeimp/comm"
+	"github.com/imperviousai/imp-daemon/comm"
 	"github.com/lightningnetwork/lnd/amp"
 	"github.com/lightningnetwork/lnd/lnrpc"
 	"github.com/lightningnetwork/lnd/lnrpc/routerrpc"

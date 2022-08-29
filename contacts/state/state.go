@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/imperviousai/freeimp/state"
+	"github.com/imperviousai/imp-daemon/state"
 )
 
-//go:generate mockgen --destination=./mock/contacts_state_mock.go --package=mock github.com/imperviousai/freeimp/contacts/state ContactsState
+//go:generate mockgen --destination=./mock/contacts_state_mock.go --package=mock github.com/imperviousai/imp-daemon/contacts/state ContactsState
 
 type ContactsState interface {
 	SaveContact(*ContactState) (int64, error)

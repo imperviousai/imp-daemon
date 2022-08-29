@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 
-	websocket_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/websocket"
-	"github.com/imperviousai/freeimp/service"
+	websocket_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/websocket"
+	"github.com/imperviousai/imp-daemon/service"
 	"go.uber.org/zap"
 )
 

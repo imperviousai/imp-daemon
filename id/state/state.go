@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/imperviousai/freeimp/state"
+	"github.com/imperviousai/imp-daemon/state"
 	_ "modernc.org/sqlite"
 )
 
-//go:generate mockgen --destination=./mock/identity_state_mock.go --package=mock github.com/imperviousai/freeimp/id/state IdentityState
+//go:generate mockgen --destination=./mock/identity_state_mock.go --package=mock github.com/imperviousai/imp-daemon/id/state IdentityState
 
 type IdentityState interface {
 	SaveID(id, document string, belongsToUser bool, identityKeyId int64, patches string) error

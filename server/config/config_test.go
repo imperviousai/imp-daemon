@@ -3,8 +3,8 @@ package config
 import (
 	"testing"
 
-	"github.com/imperviousai/freeimp/config"
-	config_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/config"
+	"github.com/imperviousai/imp-daemon/config"
+	config_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/config"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -6,16 +6,16 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/imperviousai/freeimp/comm"
-	"github.com/imperviousai/freeimp/id"
-	"github.com/imperviousai/freeimp/key"
-	"github.com/imperviousai/freeimp/messages"
-	"github.com/imperviousai/freeimp/service/service"
+	"github.com/imperviousai/imp-daemon/comm"
+	"github.com/imperviousai/imp-daemon/id"
+	"github.com/imperviousai/imp-daemon/key"
+	"github.com/imperviousai/imp-daemon/messages"
+	"github.com/imperviousai/imp-daemon/service/service"
 	"go.uber.org/zap"
 	"gopkg.in/square/go-jose.v2"
 )
 
-//go:generate mockgen --destination=./mock/handler_mock.go --package=mock github.com/imperviousai/freeimp/service Handler
+//go:generate mockgen --destination=./mock/handler_mock.go --package=mock github.com/imperviousai/imp-daemon/service Handler
 
 // Handler will handle messages meant for specific services.
 type Handler interface {

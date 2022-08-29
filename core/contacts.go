@@ -1,6 +1,6 @@
 package core
 
-import "github.com/imperviousai/freeimp/contacts"
+import "github.com/imperviousai/imp-daemon/contacts"
 
 func (c *core) GetContacts() ([]*contacts.ContactInfo, error) {
 	return c.contactsManager.GetContacts()

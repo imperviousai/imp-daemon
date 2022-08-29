@@ -9,14 +9,14 @@ import (
 	"errors"
 	"fmt"
 
-	key_state "github.com/imperviousai/freeimp/key/state"
-	"github.com/imperviousai/freeimp/state"
+	key_state "github.com/imperviousai/imp-daemon/key/state"
+	"github.com/imperviousai/imp-daemon/state"
 	"github.com/tyler-smith/go-bip32"
 	"github.com/tyler-smith/go-bip39"
 	"golang.org/x/crypto/scrypt"
 )
 
-//go:generate mockgen --destination=./mock/key_mock.go --package=mock github.com/imperviousai/freeimp/key KeyManager
+//go:generate mockgen --destination=./mock/key_mock.go --package=mock github.com/imperviousai/imp-daemon/key KeyManager
 
 type KeyManager interface {
 	// InitSeed creates the master key encrypted with a passphrase, returns the mnemonic

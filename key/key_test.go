@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	mock_state "github.com/imperviousai/freeimp/key/state/mock"
+	mock_state "github.com/imperviousai/imp-daemon/key/state/mock"
 	"github.com/stretchr/testify/suite"
 	"github.com/tyler-smith/go-bip32"
 	"github.com/tyler-smith/go-bip39"

@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/imperviousai/freeimp/state"
+	"github.com/imperviousai/imp-daemon/state"
 )
 
-//go:generate mockgen --destination=./mock/auth_state_mock.go --package=mock github.com/imperviousai/freeimp/auth/state AuthState
+//go:generate mockgen --destination=./mock/auth_state_mock.go --package=mock github.com/imperviousai/imp-daemon/auth/state AuthState
 
 type AuthState interface {
 	SaveAuth(authModel *AuthStateModel) (int64, error)

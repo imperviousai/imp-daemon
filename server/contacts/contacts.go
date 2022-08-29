@@ -3,9 +3,9 @@ package contacts
 import (
 	"context"
 
-	"github.com/imperviousai/freeimp/contacts"
-	"github.com/imperviousai/freeimp/core"
-	contacts_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/contacts"
+	"github.com/imperviousai/imp-daemon/contacts"
+	"github.com/imperviousai/imp-daemon/core"
+	contacts_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/contacts"
 	"go.uber.org/zap"
 )
 

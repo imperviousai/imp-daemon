@@ -5,15 +5,15 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	auth_state "github.com/imperviousai/freeimp/auth/state"
-	"github.com/imperviousai/freeimp/state"
+	auth_state "github.com/imperviousai/imp-daemon/auth/state"
+	"github.com/imperviousai/imp-daemon/state"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
-//go:generate mockgen --destination=./mock/auth_mock.go --package=mock github.com/imperviousai/freeimp/auth AuthService
+//go:generate mockgen --destination=./mock/auth_mock.go --package=mock github.com/imperviousai/imp-daemon/auth AuthService
 
 type AuthService interface {
 	// Auth GPRC validators

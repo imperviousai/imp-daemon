@@ -11,7 +11,7 @@ import (
 	jsonpatch "github.com/evanphx/json-patch/v5"
 	"github.com/hyperledger/aries-framework-go/pkg/doc/did"
 	"github.com/hyperledger/aries-framework-go/pkg/framework/aries/api/vdr"
-	"github.com/imperviousai/freeimp/key"
+	"github.com/imperviousai/imp-daemon/key"
 	jsonpatch_create "github.com/mattbaird/jsonpatch"
 	"github.com/mr-tron/base58"
 	"go.uber.org/zap"

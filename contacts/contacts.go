@@ -5,13 +5,13 @@ import (
 	"errors"
 	"time"
 
-	contacts_state "github.com/imperviousai/freeimp/contacts/state"
-	"github.com/imperviousai/freeimp/id"
-	"github.com/imperviousai/freeimp/state"
+	contacts_state "github.com/imperviousai/imp-daemon/contacts/state"
+	"github.com/imperviousai/imp-daemon/id"
+	"github.com/imperviousai/imp-daemon/state"
 	"go.uber.org/zap"
 )
 
-//go:generate mockgen --destination=./mock/contacts_mock.go --package=mock github.com/imperviousai/freeimp/contacts Contacts
+//go:generate mockgen --destination=./mock/contacts_mock.go --package=mock github.com/imperviousai/imp-daemon/contacts Contacts
 
 type Contacts interface {
 	GetContacts() ([]*ContactInfo, error)

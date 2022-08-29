@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/imperviousai/freeimp/id"
-	"github.com/imperviousai/freeimp/state"
+	"github.com/imperviousai/imp-daemon/id"
+	"github.com/imperviousai/imp-daemon/state"
 	_ "modernc.org/sqlite"
 )
 
-//go:generate mockgen --destination=./mock/relay_state_mock.go --package=mock github.com/imperviousai/freeimp/service/relay/state RelayState
+//go:generate mockgen --destination=./mock/relay_state_mock.go --package=mock github.com/imperviousai/imp-daemon/service/relay/state RelayState
 
 type messageStateInternal struct {
 	Id      int64          `json:"id"`

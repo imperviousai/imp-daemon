@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/imperviousai/freeimp/state"
+	"github.com/imperviousai/imp-daemon/state"
 	_ "modernc.org/sqlite"
 )
 
-//go:generate mockgen --destination=./mock/key_state_mock.go --package=mock github.com/imperviousai/freeimp/key/state KeyState
+//go:generate mockgen --destination=./mock/key_state_mock.go --package=mock github.com/imperviousai/imp-daemon/key/state KeyState
 
 type KeyState interface {
 	SaveSeed(seed, salt, mnemonic string) error

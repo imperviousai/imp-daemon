@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/hyperledger/aries-framework-go/pkg/doc/did"
-	"github.com/imperviousai/freeimp/id"
+	"github.com/imperviousai/imp-daemon/id"
 	"go.uber.org/zap"
 )
 

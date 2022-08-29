@@ -5,11 +5,11 @@ import (
 	"strings"
 	"time"
 
-	messages_state "github.com/imperviousai/freeimp/messages/state"
-	"github.com/imperviousai/freeimp/state"
+	messages_state "github.com/imperviousai/imp-daemon/messages/state"
+	"github.com/imperviousai/imp-daemon/state"
 )
 
-//go:generate mockgen --destination=./mock/message_mock.go --package=mock github.com/imperviousai/freeimp/messages MessageManager
+//go:generate mockgen --destination=./mock/message_mock.go --package=mock github.com/imperviousai/imp-daemon/messages MessageManager
 
 type MessageManager interface {
 	GetMessages() ([]*MessageInfo, error)

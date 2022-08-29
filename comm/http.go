@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	mockable_http "github.com/imperviousai/freeimp/http"
+	mockable_http "github.com/imperviousai/imp-daemon/http"
 
 	"go.uber.org/zap"
 )
 
-//go:generate mockgen --destination=./mock/http_comm_mock.go --package=mock github.com/imperviousai/freeimp/comm HttpComm
+//go:generate mockgen --destination=./mock/http_comm_mock.go --package=mock github.com/imperviousai/imp-daemon/comm HttpComm
 
 // HttpComm is the transport mechanism for sending and receiving DIDComm
 // messages over an http socket.

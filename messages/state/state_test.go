@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	mock_db "github.com/imperviousai/freeimp/state/mock"
+	mock_db "github.com/imperviousai/imp-daemon/state/mock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )

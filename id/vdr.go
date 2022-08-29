@@ -11,8 +11,8 @@ import (
 	vdrapi "github.com/hyperledger/aries-framework-go/pkg/framework/aries/api/vdr"
 	"github.com/hyperledger/aries-framework-go/pkg/vdr/fingerprint"
 	"github.com/hyperledger/aries-framework-go/pkg/vdr/peer"
-	id_state "github.com/imperviousai/freeimp/id/state"
-	"github.com/imperviousai/freeimp/key"
+	id_state "github.com/imperviousai/imp-daemon/id/state"
+	"github.com/imperviousai/imp-daemon/key"
 )
 
 const (

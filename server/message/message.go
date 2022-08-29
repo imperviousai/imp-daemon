@@ -3,10 +3,10 @@ package message
 import (
 	"context"
 
-	"github.com/imperviousai/freeimp/comm"
-	"github.com/imperviousai/freeimp/core"
-	messaging_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/messaging"
-	"github.com/imperviousai/freeimp/messages"
+	"github.com/imperviousai/imp-daemon/comm"
+	"github.com/imperviousai/imp-daemon/core"
+	messaging_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/messaging"
+	"github.com/imperviousai/imp-daemon/messages"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

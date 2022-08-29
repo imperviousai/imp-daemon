@@ -3,9 +3,9 @@ package config
 import (
 	"context"
 
-	"github.com/imperviousai/freeimp/config"
-	"github.com/imperviousai/freeimp/core"
-	config_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/config"
+	"github.com/imperviousai/imp-daemon/config"
+	"github.com/imperviousai/imp-daemon/core"
+	config_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/config"
 	"go.uber.org/zap"
 )
 

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/imperviousai/freeimp/cmd"
+	"github.com/imperviousai/imp-daemon/cmd"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 )

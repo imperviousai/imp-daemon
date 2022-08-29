@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/imperviousai/freeimp/comm"
-	"github.com/imperviousai/freeimp/lightning/node/mock"
+	"github.com/imperviousai/imp-daemon/comm"
+	"github.com/imperviousai/imp-daemon/lightning/node/mock"
 	"github.com/stretchr/testify/suite"
 )
 

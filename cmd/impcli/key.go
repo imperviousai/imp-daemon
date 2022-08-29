@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/imperviousai/freeimp/cmd"
-	"github.com/imperviousai/freeimp/config"
+	"github.com/imperviousai/imp-daemon/cmd"
+	"github.com/imperviousai/imp-daemon/config"
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 )

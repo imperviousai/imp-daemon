@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
-	auth_state "github.com/imperviousai/freeimp/auth/state"
-	mock_state "github.com/imperviousai/freeimp/auth/state/mock"
+	auth_state "github.com/imperviousai/imp-daemon/auth/state"
+	mock_state "github.com/imperviousai/imp-daemon/auth/state/mock"
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc/metadata"
 )

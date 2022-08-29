@@ -11,7 +11,7 @@ import (
 	"github.com/hyperledger/aries-framework-go/pkg/doc/jose/jwk"
 )
 
-//go:generate mockgen --destination=./mock/client_mock.go --package=mock github.com/imperviousai/freeimp/id/ion Client
+//go:generate mockgen --destination=./mock/client_mock.go --package=mock github.com/imperviousai/imp-daemon/id/ion Client
 
 const DEFAULT_URL string = "http://localhost:3000/"
 const OPERATIONS_URL string = "operations"

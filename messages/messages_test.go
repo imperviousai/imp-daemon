@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	messages_state "github.com/imperviousai/freeimp/messages/state"
-	mock_state "github.com/imperviousai/freeimp/messages/state/mock"
+	messages_state "github.com/imperviousai/imp-daemon/messages/state"
+	mock_state "github.com/imperviousai/imp-daemon/messages/state/mock"
 	"github.com/stretchr/testify/suite"
 )
 

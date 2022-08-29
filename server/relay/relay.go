@@ -3,10 +3,10 @@ package relay
 import (
 	"context"
 
-	"github.com/imperviousai/freeimp/core"
-	relay_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/relay"
-	"github.com/imperviousai/freeimp/id"
-	"github.com/imperviousai/freeimp/service/relay"
+	"github.com/imperviousai/imp-daemon/core"
+	relay_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/relay"
+	"github.com/imperviousai/imp-daemon/id"
+	"github.com/imperviousai/imp-daemon/service/relay"
 	"go.uber.org/zap"
 )
 

@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	mock_ipfs "github.com/imperviousai/freeimp/ipfs/mock/ipfs"
-	mock_path "github.com/imperviousai/freeimp/ipfs/mock/ipfs/path"
+	mock_ipfs "github.com/imperviousai/imp-daemon/ipfs/mock/ipfs"
+	mock_path "github.com/imperviousai/imp-daemon/ipfs/mock/ipfs/path"
 	icore "github.com/ipfs/interface-go-ipfs-core"
 	"github.com/stretchr/testify/suite"
 )

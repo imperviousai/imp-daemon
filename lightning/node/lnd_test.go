@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	lnd_mock "github.com/imperviousai/freeimp/lightning/node/mock/lnd"
+	lnd_mock "github.com/imperviousai/imp-daemon/lightning/node/mock/lnd"
 	"github.com/lightningnetwork/lnd/lnrpc"
 	"github.com/lightningnetwork/lnd/record"
 	"github.com/stretchr/testify/assert"

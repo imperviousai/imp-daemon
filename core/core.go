@@ -2,23 +2,23 @@ package core
 
 import (
 	"github.com/hyperledger/aries-framework-go/pkg/doc/did"
-	"github.com/imperviousai/freeimp/auth"
-	auth_state "github.com/imperviousai/freeimp/auth/state"
-	"github.com/imperviousai/freeimp/comm"
-	"github.com/imperviousai/freeimp/config"
-	"github.com/imperviousai/freeimp/contacts"
-	"github.com/imperviousai/freeimp/id"
-	"github.com/imperviousai/freeimp/ipfs"
-	"github.com/imperviousai/freeimp/key"
-	"github.com/imperviousai/freeimp/lightning"
-	"github.com/imperviousai/freeimp/messages"
-	"github.com/imperviousai/freeimp/service"
-	"github.com/imperviousai/freeimp/service/relay"
-	"github.com/imperviousai/freeimp/state"
+	"github.com/imperviousai/imp-daemon/auth"
+	auth_state "github.com/imperviousai/imp-daemon/auth/state"
+	"github.com/imperviousai/imp-daemon/comm"
+	"github.com/imperviousai/imp-daemon/config"
+	"github.com/imperviousai/imp-daemon/contacts"
+	"github.com/imperviousai/imp-daemon/id"
+	"github.com/imperviousai/imp-daemon/ipfs"
+	"github.com/imperviousai/imp-daemon/key"
+	"github.com/imperviousai/imp-daemon/lightning"
+	"github.com/imperviousai/imp-daemon/messages"
+	"github.com/imperviousai/imp-daemon/service"
+	"github.com/imperviousai/imp-daemon/service/relay"
+	"github.com/imperviousai/imp-daemon/state"
 	"go.uber.org/zap"
 )
 
-//go:generate mockgen --destination=./mock/core_mock.go --package=mock github.com/imperviousai/freeimp/core Core
+//go:generate mockgen --destination=./mock/core_mock.go --package=mock github.com/imperviousai/imp-daemon/core Core
 
 type Core interface {
 	// Start will start the IMP core

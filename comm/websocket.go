@@ -9,11 +9,11 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
-	mockable_http "github.com/imperviousai/freeimp/http"
+	mockable_http "github.com/imperviousai/imp-daemon/http"
 	"go.uber.org/zap"
 )
 
-//go:generate mockgen --destination=./mock/websocket_comm_mock.go --package=mock github.com/imperviousai/freeimp/comm WebsocketComm
+//go:generate mockgen --destination=./mock/websocket_comm_mock.go --package=mock github.com/imperviousai/imp-daemon/comm WebsocketComm
 
 var upgrader = websocket.Upgrader{} // use default options
 

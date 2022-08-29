@@ -8,14 +8,14 @@ import (
 	"strings"
 
 	"github.com/hyperledger/aries-framework-go/pkg/doc/did"
-	"github.com/imperviousai/freeimp/id"
-	"github.com/imperviousai/freeimp/key"
-	"github.com/imperviousai/freeimp/messages"
+	"github.com/imperviousai/imp-daemon/id"
+	"github.com/imperviousai/imp-daemon/key"
+	"github.com/imperviousai/imp-daemon/messages"
 	"go.uber.org/zap"
 )
 
-//go:generate mockgen --destination=./mock/did_comm_mock.go --package=mock github.com/imperviousai/freeimp/comm DIDComm
-//go:generate mockgen --destination=./mock/did_comm_transport_mock.go --package=mock github.com/imperviousai/freeimp/comm DIDCommTransport
+//go:generate mockgen --destination=./mock/did_comm_mock.go --package=mock github.com/imperviousai/imp-daemon/comm DIDComm
+//go:generate mockgen --destination=./mock/did_comm_transport_mock.go --package=mock github.com/imperviousai/imp-daemon/comm DIDCommTransport
 
 type DIDCommTransportType int
 

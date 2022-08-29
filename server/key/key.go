@@ -3,8 +3,8 @@ package key
 import (
 	"context"
 
-	"github.com/imperviousai/freeimp/core"
-	key_proto "github.com/imperviousai/freeimp/gen/go/proto/imp/api/key"
+	"github.com/imperviousai/imp-daemon/core"
+	key_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/key"
 	"go.uber.org/zap"
 )
 

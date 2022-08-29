@@ -5,8 +5,8 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/hyperledger/aries-framework-go/pkg/doc/did"
-	"github.com/imperviousai/freeimp/id"
-	mock_identity_manager "github.com/imperviousai/freeimp/id/mock"
+	"github.com/imperviousai/imp-daemon/id"
+	mock_identity_manager "github.com/imperviousai/imp-daemon/id/mock"
 	"github.com/stretchr/testify/suite"
 )
 

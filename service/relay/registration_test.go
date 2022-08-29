@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/imperviousai/freeimp/comm"
-	mock_didcomm "github.com/imperviousai/freeimp/comm/mock"
-	"github.com/imperviousai/freeimp/id"
-	mock_state "github.com/imperviousai/freeimp/service/relay/state/mock"
+	"github.com/imperviousai/imp-daemon/comm"
+	mock_didcomm "github.com/imperviousai/imp-daemon/comm/mock"
+	"github.com/imperviousai/imp-daemon/id"
+	mock_state "github.com/imperviousai/imp-daemon/service/relay/state/mock"
 	"github.com/stretchr/testify/suite"
 )
 

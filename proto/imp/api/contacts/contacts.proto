@@ -3,7 +3,7 @@ syntax = 'proto3';
 
 package contacts;
 
-option go_package = "github.com/imperviousai/freeimp/gen";
+option go_package = "github.com/imperviousai/imp-daemon/gen";
 
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";

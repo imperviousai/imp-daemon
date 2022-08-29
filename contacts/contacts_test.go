@@ -5,10 +5,10 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/hyperledger/aries-framework-go/pkg/doc/did"
-	"github.com/imperviousai/freeimp/contacts/state"
-	contacts_state "github.com/imperviousai/freeimp/contacts/state"
-	mock_state "github.com/imperviousai/freeimp/contacts/state/mock"
-	mock_identity_manager "github.com/imperviousai/freeimp/id/mock"
+	"github.com/imperviousai/imp-daemon/contacts/state"
+	contacts_state "github.com/imperviousai/imp-daemon/contacts/state"
+	mock_state "github.com/imperviousai/imp-daemon/contacts/state/mock"
+	mock_identity_manager "github.com/imperviousai/imp-daemon/id/mock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )

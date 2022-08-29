@@ -25,7 +25,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 )
 
-//go:generate mockgen --destination=./mock/ipfs_mock.go --package=mock github.com/imperviousai/freeimp/ipfs IPFS
+//go:generate mockgen --destination=./mock/ipfs_mock.go --package=mock github.com/imperviousai/imp-daemon/ipfs IPFS
 
 //go:generate mockgen --destination=./mock/ipfs/coreapi_mock.go --package=ipfs_mock github.com/ipfs/interface-go-ipfs-core CoreAPI
 //go:generate mockgen --destination=./mock/ipfs/pinapi_mock.go --package=ipfs_mock github.com/ipfs/interface-go-ipfs-core PinAPI

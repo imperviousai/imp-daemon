@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/hyperledger/aries-framework-go/pkg/doc/did"
-	"github.com/imperviousai/freeimp/id/ion"
-	id_state "github.com/imperviousai/freeimp/id/state"
-	"github.com/imperviousai/freeimp/key"
-	"github.com/imperviousai/freeimp/state"
+	"github.com/imperviousai/imp-daemon/id/ion"
+	id_state "github.com/imperviousai/imp-daemon/id/state"
+	"github.com/imperviousai/imp-daemon/key"
+	"github.com/imperviousai/imp-daemon/state"
 	"github.com/lestrrat-go/jwx/jwa"
 	"github.com/lestrrat-go/jwx/jws"
 	"github.com/multiformats/go-multihash"
@@ -20,7 +20,7 @@ import (
 	canonical "github.com/gibson042/canonicaljson-go"
 )
 
-//go:generate mockgen --destination=./mock/ion_mock.go --package=mock github.com/imperviousai/freeimp/id Ion
+//go:generate mockgen --destination=./mock/ion_mock.go --package=mock github.com/imperviousai/imp-daemon/id Ion
 
 type Ion interface {
 	ResolveDid(id string) (*did.Doc, error)

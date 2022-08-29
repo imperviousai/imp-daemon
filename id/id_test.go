@@ -9,10 +9,10 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/hyperledger/aries-framework-go/pkg/doc/did"
-	"github.com/imperviousai/freeimp/http/mock"
-	id_state "github.com/imperviousai/freeimp/id/state"
-	mock_state "github.com/imperviousai/freeimp/id/state/mock"
-	mock_key "github.com/imperviousai/freeimp/key/mock"
+	"github.com/imperviousai/imp-daemon/http/mock"
+	id_state "github.com/imperviousai/imp-daemon/id/state"
+	mock_state "github.com/imperviousai/imp-daemon/id/state/mock"
+	mock_key "github.com/imperviousai/imp-daemon/key/mock"
 	"github.com/stretchr/testify/suite"
 )
 
