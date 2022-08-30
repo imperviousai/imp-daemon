@@ -32,7 +32,7 @@ You can create the Dockerfile for this app to release the binary built into the 
 To build a new docker image:
 
 ```
-docker build -t imperviousai/imp-releases . --progress=plain
+docker build -t teamimp/imp-daemon . --progress=plain
 ```
 
 For configs, there's a couple fields required as is for working with docker:
@@ -41,6 +41,18 @@ For configs, there's a couple fields required as is for working with docker:
 server:
   grpc_addr: 0.0.0.0:8881 # LEAVE ALONE FOR DOCKER
   http_addr: 0.0.0.0:8882 # LEAVE ALONE FOR DOCKER
+  http_did_addr: 0.0.0.0:8883 # LEAVE ALONE FOR DOCKER
+
+...
+
+sql:
+  connection_string: "file:/app/db/imp.db?_auth&_auth_user=admin&_auth_pass=supersecretpassword&_auth_crypt=sha256"  # LEAVE ALONE FOR DOCKER
+  type: sqlite3
+
+...
+
+ipfs:
+  directory: /app/ipfs/ # LEAVE ALONE FOR DOCKER
 
 ...
 
@@ -56,10 +68,11 @@ To run the built docker image:
 docker run \
  -p8881:8881 \
  -p8882:8882 \
+ -p8883:8883 \
  -v {REPLACE_WITH_CONFIG_PATH}:/app/config/config.yml \
  -v {REPLACE_WITH_TLS_PATH}:/app/lnd/tls.cert \
  -v {REPLACE_WITH_MACAROON_PATH}:/app/lnd/admin.macaroon \
- -it imperviousai/imp-releases
+ -it teamimp/imp-daemon
 ```
 
 You may also change the host port number (ie `-p8891:8881`) if you are running multiple.

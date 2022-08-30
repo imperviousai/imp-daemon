@@ -1,19 +1,23 @@
-FROM golang:1.16-alpine
+FROM golang:1.16.15-alpine as buildStage
 
 RUN apk add --no-cache --update alpine-sdk
 
 WORKDIR /src
 
-COPY . .
+RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
+
+COPY ./go.mod ./go.mod
 RUN go mod download
 
-RUN mkdir /app
+COPY . .
 
-RUN go build -o /app/impervious ./cmd/impd/main.go
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o /app/impervious /src/cmd/impd/main.go
 
-# IMPORTANT DELETE SOURCE FILES FOR NOW #
+
+FROM alpine
+COPY --from=buildStage /app/impervious /app/impervious
+
 WORKDIR /app
-RUN rm -rf /src
 
 # Config files we will pass through
 Run mkdir config
@@ -23,7 +27,10 @@ RUN mkdir lnd
 RUN touch lnd/tls.cert
 RUN touch lnd/admin.macaroon
 
-EXPOSE 8882
+RUN mkdir db
+
 EXPOSE 8881
+EXPOSE 8882
+EXPOSE 8883
 
 CMD ["./impervious", "--config=config/config.yml"]
