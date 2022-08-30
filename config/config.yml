@@ -3,7 +3,7 @@ server:
   enabled: true # enable the GRPC/HTTP/websocket server
   grpc_addr: 127.0.0.1:8881 #IP:port for GRPC
   http_addr: 127.0.0.1:8882 #IP:port for HTTP/websocket
-  http_did_addr: 127.0.0.1:8893 #IP:port for HTTP DIDComm
+  http_did_addr: 127.0.0.1:8883 #IP:port for HTTP DIDComm
 sql:
   connection_string: file:/Users/imp/.imp/sender-copy/imp.db?_auth&_auth_user=admin&_auth_pass=supersecretpassword&_auth_crypt=sha256  # replace with your SQL configs
   type: sqlite
