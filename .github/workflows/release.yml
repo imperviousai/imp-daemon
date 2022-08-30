@@ -32,8 +32,9 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
+        goversion: 1.16
         project_path: "./cmd/impd"
         binary_name: "impervious"
-        pre_command: "GO111MODULE=on" # latest requires go v0.17
+        pre_command: "GO111MODULE=on"
         build_command: "go build"
         sha256sum: TRUE
