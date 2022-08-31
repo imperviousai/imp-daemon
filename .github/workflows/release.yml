@@ -7,27 +7,8 @@ on:
   pull_request: # TODO remove, only for testing
 
 jobs:
-  releases-matrix:
-    name: Release Go Binary
+  goreleaser:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # build and publish in parallel: linux/386, linux/amd64, windows/386, windows/amd64, darwin/amd64
-        goos: [linux, windows, darwin]
-        goarch: ["386", amd64, arm, arm64, "s390x"]
-        exclude:
-          - goarch: "386"
-            goos: darwin
-          - goarch: "arm"
-            goos: darwin
-          - goarch: "arm64"
-            goos: windows
-          - goarch: "arm"
-            goos: windows
-          - goarch: "s390x"
-            goos: windows
-          - goarch: "s390x"
-            goos: darwin
     steps:
       -
         name: Checkout
