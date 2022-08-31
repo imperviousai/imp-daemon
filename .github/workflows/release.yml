@@ -6,6 +6,9 @@ on:
       - '*'
   pull_request: # TODO remove, only for testing
 
+permissions:
+  contents: write
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
