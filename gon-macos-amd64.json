@@ -1,0 +1,18 @@
+{
+    "source" : ["dist/impervious-macos-amd64_darwin_amd64_v1/imp-daemon"],
+    "bundle_id" : "ai.impervious.imp-daemon",
+    "apple_id": {
+        "username":  "support@impervious.ai",
+        "password":  "@env:AC_PASSWORD"
+    },
+    "sign" :{
+        "application_identity" : "Developer ID Application: Impervious Technologies Inc. (S722DY52YY)"
+    },
+    "dmg" :{
+        "output_path":  "dist/impervious-macos-amd64_darwin_amd64_v1/imp-daemon-signed.dmg",
+        "volume_name":  "imp-daemon"
+    },
+    "zip" :{
+        "output_path" : "dist/impervious-macos-amd64_darwin_amd64_v1/imp-daemon.zip"
+    }
+}

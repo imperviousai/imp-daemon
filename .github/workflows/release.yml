@@ -1,7 +1,10 @@
 name: Release
 on:
-  release:
-    types: [created]
+  push:
+    # run only against tags
+    tags:
+      - '*'
+  pull_request: # TODO remove, only for testing
 
 jobs:
   releases-matrix:
@@ -26,15 +29,25 @@ jobs:
           - goarch: "s390x"
             goos: darwin
     steps:
-    - uses: actions/checkout@v2
-    - uses: wangyoucao577/go-release-action@v1.30
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: ${{ matrix.goos }}
-        goarch: ${{ matrix.goarch }}
-        goversion: 1.16
-        project_path: "./cmd/impd"
-        binary_name: "impervious"
-        pre_command: "GO111MODULE=on"
-        build_command: "go build"
-        sha256sum: TRUE
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        name: Fetch all tags
+        run: git fetch --force --tags
+      -
+        name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
