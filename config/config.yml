@@ -29,12 +29,12 @@ service_list:
 # Lightning
 lightning:
   lnd_node:
-    ip: 127.0.0.1 #IP of your LND node
-    port: 10001 #GRPC port of your LND node
-    pub_key: asdfasdfasdf #get your LND pubkey with "lncli getinfo"
-    tls_cert: /path/to/tls.cert
+    ip: #IP of your LND node
+    port: #GRPC port of your LND node
+    pub_key: #get your LND pubkey with "lncli getinfo"
+    tls_cert: #/path/to/tls.cert
     tls_cert_hex: # can use hex encoding cert instead of file
-    admin_macaroon: /path/to/admin.macaroon
+    admin_macaroon: #/path/to/admin.macaroon
     admin_macaroon_hex: # can use hex encoded macaroon instead of file
     listening: false # turn on if you would like to use LND
 ipfs:
