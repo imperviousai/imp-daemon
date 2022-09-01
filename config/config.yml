@@ -7,19 +7,23 @@ server:
 sql:
   connection_string: file:/Users/imp/.imp/sender-copy/imp.db?_auth&_auth_user=admin&_auth_pass=supersecretpassword&_auth_crypt=sha256  # replace with your SQL configs
   type: sqlite
-did:
-  universal_resolver_urls:
-    - https://resolver.imp-api.net/1.0/identifiers/
   # for mysql:
   #connection_string: "root:password@(localhost:52000)/impervious"  # replace with db configs
   #type: mysql
+did:
+  universal_resolver_urls:
+    - https://resolver.imp-api.net/1.0/identifiers/
 ###### DO NOT EDIT THE BELOW SECTION#####
 # Services
 service_list:
-  - service_type: relay
-    active: true
-    custom_message_type: https://didcomm.org/routing/2.0
-    additional_service_data:
+- service_type: relay
+  active: false
+  custom_message_type: https://didcomm.org/routing/2.0
+  additional_service_data: null
+- service_type: relay-registration
+  active: true
+  custom_message_type: https://impervious.ai/didcomm/relay-registration/1.0
+  additional_service_data: null
 ###### DO NOT EDIT THE ABOVE SECTION#####
 
 # Lightning
@@ -32,13 +36,13 @@ lightning:
     tls_cert_hex: # can use hex encoding cert instead of file
     admin_macaroon: /path/to/admin.macaroon
     admin_macaroon_hex: # can use hex encoded macaroon instead of file
-    listening: true
+    listening: false # turn on if you would like to use LND
 ipfs:
   directory: ~/.imp/ipfs #Directory for IPFS data if not default (~/.imp/ipfs)
 ion:
   url: http://localhost:3000  #Url for the ION node
-  active: true # Whether or not the ION node is active
+  active: true # turn on if you would like to use ION
 log:
-  ignore_file_write: true # Whether or not the logs save to disk
+  ignore_file_write: false # Whether or not the logs save to disk
 key:
   # passphrase: test # Leave empty if initializing for the first time
