@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -51,33 +52,102 @@ func (g *globalConfig) WriteConfig() error {
 }
 
 type Config struct {
-	Server struct {
-		Enabled     bool   `yaml:"enabled"`
-		GrpcAddr    string `yaml:"grpc_addr"`
-		HttpAddr    string `yaml:"http_addr"`
-		HttpDIDAddr string `yaml:"http_did_addr"`
-	} `yaml:"server"`
-	Sql struct {
-		ConnectionString string `yaml:"connection_string"`
-		Type             string `yaml:"type"`
-	} `yaml:"sql"`
-	DID struct {
-		UniversalResolverUrls []string `yaml:"universal_resolver_urls"`
-	} `yaml:"did"`
+	Server      Server     `yaml:"server"`
+	Sql         Sql        `yaml:"sql"`
+	DID         DID        `yaml:"did"`
 	ServiceList []Services `yaml:"service_list"`
-	Lightning   struct {
-		LndNode Lnd `yaml:"lnd_node"`
-	} `yaml:"lightning"`
-	IPFS struct {
-		Directory string `yaml:"directory"`
-	} `yaml:"ipfs"`
-	ION ION `yaml:"ion"`
-	Log struct {
-		IgnoreFileWrite bool `yaml:"ignore_file_write"`
-	} `yaml:"log"`
-	Key struct {
-		Passphrase string `yaml:"passphrase"`
-	} `yaml:"key"`
+	Lightning   Lightning  `yaml:"lightning"`
+	IPFS        IPFS       `yaml:"ipfs"`
+	ION         ION        `yaml:"ion"`
+	Log         Log        `yaml:"log"`
+	Key         Key        `yaml:"key"`
+}
+
+func DefaultConfig() Config {
+	// create home path if not exists
+	homePath, err := os.UserHomeDir()
+	if err != nil {
+		zap.L().Panic(err.Error())
+	}
+	homePath += "/.imp"
+	if err := os.MkdirAll(filepath.Dir(homePath), 0750); err != nil {
+		zap.L().Panic(err.Error())
+	}
+
+	sqlPath := homePath + "/imp.db"
+	ipfsPath := homePath + "/ipfs"
+
+	return Config{
+		Server: Server{
+			Enabled:     true,
+			GrpcAddr:    "127.0.0.1:8881",
+			HttpAddr:    "127.0.0.1:8882",
+			HttpDIDAddr: "127.0.0.1:8883",
+		},
+		Sql: Sql{
+			ConnectionString: fmt.Sprintf("file:%s?_auth&_auth_user=admin&_auth_pass=supersecretpassword&_auth_crypt=sha256", sqlPath),
+			Type:             "sqlite",
+		},
+		DID: DID{
+			UniversalResolverUrls: []string{
+				"https://resolver.impervious.live/1.0/identifiers/",
+			},
+		},
+		ServiceList: []Services{
+			{
+				ServiceType:       "relay",
+				Active:            false,
+				CustomMessageType: "https://didcomm.org/routing/2.0",
+			},
+			{
+				ServiceType:       "relay-registration",
+				Active:            true,
+				CustomMessageType: "https://impervious.ai/didcomm/relay-registration/1.0",
+			},
+		},
+		IPFS: IPFS{
+			Directory: ipfsPath,
+		},
+		ION: ION{
+			Url:    "http://localhost:3000",
+			Active: false,
+		},
+		Log: Log{
+			IgnoreFileWrite: false,
+		},
+	}
+}
+
+type Key struct {
+	Passphrase string `yaml:"passphrase"`
+}
+
+type Log struct {
+	IgnoreFileWrite bool `yaml:"ignore_file_write"`
+}
+
+type IPFS struct {
+	Directory string `yaml:"directory"`
+}
+
+type Lightning struct {
+	LndNode Lnd `yaml:"lnd_node"`
+}
+
+type DID struct {
+	UniversalResolverUrls []string `yaml:"universal_resolver_urls"`
+}
+
+type Sql struct {
+	ConnectionString string `yaml:"connection_string"`
+	Type             string `yaml:"type"`
+}
+
+type Server struct {
+	Enabled     bool   `yaml:"enabled"`
+	GrpcAddr    string `yaml:"grpc_addr"`
+	HttpAddr    string `yaml:"http_addr"`
+	HttpDIDAddr string `yaml:"http_did_addr"`
 }
 
 type ION struct {
@@ -143,7 +213,7 @@ func (cfg *Config) writeFile(path string) error {
 		return err
 	}
 
-	err = os.WriteFile(pathPri, data, 0)
+	err = os.WriteFile(pathPri, data, 0600)
 	if err != nil {
 		return err
 	}
@@ -154,10 +224,29 @@ func (cfg *Config) writeFile(path string) error {
 func determinePath(path string) string {
 	// Priority: path, local config, default
 	if path == "" {
-		if _, err := os.Stat("config/local.config.yml"); os.IsNotExist(err) {
-			path = "config/config.yml"
+		if _, err := os.Stat("config/config.yml"); os.IsNotExist(err) {
+			// create home path if not exists
+			homePath, err := os.UserHomeDir()
+			if err != nil {
+				zap.L().Panic(err.Error())
+			}
+			homePath += "/.imp"
+			if err := os.MkdirAll(filepath.Dir(homePath), 0750); err != nil {
+				zap.L().Panic(err.Error())
+			}
+
+			path = homePath + "/config.yml"
+
+			// check if ~/.imp/config.yml is already a file
+			if _, err := os.Stat(path); os.IsNotExist(err) {
+				// if not, write defaults to this file and return path
+				cfg := DefaultConfig()
+				if err := cfg.writeFile(path); err != nil {
+					zap.L().Panic(err.Error())
+				}
+			}
 		} else {
-			path = "config/local.config.yml"
+			path = "config/config.yml"
 		}
 	}
 	return path
