@@ -12,7 +12,7 @@ sql:
   #type: mysql
 did:
   universal_resolver_urls:
-    - https://resolver.imp-api.net/1.0/identifiers/
+    - https://resolver.impervious.live/1.0/identifiers/
 ###### DO NOT EDIT THE BELOW SECTION#####
 # Services
 service_list:
