@@ -244,8 +244,7 @@ func (v *relayRegistrationService) SendRegistrationRequest(toDID string, amt int
 		Data: data,
 	}
 
-	// TODO message preferences
-	msgId, err := v.didComm.SendMsg(msg, amt, nil, nil)
+	msgId, err := v.didComm.SendMsg(msg, amt, nil, &comm.MessageSettings{SkipMessageSaving: true})
 	if err != nil {
 		return "", err
 	}
@@ -262,8 +261,7 @@ func (v *relayRegistrationService) SendMailboxRequest(toDID string, amt int64, d
 		Data: data,
 	}
 
-	// TODO message preferences
-	msgId, err := v.didComm.SendMsg(msg, amt, nil, nil)
+	msgId, err := v.didComm.SendMsg(msg, amt, nil, &comm.MessageSettings{SkipMessageSaving: true})
 	if err != nil {
 		return "", err
 	}
