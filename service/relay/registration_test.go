@@ -57,10 +57,11 @@ func (s *RelayRegistrationSuite) TestSendRegistrationRequest() {
 		Type: RELAY_REGISTRATION_REQUEST_TYPE,
 		Data: data,
 	}
+	expectedSettings := &comm.MessageSettings{SkipMessageSaving: true}
 
 	// Setup mock
 	s.MockedDIDComm.EXPECT().
-		SendMsg(gomock.Any(), gomock.Eq(amt), nil, nil).
+		SendMsg(gomock.Any(), gomock.Eq(amt), nil, gomock.Eq(expectedSettings)).
 		DoAndReturn(
 			func(didCommEnvelope *comm.DIDCommMsg, amt int64, additionalEndpoints []id.Service, settings *comm.MessageSettings) (interface{}, error) {
 				// do not compare uuid value
@@ -152,12 +153,12 @@ func (s *RelayRegistrationSuite) TestSendRegistrationRequestSuccess() {
 		Type: RELAY_REGISTRATION_REQUEST_TYPE,
 		Data: data,
 	}
-
+	expectedSettings := &comm.MessageSettings{SkipMessageSaving: true}
 	expectedReturnedIds := "123-123-123-123"
 
 	// Setup mock
 	s.MockedDIDComm.EXPECT().
-		SendMsg(gomock.Any(), gomock.Eq(amt), nil, nil).
+		SendMsg(gomock.Any(), gomock.Eq(amt), nil, gomock.Eq(expectedSettings)).
 		DoAndReturn(
 			func(didCommEnvelope *comm.DIDCommMsg, amt int64, additionalEndpoints []id.Service, settings *comm.MessageSettings) (interface{}, error) {
 				// do not compare uuid value
@@ -188,10 +189,11 @@ func (s *RelayRegistrationSuite) TestSendRegistrationRequestFailure() {
 		Type: RELAY_REGISTRATION_REQUEST_TYPE,
 		Data: data,
 	}
+	expectedSettings := &comm.MessageSettings{SkipMessageSaving: true}
 
 	// Setup mock
 	s.MockedDIDComm.EXPECT().
-		SendMsg(gomock.Any(), gomock.Eq(amt), nil, nil).
+		SendMsg(gomock.Any(), gomock.Eq(amt), nil, gomock.Eq(expectedSettings)).
 		DoAndReturn(
 			func(didCommEnvelope *comm.DIDCommMsg, amt int64, additionalEndpoints []id.Service, settings *comm.MessageSettings) (interface{}, error) {
 				// do not compare uuid value
