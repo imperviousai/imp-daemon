@@ -75,6 +75,7 @@ type DIDCommConfig struct {
 
 type MessageSettings struct {
 	ProtocolPreferences []string
+	SkipMessageSaving   bool
 }
 
 func NewDIDComm(config *DIDCommConfig) (DIDComm, error) {
@@ -112,23 +113,25 @@ func (d *didCommController) SendMsg(didCommEnvelope *DIDCommMsg, amt int64, addi
 	didCommEnvelope.AddAmountMetadata(amt)
 
 	// Save the message first, then send individually to each party
-	envelopeBytes, err := json.Marshal(didCommEnvelope)
-	if err != nil {
-		return "", err
-	}
-	err = d.messagesManager.SaveMessage(&messages.MessageInfo{
-		Id:         didCommEnvelope.ID,
-		Type:       didCommEnvelope.Type,
-		Recipients: append(didCommEnvelope.To, didCommEnvelope.From),
-		Data:       envelopeBytes,
-		// TODO move transport to message event
-		// Transport:  transport,
-	})
-	if err != nil {
-		zap.L().Error("Could not save message before sending",
-			zap.Error(err),
-		)
-		return "", err
+	if settings != nil && !settings.SkipMessageSaving {
+		envelopeBytes, err := json.Marshal(didCommEnvelope)
+		if err != nil {
+			return "", err
+		}
+		err = d.messagesManager.SaveMessage(&messages.MessageInfo{
+			Id:         didCommEnvelope.ID,
+			Type:       didCommEnvelope.Type,
+			Recipients: append(didCommEnvelope.To, didCommEnvelope.From),
+			Data:       envelopeBytes,
+			// TODO move transport to message event
+			// Transport:  transport,
+		})
+		if err != nil {
+			zap.L().Error("Could not save message before sending",
+				zap.Error(err),
+			)
+			return "", err
+		}
 	}
 
 	err = d.sendMsgToRecipients(didCommEnvelope, amt, additionalEndpoints, settings)
@@ -141,42 +144,51 @@ func (d *didCommController) SendMsg(didCommEnvelope *DIDCommMsg, amt int64, addi
 func (d *didCommController) sendMsgToRecipients(didCommEnvelope *DIDCommMsg, amt int64, additionalEndpoints []id.Service, settings *MessageSettings) error {
 	msgIds := make([]string, len(didCommEnvelope.To))
 	for i, to := range didCommEnvelope.To {
-		err := d.messagesManager.SaveMessageEvent(&messages.MessageEvent{
-			DID:       to,
-			MessageId: didCommEnvelope.ID,
-			Type:      "pending",
-		})
-		if err != nil {
-			zap.L().Error("PENDING MSG BUT COULD NOT SAVE MSG EVENT, IGNORING ERROR....",
-				zap.Error(err),
-			)
+		if settings != nil && !settings.SkipMessageSaving {
+			err := d.messagesManager.SaveMessageEvent(&messages.MessageEvent{
+				DID:       to,
+				MessageId: didCommEnvelope.ID,
+				Type:      "pending",
+			})
+			if err != nil {
+				zap.L().Error("PENDING MSG BUT COULD NOT SAVE MSG EVENT, IGNORING ERROR....",
+					zap.Error(err),
+				)
+			}
 		}
 
 		msgSentId, err := d.sendMsgToRecipient(didCommEnvelope, amt, additionalEndpoints, to, settings)
 		if err != nil {
-			err = d.messagesManager.SaveMessageEvent(&messages.MessageEvent{
-				DID:       to,
-				MessageId: didCommEnvelope.ID,
-				Type:      "failed",
-			})
-			if err != nil {
-				zap.L().Error("FAILED MSG BUT COULD NOT SAVE MSG EVENT, IGNORING ERROR....",
-					zap.Error(err),
-				)
+			if settings != nil && !settings.SkipMessageSaving {
+				err = d.messagesManager.SaveMessageEvent(&messages.MessageEvent{
+					DID:       to,
+					MessageId: didCommEnvelope.ID,
+					Type:      "failed",
+				})
+				if err != nil {
+					zap.L().Error("FAILED MSG BUT COULD NOT SAVE MSG EVENT, IGNORING ERROR....",
+						zap.Error(err),
+					)
+				}
 			}
+			zap.L().Error("Could not send message to recipient",
+				zap.Error(err),
+			)
 			continue
 		}
 		msgIds[i] = msgSentId
 
-		err = d.messagesManager.SaveMessageEvent(&messages.MessageEvent{
-			DID:       to,
-			MessageId: didCommEnvelope.ID,
-			Type:      "sent",
-		})
-		if err != nil {
-			zap.L().Error("SENT MSG BUT COULD NOT SAVE MSG EVENT, IGNORING ERROR....",
-				zap.Error(err),
-			)
+		if settings != nil && !settings.SkipMessageSaving {
+			err = d.messagesManager.SaveMessageEvent(&messages.MessageEvent{
+				DID:       to,
+				MessageId: didCommEnvelope.ID,
+				Type:      "sent",
+			})
+			if err != nil {
+				zap.L().Error("SENT MSG BUT COULD NOT SAVE MSG EVENT, IGNORING ERROR....",
+					zap.Error(err),
+				)
+			}
 		}
 	}
 
@@ -292,9 +304,10 @@ func (d *didCommController) sendMsgToEndpoints(didDoc *did.Doc, to string, didCo
 	// via websocket. If so, attempt to send down the socketId already opened
 	err = d.sendMsg(DIDCommTransportWebsocket, "", encryptedMsg)
 	if err != nil {
-		zap.L().Error("[Messenger] sendMsg failed to send down existing websocket endpoint, trying all endpoints...",
+		zap.L().Debug("[Messenger] sendMsg failed to send down existing websocket endpoint, trying all endpoints...",
 			zap.String("socket_id", didCommEnvelope.GetWebsocketId()),
 			zap.String("did", to),
+			zap.Any("endpoints", didCommEndpoints),
 			zap.Error(err),
 		)
 		// don't return error, need to attempt down all didcomm endpoints
@@ -539,7 +552,7 @@ func ParseDIDEndpoints(endpoints []did.Service) ([]didCommEndpoint, error) {
 // Different logic can be applied in the future.
 func PriortizeEndpoints(endpoints []didCommEndpoint, amt int64, settings *MessageSettings) []didCommEndpoint {
 	// basic preferences if no settings passed in
-	if settings == nil {
+	if settings == nil || len(settings.ProtocolPreferences) == 0 {
 		sort.Slice(endpoints, func(i, j int) bool {
 			// prioritize lightning if an amount is filled in at all
 			if amt != 0 {

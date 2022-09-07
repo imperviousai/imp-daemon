@@ -400,7 +400,9 @@ func ConfigureWebsocketDIDComm(cfg config.Config, channel chan comm.IncomingDIDM
 func AddLightningNodes(cfg config.Config, lnm lightning.LightningManager) error {
 	lndNode, err := ConfigureLightningNodes(cfg)
 	if err != nil {
-		zap.L().Panic(err.Error())
+		zap.L().Error("Could not connect to lightning node, skipping lightning setup...",
+			zap.Error(err),
+		)
 	}
 	if lndNode == nil {
 		return nil
