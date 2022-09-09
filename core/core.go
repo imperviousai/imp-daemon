@@ -127,7 +127,7 @@ type Core interface {
 	// GetSeed will get the mnemonic seed phrase
 	GetSeed() (string, error)
 
-	Status() (string, error)
+	KeyStatus() (string, error)
 
 	//
 	// Contacts Commands
