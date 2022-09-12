@@ -2,7 +2,7 @@ name: Build-Artifacts
 on:
   push:
     branches:
-      - "auto-signing"
+      - "master"
 
 
 permissions:
@@ -38,6 +38,7 @@ jobs:
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           distribution: goreleaser
           version: latest
           args: release --rm-dist
