@@ -1,7 +1,8 @@
-name: Build-Sign-Release
+name: Build-Artifacts
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - "master"
 
 
 permissions:
@@ -44,3 +45,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      - 
+        name: Upload assets (macos-arm64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: Impervious-macosx_arm64
+          path: dist/impervious-macos-arm64*/impervious.zip
+      - 
+        name: Upload assets (macos-amd64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: Impervious-macosx_amd64
+          path: dist/impervious-macos-amd64*/impervious.zip
+      - 
+        name: Upload assets (linux-multi)
+        uses: actions/upload-artifact@v3
+        with:
+          name: Impervious-linux-multi
+          path: dist/impervious-linux*/*
+      - 
+        name: Upload assets (windows)
+        uses: actions/upload-artifact@v3
+        with:
+          name: Impervious-windows
+          path: dist/impervious-windows*/*
