@@ -25,6 +25,9 @@ builds:
       - darwin
     goarch:
       - amd64
+    hooks:
+      post:
+        - gon gon-macos-amd64.json
   - id: impervious-macos-arm64
     main: ./cmd/impd
     binary: imp-daemon
@@ -32,9 +35,9 @@ builds:
       - darwin
     goarch:
       - arm64
-    # hooks:
-    #   post:
-    #   - gon -log-level=info -log-json gon.hcl
+    hooks:
+      post:
+        - gon gon-macos-arm64.json
 #signs:
  #-
    #id: impervious-macos-amd64
@@ -48,5 +51,4 @@ builds:
    #args:
    #- gon-macos-arm64.json
    #artifacts: all
-
 
