@@ -1,5 +1,5 @@
 {
-    "source" : ["dist/impervious-macos-arm64_darwin_arm64_v1/impervious"],
+    "source" : ["dist/impervious-macos-arm64_darwin_arm64/impervious"],
     "bundle_id" : "ai.impervious.imp-daemon",
     "apple_id": {
         "username":  "support@impervious.ai",
@@ -9,10 +9,10 @@
         "application_identity" : "Developer ID Application: Impervious Technologies Inc. (S722DY52YY)"
     },
     "dmg" :{
-        "output_path":  "dist/impervious-macos-arm64_darwin_arm64_v1/impervious-signed.dmg",
+        "output_path":  "dist/impervious-macos-arm64_darwin_arm64/impervious-signed.dmg",
         "volume_name":  "impervious"
     },
     "zip" :{
-        "output_path" : "dist/impervious-macos-arm64_darwin_arm64_v1/impervious.zip"
+        "output_path" : "dist/impervious-macos-arm64_darwin_arm64/impervious.zip"
     }
 }

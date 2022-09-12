@@ -49,13 +49,13 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Impervious-macosx_arm64
-          path: dist/impervious-macos-arm64_darwin_arm64_v1/impervious.zip
+          path: dist/impervious-macos-arm64*/impervious.zip
       - 
         name: Upload assets (macos-amd64)
         uses: actions/upload-artifact@v3
         with:
           name: Impervious-macosx_amd64
-          path: dist/impervious-macos-amd64_darwin_amd64_v1/impervious.zip
+          path: dist/impervious-macos-amd64*/impervious.zip
       - 
         name: Upload assets (linux-multi)
         uses: actions/upload-artifact@v3
