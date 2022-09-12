@@ -6,6 +6,8 @@
 
 - [proto/imp/api/core/core.proto](#proto/imp/api/core/core.proto)
     - [KeyStatus](#core.KeyStatus)
+    - [LightningStatus](#core.LightningStatus)
+    - [NodeStatus](#core.NodeStatus)
     - [StatusRequest](#core.StatusRequest)
     - [StatusResponse](#core.StatusResponse)
   
@@ -58,6 +60,37 @@ Core service allows general core actions on the Impervious daemon.
 
 
 
+<a name="core.LightningStatus"></a>
+
+### LightningStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| node_status_list | NodeStatus | repeated |  |
+
+
+
+
+
+
+<a name="core.NodeStatus"></a>
+
+### NodeStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pubkey | string |  | The pubkey of the node the status is meant for |
+| active | bool |  | The active status of this node. |
+
+
+
+
+
+
 <a name="core.StatusRequest"></a>
 
 ### StatusRequest
@@ -77,6 +110,7 @@ Represents a response back from a status request.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | key_status | KeyStatus |  | KeyStatus information |
+| lightning_status | LightningStatus |  | LightningStatus information |
 
 
 

@@ -1,12 +1,18 @@
 package node
 
-import "github.com/imperviousai/imp-daemon/comm"
+import (
+	"github.com/imperviousai/imp-daemon/comm"
+	"github.com/lightningnetwork/lnd/lnrpc"
+)
 
 //go:generate mockgen --destination=./mock/node_mock.go --package=mock github.com/imperviousai/imp-daemon/lightning/node Node
 
 // Node is an implementation of a single lightning node with only the
 // functionality that the LightningManager needs to worry about.
 type Node interface {
+	// GetInfo will get the node's basic info.
+	GetInfo() (*lnrpc.GetInfoResponse, error)
+
 	// GetPubkey will get the node's public key.
 	GetPubkey() string
 

@@ -61,11 +61,36 @@ var SwaggerJSON = `
         }
       }
     },
+    "coreLightningStatus": {
+      "type": "object",
+      "properties": {
+        "nodeStatusList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/coreNodeStatus"
+          }
+        }
+      }
+    },
+    "coreNodeStatus": {
+      "type": "object",
+      "properties": {
+        "pubkey": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        }
+      }
+    },
     "coreStatusResponse": {
       "type": "object",
       "properties": {
         "keyStatus": {
           "$ref": "#/definitions/coreKeyStatus"
+        },
+        "lightningStatus": {
+          "$ref": "#/definitions/coreLightningStatus"
         }
       },
       "description": "*\nRepresents a response back from a status request."

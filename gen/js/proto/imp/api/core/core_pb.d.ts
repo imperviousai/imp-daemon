@@ -36,11 +36,58 @@ export namespace KeyStatus {
   }
 }
 
+export class NodeStatus extends jspb.Message {
+  getPubkey(): string;
+  setPubkey(value: string): NodeStatus;
+
+  getActive(): boolean;
+  setActive(value: boolean): NodeStatus;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): NodeStatus.AsObject;
+  static toObject(includeInstance: boolean, msg: NodeStatus): NodeStatus.AsObject;
+  static serializeBinaryToWriter(message: NodeStatus, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): NodeStatus;
+  static deserializeBinaryFromReader(message: NodeStatus, reader: jspb.BinaryReader): NodeStatus;
+}
+
+export namespace NodeStatus {
+  export type AsObject = {
+    pubkey: string,
+    active: boolean,
+  }
+}
+
+export class LightningStatus extends jspb.Message {
+  getNodeStatusListList(): Array<NodeStatus>;
+  setNodeStatusListList(value: Array<NodeStatus>): LightningStatus;
+  clearNodeStatusListList(): LightningStatus;
+  addNodeStatusList(value?: NodeStatus, index?: number): NodeStatus;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): LightningStatus.AsObject;
+  static toObject(includeInstance: boolean, msg: LightningStatus): LightningStatus.AsObject;
+  static serializeBinaryToWriter(message: LightningStatus, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): LightningStatus;
+  static deserializeBinaryFromReader(message: LightningStatus, reader: jspb.BinaryReader): LightningStatus;
+}
+
+export namespace LightningStatus {
+  export type AsObject = {
+    nodeStatusListList: Array<NodeStatus.AsObject>,
+  }
+}
+
 export class StatusResponse extends jspb.Message {
   getKeyStatus(): KeyStatus | undefined;
   setKeyStatus(value?: KeyStatus): StatusResponse;
   hasKeyStatus(): boolean;
   clearKeyStatus(): StatusResponse;
+
+  getLightningStatus(): LightningStatus | undefined;
+  setLightningStatus(value?: LightningStatus): StatusResponse;
+  hasLightningStatus(): boolean;
+  clearLightningStatus(): StatusResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): StatusResponse.AsObject;
@@ -53,6 +100,7 @@ export class StatusResponse extends jspb.Message {
 export namespace StatusResponse {
   export type AsObject = {
     keyStatus?: KeyStatus.AsObject,
+    lightningStatus?: LightningStatus.AsObject,
   }
 }
 

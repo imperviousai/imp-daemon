@@ -252,6 +252,269 @@ impl ::protobuf::reflect::ProtobufValue for KeyStatus {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
+#[derive(PartialEq,Clone,Default,Debug)]
+// @@protoc_insertion_point(message:core.NodeStatus)
+pub struct NodeStatus {
+    // message fields
+    // @@protoc_insertion_point(field:core.NodeStatus.pubkey)
+    pub pubkey: ::std::string::String,
+    // @@protoc_insertion_point(field:core.NodeStatus.active)
+    pub active: bool,
+    // special fields
+    // @@protoc_insertion_point(special_field:core.NodeStatus.special_fields)
+    pub special_fields: ::protobuf::SpecialFields,
+}
+
+impl<'a> ::std::default::Default for &'a NodeStatus {
+    fn default() -> &'a NodeStatus {
+        <NodeStatus as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl NodeStatus {
+    pub fn new() -> NodeStatus {
+        ::std::default::Default::default()
+    }
+
+    fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
+        let mut fields = ::std::vec::Vec::with_capacity(2);
+        let mut oneofs = ::std::vec::Vec::with_capacity(0);
+        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
+            "pubkey",
+            |m: &NodeStatus| { &m.pubkey },
+            |m: &mut NodeStatus| { &mut m.pubkey },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_simpler_field_accessor::<_, _>(
+            "active",
+            |m: &NodeStatus| { &m.active },
+            |m: &mut NodeStatus| { &mut m.active },
+        ));
+        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<NodeStatus>(
+            "NodeStatus",
+            fields,
+            oneofs,
+        )
+    }
+}
+
+impl ::protobuf::Message for NodeStatus {
+    const NAME: &'static str = "NodeStatus";
+
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
+        while let Some(tag) = is.read_raw_tag_or_eof()? {
+            match tag {
+                10 => {
+                    self.pubkey = is.read_string()?;
+                },
+                16 => {
+                    self.active = is.read_bool()?;
+                },
+                tag => {
+                    ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u64 {
+        let mut my_size = 0;
+        if !self.pubkey.is_empty() {
+            my_size += ::protobuf::rt::string_size(1, &self.pubkey);
+        }
+        if self.active != false {
+            my_size += 1 + 1;
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
+        self.special_fields.cached_size().set(my_size as u32);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
+        if !self.pubkey.is_empty() {
+            os.write_string(1, &self.pubkey)?;
+        }
+        if self.active != false {
+            os.write_bool(2, self.active)?;
+        }
+        os.write_unknown_fields(self.special_fields.unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn special_fields(&self) -> &::protobuf::SpecialFields {
+        &self.special_fields
+    }
+
+    fn mut_special_fields(&mut self) -> &mut ::protobuf::SpecialFields {
+        &mut self.special_fields
+    }
+
+    fn new() -> NodeStatus {
+        NodeStatus::new()
+    }
+
+    fn clear(&mut self) {
+        self.pubkey.clear();
+        self.active = false;
+        self.special_fields.clear();
+    }
+
+    fn default_instance() -> &'static NodeStatus {
+        static instance: NodeStatus = NodeStatus {
+            pubkey: ::std::string::String::new(),
+            active: false,
+            special_fields: ::protobuf::SpecialFields::new(),
+        };
+        &instance
+    }
+}
+
+impl ::protobuf::MessageFull for NodeStatus {
+    fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
+        static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
+        descriptor.get(|| file_descriptor().message_by_package_relative_name("NodeStatus").unwrap()).clone()
+    }
+}
+
+impl ::std::fmt::Display for NodeStatus {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for NodeStatus {
+    type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
+}
+
+#[derive(PartialEq,Clone,Default,Debug)]
+// @@protoc_insertion_point(message:core.LightningStatus)
+pub struct LightningStatus {
+    // message fields
+    // @@protoc_insertion_point(field:core.LightningStatus.node_status_list)
+    pub node_status_list: ::std::vec::Vec<NodeStatus>,
+    // special fields
+    // @@protoc_insertion_point(special_field:core.LightningStatus.special_fields)
+    pub special_fields: ::protobuf::SpecialFields,
+}
+
+impl<'a> ::std::default::Default for &'a LightningStatus {
+    fn default() -> &'a LightningStatus {
+        <LightningStatus as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl LightningStatus {
+    pub fn new() -> LightningStatus {
+        ::std::default::Default::default()
+    }
+
+    fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
+        let mut fields = ::std::vec::Vec::with_capacity(1);
+        let mut oneofs = ::std::vec::Vec::with_capacity(0);
+        fields.push(::protobuf::reflect::rt::v2::make_vec_simpler_accessor::<_, _>(
+            "node_status_list",
+            |m: &LightningStatus| { &m.node_status_list },
+            |m: &mut LightningStatus| { &mut m.node_status_list },
+        ));
+        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<LightningStatus>(
+            "LightningStatus",
+            fields,
+            oneofs,
+        )
+    }
+}
+
+impl ::protobuf::Message for LightningStatus {
+    const NAME: &'static str = "LightningStatus";
+
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
+        while let Some(tag) = is.read_raw_tag_or_eof()? {
+            match tag {
+                10 => {
+                    self.node_status_list.push(is.read_message()?);
+                },
+                tag => {
+                    ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u64 {
+        let mut my_size = 0;
+        for value in &self.node_status_list {
+            let len = value.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
+        };
+        my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
+        self.special_fields.cached_size().set(my_size as u32);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
+        for v in &self.node_status_list {
+            ::protobuf::rt::write_message_field_with_cached_size(1, v, os)?;
+        };
+        os.write_unknown_fields(self.special_fields.unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn special_fields(&self) -> &::protobuf::SpecialFields {
+        &self.special_fields
+    }
+
+    fn mut_special_fields(&mut self) -> &mut ::protobuf::SpecialFields {
+        &mut self.special_fields
+    }
+
+    fn new() -> LightningStatus {
+        LightningStatus::new()
+    }
+
+    fn clear(&mut self) {
+        self.node_status_list.clear();
+        self.special_fields.clear();
+    }
+
+    fn default_instance() -> &'static LightningStatus {
+        static instance: LightningStatus = LightningStatus {
+            node_status_list: ::std::vec::Vec::new(),
+            special_fields: ::protobuf::SpecialFields::new(),
+        };
+        &instance
+    }
+}
+
+impl ::protobuf::MessageFull for LightningStatus {
+    fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
+        static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
+        descriptor.get(|| file_descriptor().message_by_package_relative_name("LightningStatus").unwrap()).clone()
+    }
+}
+
+impl ::std::fmt::Display for LightningStatus {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for LightningStatus {
+    type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
+}
+
 /// *
 ///  Represents a response back from a status request.
 #[derive(PartialEq,Clone,Default,Debug)]
@@ -260,6 +523,8 @@ pub struct StatusResponse {
     // message fields
     // @@protoc_insertion_point(field:core.StatusResponse.key_status)
     pub key_status: ::protobuf::MessageField<KeyStatus>,
+    // @@protoc_insertion_point(field:core.StatusResponse.lightning_status)
+    pub lightning_status: ::protobuf::MessageField<LightningStatus>,
     // special fields
     // @@protoc_insertion_point(special_field:core.StatusResponse.special_fields)
     pub special_fields: ::protobuf::SpecialFields,
@@ -277,12 +542,17 @@ impl StatusResponse {
     }
 
     fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-        let mut fields = ::std::vec::Vec::with_capacity(1);
+        let mut fields = ::std::vec::Vec::with_capacity(2);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
         fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, KeyStatus>(
             "key_status",
             |m: &StatusResponse| { &m.key_status },
             |m: &mut StatusResponse| { &mut m.key_status },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, LightningStatus>(
+            "lightning_status",
+            |m: &StatusResponse| { &m.lightning_status },
+            |m: &mut StatusResponse| { &mut m.lightning_status },
         ));
         ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<StatusResponse>(
             "StatusResponse",
@@ -305,6 +575,9 @@ impl ::protobuf::Message for StatusResponse {
                 10 => {
                     ::protobuf::rt::read_singular_message_into_field(is, &mut self.key_status)?;
                 },
+                18 => {
+                    ::protobuf::rt::read_singular_message_into_field(is, &mut self.lightning_status)?;
+                },
                 tag => {
                     ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
                 },
@@ -321,6 +594,10 @@ impl ::protobuf::Message for StatusResponse {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
         }
+        if let Some(v) = self.lightning_status.as_ref() {
+            let len = v.compute_size();
+            my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
+        }
         my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
         self.special_fields.cached_size().set(my_size as u32);
         my_size
@@ -329,6 +606,9 @@ impl ::protobuf::Message for StatusResponse {
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
         if let Some(v) = self.key_status.as_ref() {
             ::protobuf::rt::write_message_field_with_cached_size(1, v, os)?;
+        }
+        if let Some(v) = self.lightning_status.as_ref() {
+            ::protobuf::rt::write_message_field_with_cached_size(2, v, os)?;
         }
         os.write_unknown_fields(self.special_fields.unknown_fields())?;
         ::std::result::Result::Ok(())
@@ -348,12 +628,14 @@ impl ::protobuf::Message for StatusResponse {
 
     fn clear(&mut self) {
         self.key_status.clear();
+        self.lightning_status.clear();
         self.special_fields.clear();
     }
 
     fn default_instance() -> &'static StatusResponse {
         static instance: StatusResponse = StatusResponse {
             key_status: ::protobuf::MessageField::none(),
+            lightning_status: ::protobuf::MessageField::none(),
             special_fields: ::protobuf::SpecialFields::new(),
         };
         &instance
@@ -381,44 +663,63 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \n\x1dproto/imp/api/core/core.proto\x12\x04core\x1a\x1cgoogle/api/annota\
     tions.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"\x0f\n\r\
     StatusRequest\"#\n\tKeyStatus\x12\x16\n\x06status\x18\x01\x20\x01(\tR\
-    \x06status\"@\n\x0eStatusResponse\x12.\n\nkey_status\x18\x01\x20\x01(\
-    \x0b2\x0f.core.KeyStatusR\tkeyStatus2T\n\x04Core\x12L\n\x06Status\x12\
-    \x13.core.StatusRequest\x1a\x14.core.StatusResponse\"\x17\x82\xd3\xe4\
-    \x93\x02\x11\x12\x0f/v1/core/statusB\xb9\x02Z&github.com/imperviousai/im\
-    p-daemon/gen\x92A\x8d\x02\x12<\n\rCore\x20Services\"&\n\rImpervious\x20A\
-    I\x12\x15https://impervious.ai2\x031.0*\x03\x01\x02\x042\x10application/\
-    json:\x10application/jsonZa\n_\n\x07api_key\x12T\x08\x02\x125An\x20API\
-    \x20key\x20generated\x20by\x20the\x20daemon\x20for\x20authentication\x1a\
-    \x17Grpc-Metadata-X-API-KEY\x20\x03b\r\n\x0b\n\x07api_key\x12\0r2\n\x14D\
-    ocumentation\x20on\x20IMP\x12\x1ahttps://docs.impervious.aiJ\xe5\x06\n\
-    \x06\x12\x04\x01\0K\x01\n>\n\x01\x0c\x12\x03\x01\0\x12\x1a4/\x20Allows\
-    \x20for\x20p2p\x20messaging\x20between\x20Impervious\x20nodes\n\n\x08\n\
-    \x01\x02\x12\x03\x03\0\r\n\x08\n\x01\x08\x12\x03\x05\0=\n\t\n\x02\x08\
-    \x0b\x12\x03\x05\0=\n\t\n\x02\x03\0\x12\x03\x07\0&\n\t\n\x02\x03\x01\x12\
-    \x03\x08\08\n\t\n\x01\x08\x12\x04\n\0,\x02\n\x0b\n\x03\x08\x92\x08\x12\
-    \x04\n\0,\x02\nR\n\x02\x06\0\x12\x041\0:\x01\x1aF*\n\x20Core\x20service\
-    \x20allows\x20general\x20core\x20actions\x20on\x20the\x20Impervious\x20d\
-    aemon.\n\n\n\n\x03\x06\0\x01\x12\x031\x08\x0c\nT\n\x04\x06\0\x02\0\x12\
-    \x045\x089\t\x1aF*\n\x20Status\x20gives\x20the\x20status\x20of\x20variou\
-    s\x20services\x20the\x20daemon\x20is\x20running.\n\n\x0c\n\x05\x06\0\x02\
-    \0\x01\x12\x035\x0c\x12\n\x0c\n\x05\x06\0\x02\0\x02\x12\x035\x13\x20\n\
-    \x0c\n\x05\x06\0\x02\0\x03\x12\x035+9\n\r\n\x05\x06\0\x02\0\x04\x12\x046\
-    \x108\x12\n\x11\n\t\x06\0\x02\0\x04\xb0\xca\xbc\"\x12\x046\x108\x12\n4\n\
-    \x02\x04\0\x12\x04?\0@\x01\x1a(*\n\x20Represents\x20a\x20status\x20reque\
-    st\x20message.\n\n\n\n\x03\x04\0\x01\x12\x03?\x08\x15\n\n\n\x02\x04\x01\
-    \x12\x04B\0D\x01\n\n\n\x03\x04\x01\x01\x12\x03B\x08\x11\n\xa8\x01\n\x04\
-    \x04\x01\x02\0\x12\x03C\x08\x1a\"\x9a\x01\x20The\x20status\x20of\x20the\
-    \x20daemon\x20db/key.\x20NOT_INITIALIZED\x20means\x20an\x20InitSeed()\
-    \x20is\x20needed.\x20LOCKED\x20means\x20an\x20UnlockSeed()\x20is\x20need\
-    ed.\x20READY\x20means\x20the\x20daemon\x20is\x20ready.\n\n\x0c\n\x05\x04\
-    \x01\x02\0\x05\x12\x03C\x08\x0e\n\x0c\n\x05\x04\x01\x02\0\x01\x12\x03C\
-    \x0f\x15\n\x0c\n\x05\x04\x01\x02\0\x03\x12\x03C\x18\x19\nA\n\x02\x04\x02\
-    \x12\x04I\0K\x01\x1a5*\n\x20Represents\x20a\x20response\x20back\x20from\
-    \x20a\x20status\x20request.\n\n\n\n\x03\x04\x02\x01\x12\x03I\x08\x16\n$\
-    \n\x04\x04\x02\x02\0\x12\x03J\x08!\"\x17\x20KeyStatus\x20information\n\n\
-    \x0c\n\x05\x04\x02\x02\0\x06\x12\x03J\x08\x11\n\x0c\n\x05\x04\x02\x02\0\
-    \x01\x12\x03J\x12\x1c\n\x0c\n\x05\x04\x02\x02\0\x03\x12\x03J\x1f\x20b\
-    \x06proto3\
+    \x06status\"<\n\nNodeStatus\x12\x16\n\x06pubkey\x18\x01\x20\x01(\tR\x06p\
+    ubkey\x12\x16\n\x06active\x18\x02\x20\x01(\x08R\x06active\"M\n\x0fLightn\
+    ingStatus\x12:\n\x10node_status_list\x18\x01\x20\x03(\x0b2\x10.core.Node\
+    StatusR\x0enodeStatusList\"\x82\x01\n\x0eStatusResponse\x12.\n\nkey_stat\
+    us\x18\x01\x20\x01(\x0b2\x0f.core.KeyStatusR\tkeyStatus\x12@\n\x10lightn\
+    ing_status\x18\x02\x20\x01(\x0b2\x15.core.LightningStatusR\x0flightningS\
+    tatus2T\n\x04Core\x12L\n\x06Status\x12\x13.core.StatusRequest\x1a\x14.co\
+    re.StatusResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/v1/core/statusB\
+    \xb9\x02Z&github.com/imperviousai/imp-daemon/gen\x92A\x8d\x02\x12<\n\rCo\
+    re\x20Services\"&\n\rImpervious\x20AI\x12\x15https://impervious.ai2\x031\
+    .0*\x03\x01\x02\x042\x10application/json:\x10application/jsonZa\n_\n\x07\
+    api_key\x12T\x08\x02\x125An\x20API\x20key\x20generated\x20by\x20the\x20d\
+    aemon\x20for\x20authentication\x1a\x17Grpc-Metadata-X-API-KEY\x20\x03b\r\
+    \n\x0b\n\x07api_key\x12\0r2\n\x14Documentation\x20on\x20IMP\x12\x1ahttps\
+    ://docs.impervious.aiJ\xf3\t\n\x06\x12\x04\x01\0U\x01\n>\n\x01\x0c\x12\
+    \x03\x01\0\x12\x1a4/\x20Allows\x20for\x20p2p\x20messaging\x20between\x20\
+    Impervious\x20nodes\n\n\x08\n\x01\x02\x12\x03\x03\0\r\n\x08\n\x01\x08\
+    \x12\x03\x05\0=\n\t\n\x02\x08\x0b\x12\x03\x05\0=\n\t\n\x02\x03\0\x12\x03\
+    \x07\0&\n\t\n\x02\x03\x01\x12\x03\x08\08\n\t\n\x01\x08\x12\x04\n\0,\x02\
+    \n\x0b\n\x03\x08\x92\x08\x12\x04\n\0,\x02\nR\n\x02\x06\0\x12\x041\0:\x01\
+    \x1aF*\n\x20Core\x20service\x20allows\x20general\x20core\x20actions\x20o\
+    n\x20the\x20Impervious\x20daemon.\n\n\n\n\x03\x06\0\x01\x12\x031\x08\x0c\
+    \nT\n\x04\x06\0\x02\0\x12\x045\x089\t\x1aF*\n\x20Status\x20gives\x20the\
+    \x20status\x20of\x20various\x20services\x20the\x20daemon\x20is\x20runnin\
+    g.\n\n\x0c\n\x05\x06\0\x02\0\x01\x12\x035\x0c\x12\n\x0c\n\x05\x06\0\x02\
+    \0\x02\x12\x035\x13\x20\n\x0c\n\x05\x06\0\x02\0\x03\x12\x035+9\n\r\n\x05\
+    \x06\0\x02\0\x04\x12\x046\x108\x12\n\x11\n\t\x06\0\x02\0\x04\xb0\xca\xbc\
+    \"\x12\x046\x108\x12\n4\n\x02\x04\0\x12\x04?\0@\x01\x1a(*\n\x20Represent\
+    s\x20a\x20status\x20request\x20message.\n\n\n\n\x03\x04\0\x01\x12\x03?\
+    \x08\x15\n\n\n\x02\x04\x01\x12\x04B\0D\x01\n\n\n\x03\x04\x01\x01\x12\x03\
+    B\x08\x11\n\xa8\x01\n\x04\x04\x01\x02\0\x12\x03C\x08\x1a\"\x9a\x01\x20Th\
+    e\x20status\x20of\x20the\x20daemon\x20db/key.\x20NOT_INITIALIZED\x20mean\
+    s\x20an\x20InitSeed()\x20is\x20needed.\x20LOCKED\x20means\x20an\x20Unloc\
+    kSeed()\x20is\x20needed.\x20READY\x20means\x20the\x20daemon\x20is\x20rea\
+    dy.\n\n\x0c\n\x05\x04\x01\x02\0\x05\x12\x03C\x08\x0e\n\x0c\n\x05\x04\x01\
+    \x02\0\x01\x12\x03C\x0f\x15\n\x0c\n\x05\x04\x01\x02\0\x03\x12\x03C\x18\
+    \x19\n\n\n\x02\x04\x02\x12\x04F\0I\x01\n\n\n\x03\x04\x02\x01\x12\x03F\
+    \x08\x12\n=\n\x04\x04\x02\x02\0\x12\x03G\x08\x1a\"0\x20The\x20pubkey\x20\
+    of\x20the\x20node\x20the\x20status\x20is\x20meant\x20for\n\n\x0c\n\x05\
+    \x04\x02\x02\0\x05\x12\x03G\x08\x0e\n\x0c\n\x05\x04\x02\x02\0\x01\x12\
+    \x03G\x0f\x15\n\x0c\n\x05\x04\x02\x02\0\x03\x12\x03G\x18\x19\n.\n\x04\
+    \x04\x02\x02\x01\x12\x03H\x08\x18\"!\x20The\x20active\x20status\x20of\
+    \x20this\x20node.\n\n\x0c\n\x05\x04\x02\x02\x01\x05\x12\x03H\x08\x0c\n\
+    \x0c\n\x05\x04\x02\x02\x01\x01\x12\x03H\r\x13\n\x0c\n\x05\x04\x02\x02\
+    \x01\x03\x12\x03H\x16\x17\n\n\n\x02\x04\x03\x12\x04K\0M\x01\n\n\n\x03\
+    \x04\x03\x01\x12\x03K\x08\x17\n\x0b\n\x04\x04\x03\x02\0\x12\x03L\x081\n\
+    \x0c\n\x05\x04\x03\x02\0\x04\x12\x03L\x08\x10\n\x0c\n\x05\x04\x03\x02\0\
+    \x06\x12\x03L\x11\x1b\n\x0c\n\x05\x04\x03\x02\0\x01\x12\x03L\x1c,\n\x0c\
+    \n\x05\x04\x03\x02\0\x03\x12\x03L/0\nA\n\x02\x04\x04\x12\x04R\0U\x01\x1a\
+    5*\n\x20Represents\x20a\x20response\x20back\x20from\x20a\x20status\x20re\
+    quest.\n\n\n\n\x03\x04\x04\x01\x12\x03R\x08\x16\n$\n\x04\x04\x04\x02\0\
+    \x12\x03S\x08!\"\x17\x20KeyStatus\x20information\n\n\x0c\n\x05\x04\x04\
+    \x02\0\x06\x12\x03S\x08\x11\n\x0c\n\x05\x04\x04\x02\0\x01\x12\x03S\x12\
+    \x1c\n\x0c\n\x05\x04\x04\x02\0\x03\x12\x03S\x1f\x20\n*\n\x04\x04\x04\x02\
+    \x01\x12\x03T\x08-\"\x1d\x20LightningStatus\x20information\n\n\x0c\n\x05\
+    \x04\x04\x02\x01\x06\x12\x03T\x08\x17\n\x0c\n\x05\x04\x04\x02\x01\x01\
+    \x12\x03T\x18(\n\x0c\n\x05\x04\x04\x02\x01\x03\x12\x03T+,b\x06proto3\
 ";
 
 /// `FileDescriptorProto` object which was a source for this generated file
@@ -438,9 +739,11 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
             let mut deps = ::std::vec::Vec::with_capacity(2);
             deps.push(super::annotations::file_descriptor().clone());
             deps.push(super::annotations::file_descriptor().clone());
-            let mut messages = ::std::vec::Vec::with_capacity(3);
+            let mut messages = ::std::vec::Vec::with_capacity(5);
             messages.push(StatusRequest::generated_message_descriptor_data());
             messages.push(KeyStatus::generated_message_descriptor_data());
+            messages.push(NodeStatus::generated_message_descriptor_data());
+            messages.push(LightningStatus::generated_message_descriptor_data());
             messages.push(StatusResponse::generated_message_descriptor_data());
             let mut enums = ::std::vec::Vec::with_capacity(0);
             ::protobuf::reflect::GeneratedFileDescriptor::new_generated(

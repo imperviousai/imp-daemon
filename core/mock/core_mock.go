@@ -337,6 +337,21 @@ func (mr *MockCoreMockRecorder) InitSeed(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InitSeed", reflect.TypeOf((*MockCore)(nil).InitSeed), arg0, arg1)
 }
 
+// KeyStatus mocks base method.
+func (m *MockCore) KeyStatus() (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "KeyStatus")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// KeyStatus indicates an expected call of KeyStatus.
+func (mr *MockCoreMockRecorder) KeyStatus() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "KeyStatus", reflect.TypeOf((*MockCore)(nil).KeyStatus))
+}
+
 // ListDID mocks base method.
 func (m *MockCore) ListDID() ([]*did.Doc, error) {
 	m.ctrl.T.Helper()
@@ -572,21 +587,6 @@ func (m *MockCore) Start() error {
 func (mr *MockCoreMockRecorder) Start() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Start", reflect.TypeOf((*MockCore)(nil).Start))
-}
-
-// Status mocks base method.
-func (m *MockCore) Status() (string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Status")
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Status indicates an expected call of Status.
-func (mr *MockCoreMockRecorder) Status() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Status", reflect.TypeOf((*MockCore)(nil).Status))
 }
 
 // Stop mocks base method.
