@@ -1,7 +1,7 @@
 builds:
   - id: impervious-windows
     main: ./cmd/impd
-    binary: imp-daemon
+    binary: impervious
     goos:
       - windows
     goarch:
@@ -9,18 +9,18 @@ builds:
       - amd64
   - id: impervious-linux
     main: ./cmd/impd
-    binary: imp-daemon
+    binary: impervious
     goos:
       - linux
     goarch:
       - 386
       - amd64
-      # - arm # linux arm seems to fail to compile, is it
+      - arm
       - arm64
       - s390x
   - id: impervious-macos-amd64
     main: ./cmd/impd
-    binary: imp-daemon
+    binary: impervious
     goos:
       - darwin
     goarch:
@@ -30,7 +30,7 @@ builds:
         - gon gon-macos-amd64.json
   - id: impervious-macos-arm64
     main: ./cmd/impd
-    binary: imp-daemon
+    binary: impervious
     goos:
       - darwin
     goarch:
@@ -38,17 +38,3 @@ builds:
     hooks:
       post:
         - gon gon-macos-arm64.json
-#signs:
- #-
-   #id: impervious-macos-amd64
-   #cmd: gon
-   #args:
-   #- gon-macos-amd64.json
-   #artifacts: all
- #-
-   #id: impervious-macos-arm64
-   #cmd: gon
-   #args:
-   #- gon-macos-arm64.json
-   #artifacts: all
-
