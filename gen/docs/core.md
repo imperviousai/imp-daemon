@@ -5,6 +5,7 @@
 ## Table of Contents
 
 - [proto/imp/api/core/core.proto](#proto/imp/api/core/core.proto)
+    - [CommunicationStatus](#core.CommunicationStatus)
     - [KeyStatus](#core.KeyStatus)
     - [LightningStatus](#core.LightningStatus)
     - [NodeStatus](#core.NodeStatus)
@@ -42,6 +43,21 @@ Core service allows general core actions on the Impervious daemon.
 | Method Name | Method | Pattern |
 | ----------- | ------ | ------- |
 | `Status` | `GET` | `/v1/core/status` <!-- end services -->
+
+
+
+<a name="core.CommunicationStatus"></a>
+
+### CommunicationStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| websocket_connections | string | repeated |  |
+
+
+
 
 
 
@@ -111,6 +127,7 @@ Represents a response back from a status request.
 | ----- | ---- | ----- | ----------- |
 | key_status | KeyStatus |  | KeyStatus information |
 | lightning_status | LightningStatus |  | LightningStatus information |
+| communication_status | CommunicationStatus |  | CommunicationStatus information |
 
 
 

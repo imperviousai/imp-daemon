@@ -78,6 +78,26 @@ export namespace LightningStatus {
   }
 }
 
+export class CommunicationStatus extends jspb.Message {
+  getWebsocketConnectionsList(): Array<string>;
+  setWebsocketConnectionsList(value: Array<string>): CommunicationStatus;
+  clearWebsocketConnectionsList(): CommunicationStatus;
+  addWebsocketConnections(value: string, index?: number): CommunicationStatus;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): CommunicationStatus.AsObject;
+  static toObject(includeInstance: boolean, msg: CommunicationStatus): CommunicationStatus.AsObject;
+  static serializeBinaryToWriter(message: CommunicationStatus, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): CommunicationStatus;
+  static deserializeBinaryFromReader(message: CommunicationStatus, reader: jspb.BinaryReader): CommunicationStatus;
+}
+
+export namespace CommunicationStatus {
+  export type AsObject = {
+    websocketConnectionsList: Array<string>,
+  }
+}
+
 export class StatusResponse extends jspb.Message {
   getKeyStatus(): KeyStatus | undefined;
   setKeyStatus(value?: KeyStatus): StatusResponse;
@@ -88,6 +108,11 @@ export class StatusResponse extends jspb.Message {
   setLightningStatus(value?: LightningStatus): StatusResponse;
   hasLightningStatus(): boolean;
   clearLightningStatus(): StatusResponse;
+
+  getCommunicationStatus(): CommunicationStatus | undefined;
+  setCommunicationStatus(value?: CommunicationStatus): StatusResponse;
+  hasCommunicationStatus(): boolean;
+  clearCommunicationStatus(): StatusResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): StatusResponse.AsObject;
@@ -101,6 +126,7 @@ export namespace StatusResponse {
   export type AsObject = {
     keyStatus?: KeyStatus.AsObject,
     lightningStatus?: LightningStatus.AsObject,
+    communicationStatus?: CommunicationStatus.AsObject,
   }
 }
 

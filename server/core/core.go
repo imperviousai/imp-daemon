@@ -39,7 +39,12 @@ func (m *coreServer) Status(ctx context.Context, req *core_proto.StatusRequest) 
 		return nil, err
 	}
 
-	// TODO check relay status
+	// Check the clients the daemon is connected to via websockets
+	websocketConnections, err := m.core.GetWebsocketConnections()
+	if err != nil {
+		zap.L().Error("[Server] Status failed", zap.String("error", err.Error()))
+		return nil, err
+	}
 
 	zap.L().Info("[Server] Core Status success")
 	return &core_proto.StatusResponse{
@@ -47,7 +52,9 @@ func (m *coreServer) Status(ctx context.Context, req *core_proto.StatusRequest) 
 			Status: keyStatus,
 		},
 		LightningStatus: lightningStatusToProto(lightningStatus),
-		// TODO relay status
+		CommunicationStatus: &core_proto.CommunicationStatus{
+			WebsocketConnections: websocketConnections,
+		},
 	}, nil
 }
 

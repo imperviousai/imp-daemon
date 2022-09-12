@@ -53,6 +53,17 @@ var SwaggerJSON = `
     }
   },
   "definitions": {
+    "coreCommunicationStatus": {
+      "type": "object",
+      "properties": {
+        "websocketConnections": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "coreKeyStatus": {
       "type": "object",
       "properties": {
@@ -91,6 +102,9 @@ var SwaggerJSON = `
         },
         "lightningStatus": {
           "$ref": "#/definitions/coreLightningStatus"
+        },
+        "communicationStatus": {
+          "$ref": "#/definitions/coreCommunicationStatus"
         }
       },
       "description": "*\nRepresents a response back from a status request."

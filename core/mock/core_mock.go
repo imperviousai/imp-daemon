@@ -14,6 +14,7 @@ import (
 	config "github.com/imperviousai/imp-daemon/config"
 	contacts "github.com/imperviousai/imp-daemon/contacts"
 	id "github.com/imperviousai/imp-daemon/id"
+	lightning "github.com/imperviousai/imp-daemon/lightning"
 	messages "github.com/imperviousai/imp-daemon/messages"
 	relay "github.com/imperviousai/imp-daemon/service/relay"
 )
@@ -84,6 +85,21 @@ func (m *MockCore) CheckInvoice(arg0 string) (bool, error) {
 func (mr *MockCoreMockRecorder) CheckInvoice(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckInvoice", reflect.TypeOf((*MockCore)(nil).CheckInvoice), arg0)
+}
+
+// CheckLightningStatus mocks base method.
+func (m *MockCore) CheckLightningStatus() ([]lightning.NodeStatus, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckLightningStatus")
+	ret0, _ := ret[0].([]lightning.NodeStatus)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CheckLightningStatus indicates an expected call of CheckLightningStatus.
+func (mr *MockCoreMockRecorder) CheckLightningStatus() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckLightningStatus", reflect.TypeOf((*MockCore)(nil).CheckLightningStatus))
 }
 
 // CreateContact mocks base method.

@@ -95,6 +95,12 @@ type Core interface {
 	UpdateDID(document string) (*id.DIDUpdateInfo, error)
 
 	//
+	// Communication Commands
+	//
+	// GetWebsocketConnections will get all the DIDs that the daemon is connected to via websockets
+	GetWebsocketConnections() ([]string, error)
+
+	//
 	// IPFS Commands
 	//
 

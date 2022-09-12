@@ -77,10 +77,15 @@ message LightningStatus {
 	repeated NodeStatus node_status_list = 1;
 }
 
+message CommunicationStatus {
+	repeated string websocket_connections = 1;
+}
+
 /**
  * Represents a response back from a status request.
  */
 message StatusResponse {
 	KeyStatus key_status = 1; // KeyStatus information
 	LightningStatus lightning_status = 2; // LightningStatus information
+	CommunicationStatus communication_status = 3; // CommunicationStatus information
 }
