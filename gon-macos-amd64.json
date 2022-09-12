@@ -1,5 +1,5 @@
 {
-    "source" : ["dist/impervious-macos-amd64_darwin_amd64_v1/imp-daemon"],
+    "source" : ["dist/impervious-macos-amd64_darwin_amd64_v1/impervious"],
     "bundle_id" : "ai.impervious.imp-daemon",
     "apple_id": {
         "username":  "support@impervious.ai",
