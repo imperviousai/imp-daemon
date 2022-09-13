@@ -38,3 +38,10 @@ builds:
     hooks:
       post:
         - gon gon-macos-arm64.json
+archives:
+  - 
+    format: zip
+    name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+checksum:
+  name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}_checksums.txt"
+  algorithm: sha256
