@@ -195,7 +195,8 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 	}
 
 	// Setup IPFS - 15 Sep 2022 - markcryptohash - disabled IPFS because we no longer need it.
-	/*	if ipfsSvc == nil {
+	// Setup IPFS - 15 Sep 2022 - stewIMP - Added config option to disable instead
+	if ipfsSvc == nil && cfg.IPFS.Active 
 		zap.L().Debug("[Cfg] Setting up IPFS")
 		ipfsSvc, err = ipfs.SetupIPFS(&ipfs.Config{
 			DirectoryPath: cfg.IPFS.Directory,
@@ -203,7 +204,7 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 		if err != nil {
 			zap.L().Panic(err.Error())
 		}
-	}*/
+	}
 
 	// Setup Contacts manager
 	zap.L().Debug("[Cfg] Setting up Contacts")
