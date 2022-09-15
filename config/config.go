@@ -107,7 +107,7 @@ func DefaultConfig() Config {
 		},
 		IPFS: IPFS{
 			Directory: ipfsPath,
-			Active: false,
+			Active:    false,
 		},
 		ION: ION{
 			Url:    "http://localhost:3000",
