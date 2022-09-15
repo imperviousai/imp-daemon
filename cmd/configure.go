@@ -196,7 +196,7 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 
 	// Setup IPFS - 15 Sep 2022 - markcryptohash - disabled IPFS because we no longer need it.
 	// Setup IPFS - 15 Sep 2022 - stewIMP - Added config option to disable instead
-	if ipfsSvc == nil && cfg.IPFS.Active 
+	if ipfsSvc == nil && cfg.IPFS.Active {
 		zap.L().Debug("[Cfg] Setting up IPFS")
 		ipfsSvc, err = ipfs.SetupIPFS(&ipfs.Config{
 			DirectoryPath: cfg.IPFS.Directory,
