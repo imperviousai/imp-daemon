@@ -253,11 +253,13 @@ func (c *core) Stop() error {
 	zap.L().Debug("[Core] service handler stopped")
 
 	// Stop IPFS
-	zap.L().Debug("[Core] Stopping IPFS")
-	if err := c.ipfs.Stop(); err != nil {
-		zap.L().Error("[Core] IPFS failed to stop", zap.String("error", err.Error()))
+	if c.ipfs != nil {
+		zap.L().Debug("[Core] Stopping IPFS")
+		if err := c.ipfs.Stop(); err != nil {
+			zap.L().Error("[Core] IPFS failed to stop", zap.String("error", err.Error()))
+		}
+		zap.L().Debug("[Core] IPFS stoppped")
 	}
-	zap.L().Debug("[Core] IPFS stoppped")
 
 	// Stop DIDComm
 	if c.didComm != nil {
