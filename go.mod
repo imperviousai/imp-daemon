@@ -23,6 +23,7 @@ require (
 	github.com/ipfs/go-ipfs-files v0.0.9
 	github.com/ipfs/go-ipld-format v0.2.0
 	github.com/ipfs/interface-go-ipfs-core v0.5.2
+	github.com/kardianos/service v1.2.1 // indirect
 	github.com/lestrrat-go/jwx v1.2.13
 	github.com/libp2p/go-libp2p-core v0.11.0
 	github.com/lightningnetwork/lnd v0.14.3-beta

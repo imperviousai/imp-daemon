@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -24,6 +25,8 @@ import (
 	"github.com/imperviousai/imp-daemon/state"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	osservice "github.com/kardianos/service"
 )
 
 type ConfigureContext struct {
@@ -59,6 +62,9 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 			ipfsSvc = prevContext.IPFS
 		}
 	}
+
+	// os level service configuration
+	ConfigureOSService()
 
 	// setup didcomm http server
 	httpDIDCommServer, httpDIDCommMux := ConfigureDIDCommHttpServer(cfg)
@@ -195,7 +201,7 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 	}
 
 	// Setup IPFS
-	if ipfsSvc == nil {
+	if ipfsSvc == nil && cfg.IPFS.Active {
 		zap.L().Debug("[Cfg] Setting up IPFS")
 		ipfsSvc, err = ipfs.SetupIPFS(&ipfs.Config{
 			DirectoryPath: cfg.IPFS.Directory,
@@ -464,6 +470,57 @@ func ConfigureDIDCommHttpServer(cfg config.Config) (*http.Server, *http.ServeMux
 	return nil, nil
 }
 
+func ConfigureOSService() {
+
+	homePath, err := os.UserHomeDir()
+	if err != nil {
+		zap.L().Panic(err.Error())
+	}
+
+	svcConfig := &osservice.Config{
+		Name:        "ImperviousDaemon",
+		DisplayName: "Impervious Daemon",
+		Description: "OS Level Service for Impervious Daemon",
+		Executable:  homePath + "/Impervious/daemon/impervious",
+	}
+
+	switch runtime.GOOS {
+	case "darwin":
+		//fmt.Println("MAC operating system")
+		svcConfig.Option = osservice.KeyValue{
+			"KeepAlive":   true,
+			"RunAtLoad":   true,
+			"UserService": true,
+		}
+	case "linux":
+		svcConfig.Option = osservice.KeyValue{
+			"UserService":  true,
+			"Restart":      "always",
+			"LogDirectory": homePath + "/.imp/service.log",
+			"LimitNOFILE":  65535,
+		}
+	default:
+		zap.L().Debug("Not macos or linux in service creation...")
+	}
+
+	// prg := &program{}
+	s, err := osservice.New(&program{}, svcConfig)
+	if err != nil {
+		zap.L().Error("Error creating OS Service...", zap.Error(err))
+	}
+
+	err = s.Install()
+	if err != nil {
+		zap.L().Error("Error Installing OS Service...", zap.Error(err))
+	}
+
+	err = s.Start()
+	if err != nil {
+		zap.L().Error("Error Running OS Service...", zap.Error(err))
+	}
+
+}
+
 func GetStringInBetweenTwoString(str string, startS string, endS string) (result string) {
 	s := strings.Index(str, startS)
 	if s == -1 {
@@ -476,4 +533,19 @@ func GetStringInBetweenTwoString(str string, startS string, endS string) (result
 	}
 	result = newS[:e]
 	return result
+}
+
+type program struct{}
+
+func (p *program) Start(s osservice.Service) error {
+	// Start should not block. Do the actual work async.
+	go p.run()
+	return nil
+}
+func (p *program) run() {
+	// Do work here
+}
+func (p *program) Stop(s osservice.Service) error {
+	// Stop should not block. Return with a few seconds.
+	return nil
 }
