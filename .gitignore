@@ -26,4 +26,11 @@ local.config.yml
 imp.db*
 config/*.config.yml
 
-.vscode
+.vscode/*
+.vscode/
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
