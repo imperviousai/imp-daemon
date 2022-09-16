@@ -25,3 +25,5 @@ vendor/
 local.config.yml
 imp.db*
 config/*.config.yml
+
+.vscode
