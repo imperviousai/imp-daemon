@@ -3,7 +3,6 @@ package comm
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	mockable_http "github.com/imperviousai/imp-daemon/http"
@@ -84,7 +83,6 @@ func (h *httpComm) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	case "GET":
 		return
 	case "POST":
-		fmt.Println("HTTTTTTTPPPPPPPP ___ POOOOOOOOOOOST+++++++++")
 		didCommEnvelope, err := ParseMsgFromReq(req.Body)
 		if err != nil {
 			zap.L().Error("error decoding http message",
