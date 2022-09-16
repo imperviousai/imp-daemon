@@ -61,6 +61,7 @@ type Config struct {
 	ION         ION        `yaml:"ion"`
 	Log         Log        `yaml:"log"`
 	Key         Key        `yaml:"key"`
+	OSService   OSService  `yaml:"osservice"`
 }
 
 func DefaultConfig() Config {
@@ -115,6 +116,9 @@ func DefaultConfig() Config {
 		},
 		Log: Log{
 			IgnoreFileWrite: false,
+		},
+		OSService: OSService{
+			Active: true,
 		},
 	}
 }
@@ -173,6 +177,10 @@ type Services struct {
 	Active                bool        `yaml:"active"`
 	CustomMessageType     string      `yaml:"custom_message_type"`
 	AdditionalServiceData interface{} `yaml:"additional_service_data"`
+}
+
+type OSService struct {
+	Active bool `yaml:"active"`
 }
 
 func GetConfig(path string) (config Config) {

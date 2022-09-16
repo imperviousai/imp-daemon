@@ -43,6 +43,7 @@ lightning:
     listening: false # turn on if you would like to use LND
 ipfs:
   directory: ~/.imp/ipfs #Directory for IPFS data if not default (~/.imp/ipfs)
+  active: false
 ion:
   url: http://localhost:3000  #Url for the ION node
   active: true # turn on if you would like to use ION
@@ -50,3 +51,5 @@ log:
   ignore_file_write: false # Whether or not the logs save to disk
 key:
   # passphrase: test # Leave empty if initializing for the first time
+osservice:
+  active: true

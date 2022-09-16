@@ -64,7 +64,8 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 	}
 
 	// os level service configuration
-	ConfigureOSService()
+	zap.L().Debug("[Cfg] Setting up OS Service")
+	ConfigureOSService(cfg)
 
 	// setup didcomm http server
 	httpDIDCommServer, httpDIDCommMux := ConfigureDIDCommHttpServer(cfg)
@@ -470,7 +471,7 @@ func ConfigureDIDCommHttpServer(cfg config.Config) (*http.Server, *http.ServeMux
 	return nil, nil
 }
 
-func ConfigureOSService() {
+func ConfigureOSService(cfg config.Config) {
 
 	homePath, err := os.UserHomeDir()
 	if err != nil {
@@ -478,7 +479,7 @@ func ConfigureOSService() {
 	}
 
 	svcConfig := &osservice.Config{
-		Name:        "ImperviousDaemon",
+		Name:        "ai.impervious.impd",
 		DisplayName: "Impervious Daemon",
 		Description: "OS Level Service for Impervious Daemon",
 		Executable:  homePath + "/Impervious/daemon/impervious",
@@ -486,39 +487,80 @@ func ConfigureOSService() {
 
 	switch runtime.GOOS {
 	case "darwin":
-		//fmt.Println("MAC operating system")
 		svcConfig.Option = osservice.KeyValue{
-			"KeepAlive":   true,
-			"RunAtLoad":   true,
 			"UserService": true,
+			"LaunchdConfig": `<?xml version="1.0" encoding="UTF-8"?>
+			<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+			<plist version="1.0">
+			  <dict>
+				<key>Label</key>
+				<string>{{html .Name}}</string>
+				<key>ProgramArguments</key>
+				<array>
+				<string>{{html .Path}}</string>
+			  </array>
+				<key>RunAtLoad</key>
+				<true/>
+				<key>KeepAlive</key>
+				<true/>
+			  </dict>
+			</plist>
+			`,
 		}
 	case "linux":
 		svcConfig.Option = osservice.KeyValue{
-			"UserService":  true,
-			"Restart":      "always",
-			"LogDirectory": homePath + "/.imp/service.log",
-			"LimitNOFILE":  65535,
+			"UserService": true,
+			"Restart":     "always",
+			"LimitNOFILE": 65535,
 		}
 	default:
 		zap.L().Debug("Not macos or linux in service creation...")
 	}
 
-	// prg := &program{}
 	s, err := osservice.New(&program{}, svcConfig)
 	if err != nil {
-		zap.L().Error("Error creating OS Service...", zap.Error(err))
+		zap.L().Error("Error Configuring OS Service...", zap.Error(err))
 	}
 
-	err = s.Install()
-	if err != nil {
-		zap.L().Error("Error Installing OS Service...", zap.Error(err))
-	}
+	if cfg.OSService.Active {
+		err = s.Install()
+		if err != nil {
+			zap.L().Error("Error Installing OS Service...", zap.Error(err))
+		}
 
-	err = s.Start()
-	if err != nil {
-		zap.L().Error("Error Running OS Service...", zap.Error(err))
-	}
+		err = s.Start()
+		if err != nil {
+			zap.L().Error("Error Starting OS Service...", zap.Error(err))
+		}
+	} else {
+		err = s.Stop()
+		if err != nil {
+			zap.L().Error("Error Stopping OS Service...", zap.Error(err))
+		}
 
+		err = s.Uninstall()
+		if err != nil {
+			zap.L().Error("Error Uninstalling OS Service...", zap.Error(err))
+		}
+
+		os.Exit(0)
+	}
+}
+
+type program struct{}
+
+func (p *program) Start(s osservice.Service) error {
+	// Start should not block. Do the actual work async.
+	go p.run()
+	return nil
+}
+
+func (p *program) run() {
+	// Do work here
+}
+func (p *program) Stop(s osservice.Service) error {
+	// Stop should not block. Return with a few seconds.
+	return nil
 }
 
 func GetStringInBetweenTwoString(str string, startS string, endS string) (result string) {
@@ -533,19 +575,4 @@ func GetStringInBetweenTwoString(str string, startS string, endS string) (result
 	}
 	result = newS[:e]
 	return result
-}
-
-type program struct{}
-
-func (p *program) Start(s osservice.Service) error {
-	// Start should not block. Do the actual work async.
-	go p.run()
-	return nil
-}
-func (p *program) run() {
-	// Do work here
-}
-func (p *program) Stop(s osservice.Service) error {
-	// Stop should not block. Return with a few seconds.
-	return nil
 }
