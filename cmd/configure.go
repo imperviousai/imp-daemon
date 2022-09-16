@@ -473,6 +473,11 @@ func ConfigureDIDCommHttpServer(cfg config.Config) (*http.Server, *http.ServeMux
 
 func ConfigureOSService(cfg config.Config) {
 
+	// this section should only be completed if spawned by the user
+	if os.Getppid() == 1 {
+		return
+	}
+
 	homePath, err := os.UserHomeDir()
 	if err != nil {
 		zap.L().Panic(err.Error())
@@ -532,6 +537,9 @@ func ConfigureOSService(cfg config.Config) {
 		if err != nil {
 			zap.L().Error("Error Starting OS Service...", zap.Error(err))
 		}
+
+		zap.L().Debug("Daemon installed. You may close this window now.")
+
 	} else {
 		err = s.Stop()
 		if err != nil {
@@ -543,8 +551,10 @@ func ConfigureOSService(cfg config.Config) {
 			zap.L().Error("Error Uninstalling OS Service...", zap.Error(err))
 		}
 
-		os.Exit(0)
+		zap.L().Debug("Daemon uninstalled. You may close this window now.")
+
 	}
+	os.Exit(0)
 }
 
 type program struct{}
