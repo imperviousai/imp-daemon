@@ -71,3 +71,4 @@ message SubscribeResponse {
 	bytes data = 1; // The data the node is sending over
 	int64 amount = 2; // The amount sent as part of the message
 }
+

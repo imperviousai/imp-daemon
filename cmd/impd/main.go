@@ -28,6 +28,7 @@ import (
 
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/runtime/middleware"
+	filemux "github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	auth_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/auth"
 	config_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/config"
@@ -81,6 +82,7 @@ func main() {
 
 	var grpcServer *grpc.Server
 	var httpProxy *http.Server
+	var fileServer *http.Server
 
 	// Graceful shutdowns
 	var wg sync.WaitGroup
@@ -194,6 +196,15 @@ func main() {
 				}
 				injectSpecsMiddleware(httpProxy)
 
+				r := filemux.NewRouter()
+				var dir string
+				dir = "./client"
+				r.PathPrefix("").Handler(http.StripPrefix("", http.FileServer(http.Dir(dir))))
+				fileServer = &http.Server{
+					Addr:    ":8080",
+					Handler: r,
+				}
+
 				wg.Add(2)
 
 				// Start servers and wait
@@ -235,6 +246,13 @@ func main() {
 			}
 			// Webserver started..
 
+			wg.Add(1) //for static web server
+			go func() {
+				defer wg.Done()
+				zap.L().Debug("Starting static file server on port 8080")
+				fileServer.ListenAndServe()
+			}()
+
 			wg.Add(1) // for core
 
 			zap.L().Info("IMPD started!")
@@ -258,6 +276,10 @@ func main() {
 					// Ideally a graceful stop, but need to shut down
 					// the grpc subscriber
 					grpcServer.Stop()
+
+					// Shutdown FileServer
+					zap.L().Debug("Shutting down fileserver")
+					fileServer.Shutdown(context.Background())
 
 					// Shutdown http didcomm
 					if ctx.HttpDIDComm != nil {
