@@ -113,11 +113,13 @@ func (d *didCommController) SendMsg(didCommEnvelope *DIDCommMsg, amt int64, addi
 	didCommEnvelope.AddAmountMetadata(amt)
 
 	// Save the message first, then send individually to each party
-	if settings != nil && !settings.SkipMessageSaving {
-		envelopeBytes, err := json.Marshal(didCommEnvelope)
-		if err != nil {
-			return "", err
-		}
+	// if settings != nil && !settings.SkipMessageSaving {
+	envelopeBytes, err := json.Marshal(didCommEnvelope)
+	if err != nil {
+		return "", err
+	}
+
+	if didCommEnvelope.Type != "https://impervious.ai/didcomm/relay-registration/1.0" {
 		err = d.messagesManager.SaveMessage(&messages.MessageInfo{
 			Id:         didCommEnvelope.ID,
 			Type:       didCommEnvelope.Type,
@@ -133,6 +135,8 @@ func (d *didCommController) SendMsg(didCommEnvelope *DIDCommMsg, amt int64, addi
 			return "", err
 		}
 	}
+
+	// }
 
 	err = d.sendMsgToRecipients(didCommEnvelope, amt, additionalEndpoints, settings)
 	if err != nil {
