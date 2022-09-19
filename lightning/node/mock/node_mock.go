@@ -9,6 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	comm "github.com/imperviousai/imp-daemon/comm"
+	lnrpc "github.com/lightningnetwork/lnd/lnrpc"
 )
 
 // MockNode is a mock of Node interface.
@@ -76,6 +77,21 @@ func (m *MockNode) GenerateInvoice(arg0 int64, arg1 string) (string, error) {
 func (mr *MockNodeMockRecorder) GenerateInvoice(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateInvoice", reflect.TypeOf((*MockNode)(nil).GenerateInvoice), arg0, arg1)
+}
+
+// GetInfo mocks base method.
+func (m *MockNode) GetInfo() (*lnrpc.GetInfoResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetInfo")
+	ret0, _ := ret[0].(*lnrpc.GetInfoResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetInfo indicates an expected call of GetInfo.
+func (mr *MockNodeMockRecorder) GetInfo() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInfo", reflect.TypeOf((*MockNode)(nil).GetInfo))
 }
 
 // GetPubkey mocks base method.

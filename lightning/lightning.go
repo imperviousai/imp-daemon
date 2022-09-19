@@ -16,6 +16,9 @@ import (
 // managing multiple lightning nodes. Data transfer happens via channels
 // in order to abstract base functionality.
 type LightningManager interface {
+	// Status will report the status of the Lightning Nodes connected
+	Status() ([]NodeStatus, error)
+
 	// Subscribe will subscribe to keysend events on all nodes on configured chan.
 	Subscribe() error
 
@@ -404,4 +407,41 @@ func (l *lightningManager) Stop() {
 	nodeWg.Wait()
 
 	zap.L().Debug("[LM] Stop successful")
+}
+
+type NodeStatus struct {
+	Pubkey string
+	Active bool
+}
+
+func (l *lightningManager) Status() ([]NodeStatus, error) {
+	zap.L().Debug("[LM] Status")
+
+	l.nodesLock.Lock()
+	defer l.nodesLock.Unlock()
+
+	nodeStatuses := make([]NodeStatus, 0, len(l.nodeControllers))
+
+	// Go through each node
+	for _, nodeCtrl := range l.nodeControllers {
+		active := nodeCtrl.active
+		// Double check if active nodes are indeed connected
+		if active {
+			_, err := nodeCtrl.node.GetInfo()
+			if err != nil {
+				zap.L().Error("[LM] Node status check failed",
+					zap.String("pubkey", nodeCtrl.node.GetPubkey()),
+					zap.String("error", err.Error()),
+				)
+				active = false
+			}
+		}
+
+		nodeStatuses = append(nodeStatuses, NodeStatus{
+			Pubkey: nodeCtrl.node.GetPubkey(),
+			Active: active,
+		})
+	}
+
+	return nodeStatuses, nil
 }

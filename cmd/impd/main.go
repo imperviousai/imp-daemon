@@ -16,6 +16,7 @@ import (
 	auth_server "github.com/imperviousai/imp-daemon/server/auth"
 	config_server "github.com/imperviousai/imp-daemon/server/config"
 	contacts_server "github.com/imperviousai/imp-daemon/server/contacts"
+	core_server "github.com/imperviousai/imp-daemon/server/core"
 	id_server "github.com/imperviousai/imp-daemon/server/id"
 	ipfs_server "github.com/imperviousai/imp-daemon/server/ipfs"
 	key_server "github.com/imperviousai/imp-daemon/server/key"
@@ -32,6 +33,7 @@ import (
 	auth_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/auth"
 	config_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/config"
 	contacts_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/contacts"
+	core_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/core"
 	id_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/id"
 	ipfs_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/ipfs"
 	key_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/key"
@@ -42,6 +44,7 @@ import (
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/auth"
 	config_openapi "github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/config"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/contacts"
+	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/core"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/id"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/ipfs"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/key"
@@ -124,6 +127,7 @@ func main() {
 				messaging_proto.RegisterMessagingServer(grpcServer, message_server.NewMessagingServer(ctx.Core))
 				ipfs_proto.RegisterIPFSServer(grpcServer, ipfs_server.NewIPFSServer(ctx.Core))
 				relay_proto.RegisterRelayServer(grpcServer, relay_server.NewRelayServer(ctx.Core))
+				core_proto.RegisterCoreServer(grpcServer, core_server.NewCoreServer(ctx.Core))
 				contacts_proto.RegisterContactsServer(grpcServer, contacts_server.NewContactsServer(ctx.Core))
 				auth_proto.RegisterAuthServer(grpcServer, auth_server.NewAuthServer(ctx.Core))
 				config_proto.RegisterConfigServer(grpcServer, config_server.NewConfigServer(ctx.Core))
@@ -155,6 +159,10 @@ func main() {
 					zap.L().Error(err.Error())
 				}
 				err = relay_proto.RegisterRelayHandlerFromEndpoint(ctxProxy, mux, globalConfig.GetConfig().Server.GrpcAddr, opts)
+				if err != nil {
+					zap.L().Error(err.Error())
+				}
+				err = core_proto.RegisterCoreHandlerFromEndpoint(ctxProxy, mux, globalConfig.GetConfig().Server.GrpcAddr, opts)
 				if err != nil {
 					zap.L().Error(err.Error())
 				}
@@ -340,6 +348,11 @@ func injectSpecsMiddleware(s *http.Server) {
 		zap.L().Error(err.Error())
 		return
 	}
+	coreSpec, err := loads.Analyzed(json.RawMessage([]byte(core.SwaggerJSON)), "")
+	if err != nil {
+		zap.L().Error(err.Error())
+		return
+	}
 	contactsSpec, err := loads.Analyzed(json.RawMessage([]byte(contacts.SwaggerJSON)), "")
 	if err != nil {
 		zap.L().Error(err.Error())
@@ -385,6 +398,10 @@ func injectSpecsMiddleware(s *http.Server) {
 	s.Handler = middleware.Spec("/relay",
 		relaySpec.Raw(),
 		middleware.Redoc(middleware.RedocOpts{BasePath: "/docs", Path: "relay", SpecURL: "/relay/swagger.json"}, s.Handler),
+	)
+	s.Handler = middleware.Spec("/core",
+		coreSpec.Raw(),
+		middleware.Redoc(middleware.RedocOpts{BasePath: "/docs", Path: "core", SpecURL: "/core/swagger.json"}, s.Handler),
 	)
 	s.Handler = middleware.Spec("/contacts",
 		contactsSpec.Raw(),

@@ -49,6 +49,20 @@ func (mr *MockWebsocketCommMockRecorder) CheckMsg(arg0, arg1 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckMsg", reflect.TypeOf((*MockWebsocketComm)(nil).CheckMsg), arg0, arg1)
 }
 
+// ConnectedClients mocks base method.
+func (m *MockWebsocketComm) ConnectedClients() []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ConnectedClients")
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// ConnectedClients indicates an expected call of ConnectedClients.
+func (mr *MockWebsocketCommMockRecorder) ConnectedClients() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConnectedClients", reflect.TypeOf((*MockWebsocketComm)(nil).ConnectedClients))
+}
+
 // SendData mocks base method.
 func (m *MockWebsocketComm) SendData(arg0 string, arg1 *comm.DIDCommMsg) error {
 	m.ctrl.T.Helper()

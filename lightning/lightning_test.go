@@ -7,6 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/imperviousai/imp-daemon/comm"
 	"github.com/imperviousai/imp-daemon/lightning/node/mock"
+	"github.com/lightningnetwork/lnd/lnrpc"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -35,6 +36,13 @@ func (s *LightningManagerSuite) SetupTest() {
 		"node0": node0,
 		"node1": node1,
 	}
+
+	node0.EXPECT().GetPubkey().
+		Return("abc123").
+		AnyTimes()
+	node1.EXPECT().GetPubkey().
+		Return("321cba").
+		AnyTimes()
 
 	// Add each one, odd nodes are inactive at start
 	i := 0
@@ -114,6 +122,36 @@ func (s *LightningManagerSuite) TestAddNodeActiveSubscriptionsSubscribeFailure()
 	// Assert that node has NOT been added
 	_, ok := s.LightningManager.nodeControllers["newnode"]
 	s.Assert().False(ok)
+}
+
+func (s *LightningManagerSuite) TestStatus() {
+	node0, ok := s.Nodes["node0"]
+	s.Assert().True(ok)
+	node1, ok := s.Nodes["node1"]
+	s.Assert().True(ok)
+
+	// Default LightningManagerSuite has two nodes, one active one not
+	// Mock the active one to provide back a valid get info request
+	node0.EXPECT().
+		GetInfo().
+		Return(&lnrpc.GetInfoResponse{}, nil).
+		Times(1)
+
+	// Expect one node active one node inactive
+	expectedNodeStatuses := make([]NodeStatus, 0, 2)
+	expectedNodeStatuses = append(expectedNodeStatuses, NodeStatus{
+		Pubkey: node0.GetPubkey(),
+		Active: true,
+	})
+	expectedNodeStatuses = append(expectedNodeStatuses, NodeStatus{
+		Pubkey: node1.GetPubkey(),
+		Active: false,
+	})
+
+	// Assert that node has been added
+	nodeStatuses, err := s.LightningManager.Status()
+	s.Assert().Nil(err)
+	s.Assert().ElementsMatch(expectedNodeStatuses, nodeStatuses)
 }
 
 func TestLightningManager(t *testing.T) {
