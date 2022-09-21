@@ -27,6 +27,7 @@ import (
 	"go.uber.org/zap/zapcore"
 
 	osservice "github.com/kardianos/service"
+	ps "github.com/mitchellh/go-ps"
 )
 
 type ConfigureContext struct {
@@ -474,7 +475,14 @@ func ConfigureDIDCommHttpServer(cfg config.Config) (*http.Server, *http.ServeMux
 func ConfigureOSService(cfg config.Config) {
 
 	// this section should only be completed if spawned by the user
-	if os.Getppid() == 1 {
+
+	ppid := os.Getppid()
+	ppidName, err := ps.FindProcess(ppid)
+	if err != nil {
+		zap.L().Error("Error finding PPID...", zap.Error(err))
+	}
+
+	if ppid == 1 || strings.Contains(ppidName.Executable(), "systemd") {
 		return
 	}
 
@@ -484,7 +492,7 @@ func ConfigureOSService(cfg config.Config) {
 	}
 
 	svcConfig := &osservice.Config{
-		Name:        "ai.impervious.impd",
+		Name:        "ImperviousDaemon",
 		DisplayName: "Impervious Daemon",
 		Description: "OS Level Service for Impervious Daemon",
 		Executable:  homePath + "/Impervious/daemon/impervious",
@@ -502,21 +510,25 @@ func ConfigureOSService(cfg config.Config) {
 				<string>{{html .Name}}</string>
 				<key>ProgramArguments</key>
 				<array>
-				<string>{{html .Path}}</string>
+				<string>{{html .Executable}}</string>
 			  </array>
 				<key>RunAtLoad</key>
 				<true/>
 				<key>KeepAlive</key>
 				<true/>
+				<key>Disabled</key>
+				<false/>
 			  </dict>
 			</plist>
 			`,
 		}
 	case "linux":
 		svcConfig.Option = osservice.KeyValue{
-			"UserService": true,
-			"Restart":     "always",
-			"LimitNOFILE": 65535,
+			"UserService":  true,
+			"Restart":      "always",
+			"LimitNOFILE":  65535,
+			"LogOutput":    false,
+			"LogDirectory": homePath + "/Impervious/daemon/impervious",
 		}
 	default:
 		zap.L().Debug("Not macos or linux in service creation...")
@@ -538,7 +550,9 @@ func ConfigureOSService(cfg config.Config) {
 			zap.L().Error("Error Starting OS Service...", zap.Error(err))
 		}
 
-		zap.L().Debug("Daemon installed. You may close this window now.")
+		if err == nil {
+			zap.L().Debug("Daemon installed. You may close this window now.")
+		}
 
 	} else {
 		err = s.Stop()
@@ -551,7 +565,9 @@ func ConfigureOSService(cfg config.Config) {
 			zap.L().Error("Error Uninstalling OS Service...", zap.Error(err))
 		}
 
-		zap.L().Debug("Daemon uninstalled. You may close this window now.")
+		if err == nil {
+			zap.L().Debug("Daemon uninstalled. You may close this window now.")
+		}
 
 	}
 	os.Exit(0)

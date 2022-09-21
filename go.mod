@@ -29,6 +29,7 @@ require (
 	github.com/lightningnetwork/lnd v0.14.3-beta
 	github.com/mattbaird/jsonpatch v0.0.0-20200820163806-098863c1fc24
 	github.com/miekg/dns v1.1.48 // indirect
+	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/mr-tron/base58 v1.2.0
 	github.com/multiformats/go-multiaddr v0.4.1
 	github.com/multiformats/go-multihash v0.1.0
