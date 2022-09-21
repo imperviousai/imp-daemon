@@ -108,7 +108,6 @@ func DefaultConfig() Config {
 		},
 		IPFS: IPFS{
 			Directory: ipfsPath,
-			Active:    false,
 		},
 		ION: ION{
 			Url:    "http://localhost:3000",
@@ -130,7 +129,6 @@ type Log struct {
 
 type IPFS struct {
 	Directory string `yaml:"directory"`
-	Active    bool   `yaml:"active"`
 }
 
 type Lightning struct {
