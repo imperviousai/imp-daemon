@@ -25,4 +25,12 @@ vendor/
 local.config.yml
 imp.db*
 config/*.config.yml
-.idea
+
+.vscode/*
+.vscode/
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
