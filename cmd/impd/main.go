@@ -200,7 +200,7 @@ func main() {
 				var dir = "./client/out"
 				r.PathPrefix("").Handler(http.StripPrefix("", http.FileServer(http.Dir(dir))))
 				fileServer = &http.Server{
-					Addr:    ":8080",
+					Addr:    globalConfig.GetConfig().Server.ClientAddr,
 					Handler: r,
 				}
 
@@ -245,11 +245,14 @@ func main() {
 			}
 			// Webserver started..
 
-			wg.Add(1) //for static web server
+			wg.Add(1) // for static web server
 			go func() {
 				defer wg.Done()
 				zap.L().Debug("Starting static file server on port 8080")
-				fileServer.ListenAndServe()
+				err := fileServer.ListenAndServe()
+				if err != nil {
+					zap.L().Error(err.Error())
+				}
 			}()
 
 			wg.Add(1) // for core
@@ -278,7 +281,10 @@ func main() {
 
 					// Shutdown FileServer
 					zap.L().Debug("Shutting down fileserver")
-					fileServer.Shutdown(context.Background())
+					err := fileServer.Shutdown(context.Background())
+					if err != nil {
+						zap.L().Error(err.Error())
+					}
 
 					// Shutdown http didcomm
 					if ctx.HttpDIDComm != nil {
