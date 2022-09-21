@@ -197,8 +197,7 @@ func main() {
 				injectSpecsMiddleware(httpProxy)
 
 				r := filemux.NewRouter()
-				var dir string
-				dir = "./client"
+				var dir = "./client/out"
 				r.PathPrefix("").Handler(http.StripPrefix("", http.FileServer(http.Dir(dir))))
 				fileServer = &http.Server{
 					Addr:    ":8080",

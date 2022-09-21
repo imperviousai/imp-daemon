@@ -1,0 +1,12 @@
+body {
+  background-color: #f7f7f9;
+}
+
+.ql-toolbar {
+  border: none !important;
+  text-align: center !important;
+}
+
+.ql-container.ql-snow {
+  border: none !important;
+}
