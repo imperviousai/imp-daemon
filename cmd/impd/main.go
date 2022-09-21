@@ -248,7 +248,7 @@ func main() {
 			wg.Add(1) // for static web server
 			go func() {
 				defer wg.Done()
-				zap.L().Debug("Starting static file server on port 8080")
+				zap.L().Debug("Starting static file server")
 				err := fileServer.ListenAndServe()
 				if err != nil {
 					zap.L().Error(err.Error())
