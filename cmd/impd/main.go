@@ -200,8 +200,9 @@ func main() {
 				var dir = "./client/out"
 				r.PathPrefix("").Handler(http.StripPrefix("", http.FileServer(http.Dir(dir))))
 				fileServer = &http.Server{
-					Addr:    globalConfig.GetConfig().Server.ClientAddr,
-					Handler: r,
+					Addr:              globalConfig.GetConfig().Server.ClientAddr,
+					Handler:           r,
+					ReadHeaderTimeout: 10 * time.Second,
 				}
 
 				wg.Add(2)
