@@ -1,23 +1,23 @@
 builds:
-  - id: impervious-windows
-    main: ./cmd/impd
-    binary: impervious
-    goos:
-      - windows
-    goarch:
-      - 386
-      - amd64
+  # - id: impervious-windows temporarily disabling arch that we dont currently support
+  #   main: ./cmd/impd
+  #   binary: impervious
+  #   goos:
+  #     - windows
+  #   goarch:
+  #     - 386
+  #     - amd64
   - id: impervious-linux
     main: ./cmd/impd
     binary: impervious
     goos:
       - linux
     goarch:
-      - 386
+      # - 386
       - amd64
-      - arm
-      - arm64
-      - s390x
+      # - arm
+      # - arm64
+      # - s390x
   - id: impervious-macos-amd64
     main: ./cmd/impd
     binary: impervious
