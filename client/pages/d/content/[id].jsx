@@ -4,7 +4,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState, useRef, useEffect } from "react";
 import { DownloadIcon, XIcon } from "@heroicons/react/outline";
 import { CalendarIcon, PencilIcon, MenuIcon } from "@heroicons/react/solid";
-import { BigHead } from "@bigheads/core";
 import RichTextEditor from "../../../components/RichTextEditor";
 import { ChevronLeftIcon } from "@heroicons/react/outline";
 import Link from "next/link";
@@ -24,10 +23,10 @@ import { useUploadFile } from "../../../hooks/files";
 import { useFetchMyDid } from "../../../hooks/id";
 import { useFetchContacts } from "../../../hooks/contacts";
 import moment from "moment";
-import { getContactAvatar } from "../../../utils/contacts";
 import { saveAs } from "file-saver";
 import { updateDocTitle } from "../../../utils/content";
 import { on, off, trigger } from "../../../utils/events";
+import ContactAvatar from "../../../components/contact/ContactAvatar";
 
 const pageTitle = "Live Docs";
 
@@ -494,9 +493,9 @@ function NewDocument() {
                 <li key={i} className="flex justify-start group">
                   <a href="#" className="flex items-center space-x-3">
                     <div className="flex-shrink-0">
-                      <BigHead
+                      <ContactAvatar
+                        contact={peer.metadata.contact}
                         className="h-5 w-5"
-                        {...getContactAvatar(peer.metadata.contact)}
                       />
                     </div>
                     <div className="text-sm font-medium text-gray-900">

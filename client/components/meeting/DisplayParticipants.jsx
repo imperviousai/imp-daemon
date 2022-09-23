@@ -2,7 +2,6 @@ import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition, Listbox } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import { PlusSmIcon, CheckIcon, SelectorIcon } from "@heroicons/react/solid";
-import { BigHead } from "@bigheads/core";
 import { useAtom } from "jotai";
 import {
   addPeerAtom,
@@ -15,9 +14,9 @@ import { sendPeerInvitation } from "../../utils/peers";
 import { useFetchMyDid } from "../../hooks/id";
 import { useFetchContacts } from "../../hooks/contacts";
 import { useSendMessage } from "../../hooks/messages";
-import { getContactAvatar } from "../../utils/contacts";
 import { toast } from "react-toastify";
 import { trigger } from "../../utils/events";
+import ContactAvatar from "../contact/ContactAvatar";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -87,7 +86,7 @@ export const SelectParticipants = ({
             <li key={contact.did} className="py-4">
               <div className="flex items-center space-x-4">
                 <div className="flex-shrink-0">
-                  <BigHead className="h-8 w-8" {...getContactAvatar(contact)} />
+                  <ContactAvatar contact={contact} className="h-8 w-8" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">
@@ -141,9 +140,9 @@ const RenderParticipants = ({ peers }) => {
         {peers.map((peer, i) => (
           <li className="flex items-center justify-between py-3" key={i}>
             <div className="flex items-center">
-              <BigHead
+              <ContactAvatar
+                contact={peer.metadata.contact}
                 className="h-8 w-8"
-                {...getContactAvatar(peer.metadata.contact)}
               />
               <p className="ml-4 text-sm font-medium text-gray-900">
                 {peer.metadata.contact.name}

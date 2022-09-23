@@ -1,0 +1,27 @@
+{
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-impextension-prod-93245-authRole",
+      "UnauthRoleArn": "arn:aws:iam::888315068417:role/amplify-impextension-prod-93245-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::888315068417:role/amplify-impextension-prod-93245-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-impextension-prod-93245-deployment",
+      "UnauthRoleName": "amplify-impextension-prod-93245-unauthRole",
+      "StackName": "amplify-impextension-prod-93245",
+      "StackId": "arn:aws:cloudformation:us-east-2:888315068417:stack/amplify-impextension-prod-93245/1a0e3680-343a-11ed-8fdb-027fbb71959e",
+      "AmplifyAppId": "d5snpxhl2a2ip"
+    },
+    "categories": {
+      "auth": {
+        "impextension757a51c5": {}
+      },
+      "function": {
+        "impextensionalgolia": {
+          "secretsPathAmplifyAppId": "d5snpxhl2a2ip",
+          "deploymentBucketName": "amplify-impextension-prod-93245-deployment",
+          "s3Key": "amplify-builds/impextensionalgolia-557579364c336f7a6765-build.zip"
+        }
+      }
+    }
+  }
+}

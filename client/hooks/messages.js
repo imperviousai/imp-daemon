@@ -8,50 +8,45 @@ import {
   saveMessage,
 } from "../utils/messages";
 import { defaultRelayShortForm } from "../utils/onboard";
+import _ from "lodash";
+
+const getNotifications = (messages, myDid) => {
+  let notifications = _.chain(messages)
+    .filter(
+      (m) =>
+        m.type === "https://didcomm.org/webrtc/1.0/sdp" &&
+        JSON.parse(m.data).body.content.signal?.type !== "answer"
+    )
+    .map((m) => {
+      return { ...m, data: JSON.parse(m.data) };
+    })
+    .sortBy((m) => m.data.created_time)
+    .value();
+  return notifications;
+};
 
 // convertMessagesIntoConversations sorts messages into conversations where the
 // conversationID is the did of the peer you are communicating with
-const convertMessagesintoConversations = (messages, contacts, myDid) => {
-  let conversations = {};
-  contacts.forEach((contact) => {
-    const sortedMessages = messages
-      .filter(
-        (message) =>
-          (message.recipients.includes(contact.did) ||
-            contact.did === JSON.parse(message.data).from) &&
-          JSON.parse(message.data).body.content.signal?.type !== "answer"
-      )
-      .map((message) => {
-        return {
-          ...message,
-          data: {
-            ...JSON.parse(message.data),
-            from: JSON.parse(message.data).from.split("?")[0],
-            groupId: message.groupId,
-          },
-        };
-      })
-      .sort((x, y) => x.data.created_time - y.data.created_time);
+const convertMessagesintoConversations = (messages, myDid) => {
+  let conversations = [];
+  const sortedMessages = _.chain(messages)
+    .filter(
+      (m) =>
+        m.type !== "https://impervious.ai/didcomm/relay-registration/1.0" &&
+        JSON.parse(m.data).body.content.signal?.type !== "answer"
+    )
+    .sortBy((m) => m.data.created_time)
+    .map((m) => {
+      return { ...m, data: JSON.parse(m.data) };
+    })
+    .value();
 
-    if (sortedMessages.length > 0) {
-      const {
-        data: lastMessage,
-        recipients: participants,
-        groupId,
-      } = sortedMessages[sortedMessages.length - 1];
-
-      conversations[contact.did] = {
-        messages: sortedMessages,
-        metadata: {
-          name: contact.name,
-          lastMessage,
-          lastAuthor: lastMessage?.from === myDid ? contact : null,
-          participants,
-          lastUpdated: lastMessage?.created_time,
-          groupId,
-        },
-      };
-    }
+  let conversationIds = _.uniq(sortedMessages.map((m) => m.groupId));
+  conversationIds.forEach((groupId) => {
+    conversations.push({
+      groupId,
+      messages: sortedMessages.filter((m) => m.groupId === groupId),
+    });
   });
 
   return conversations;
@@ -60,35 +55,24 @@ const convertMessagesintoConversations = (messages, contacts, myDid) => {
 // useFetchMessages gets all of the messages, sorts them into conversations assuming a 1:1 pair (for now).
 // It will be the responsibility of the consuming component to sort between messages types as they choose.
 // NOTE: Requires myDid as a parameter to handle the sorting of messages into conversations
-export const useFetchMessages = ({ myDid, contacts, onSuccess }) => {
+export const useFetchMessages = ({ myDid, onSuccess }) => {
   return useQuery("fetch-messages", fetchMessages, {
     onSuccess,
     onError: (error) => {
       toast.error("Unable to fetch messages. Please try again.");
       console.log("Unable to fetch messages. Error: ", error);
     },
-    enabled: !!contacts && !!myDid,
+    enabled: !!myDid,
     // refetchInterval: 3000,
     select: (data) => {
       // do data transformation to turn messages into conversations
-      if (data.data.messages.length > 0) {
+      if (data.data.messages) {
         return {
           conversations: convertMessagesintoConversations(
             data.data.messages,
-            contacts,
             myDid
           ),
-          notifications: data.data.messages
-            .filter(
-              (message) => message.type === "https://didcomm.org/webrtc/1.0/sdp"
-            )
-            .map((message) => {
-              const sender = message.recipients.filter(
-                (r) => r !== myDid.id && r !== defaultRelayShortForm
-              )[0];
-              let contact = contacts.find((i) => i.did === sender);
-              return { ...message, metadata: { contact } };
-            }),
+          notifications: getNotifications(data.data.messages, myDid),
         };
       } else {
         return data.data;

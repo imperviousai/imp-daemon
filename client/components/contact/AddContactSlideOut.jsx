@@ -28,32 +28,47 @@ export default function AddContactSlideOut({ open, setOpen, existingContact }) {
   const { mutate: deleteContactById } = useDeleteContactById();
   const { mutate: updateContact } = useUpdateContact();
 
+  const parseDid = () =>
+    longFormDidInput.split(/[\s]+/).find((d) => d.includes("did:"));
+
   const submitContactForm = (e) => {
     e.preventDefault();
-    // check for longFormDid formatting
-
-    const longFormDid = longFormDidInput
-      .split(/[\s]+/)
-      .find((d) => d.includes("did:"));
-    if (!longFormDid) {
-      toast.error("Unable to parse DID. Check formatting and try again.");
-      return;
-    }
     // for now let's just check that it's an object. Assuming it came from the "Share Contact".
     if (existingContact) {
       // check for same ID
-      const longFormDidId = longFormDid.split("?")[0];
-      if (longFormDidId === existingContact.did) {
-        updateContact({ name, existingContact, longFormDid });
-        setOpen(false);
+      if (longFormDidInput) {
+        const longFormDid = parseDid();
+        if (!longFormDid) {
+          toast.error("Unable to parse DID. Check formatting and try again.");
+          return;
+        }
+        const longFormDidId = longFormDid.split("?")[0];
+        if (longFormDidId === existingContact.did) {
+          updateContact({
+            name,
+            existingContact,
+            longFormDid: longFormDid || null,
+          });
+          setOpen(false);
+        } else {
+          toast.error(
+            "DID ID does not match this contact's ID. Please supply a correct DID or create a new contact for this DID."
+          );
+        }
       } else {
-        toast.error(
-          "DID ID does not match this contact's ID. Please supply a correct DID or create a new contact for this DID."
-        );
+        updateContact({
+          name,
+          existingContact,
+        });
       }
 
       return;
     } else {
+      const longFormDid = parseDid();
+      if (!longFormDid) {
+        toast.error("Unable to parse DID. Check formatting and try again.");
+        return;
+      }
       resolveDid(longFormDid)
         .then((res) => {
           console.log(res);

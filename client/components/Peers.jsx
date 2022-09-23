@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import { peersAtom, peerNetworksAtom, removePeerAtom } from "../stores/peers";
 import { on, off } from "../utils/events";
 import { useRouter } from "next/router";
+import { getShortFormId } from "../utils/id";
 
 const Peer = ({ peer, router }) => {
   const [, removePeer] = useAtom(removePeerAtom);
@@ -45,7 +46,7 @@ const Peer = ({ peer, router }) => {
 
       if (sourceType === "didcomm") {
         if (
-          peerRef.current.metadata.dest === message.from.split("?")[0] &&
+          peerRef.current.metadata.dest === getShortFormId(message.from) &&
           peerRef.current.metadata.networkId ===
             message.body.content.networkId &&
           !peerRef.current.peer._connected

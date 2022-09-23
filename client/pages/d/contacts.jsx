@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MenuIcon, RefreshIcon } from "@heroicons/react/outline";
+import { MenuIcon } from "@heroicons/react/outline";
 import {
   ChatAlt2Icon,
   ChevronLeftIcon,
@@ -8,16 +8,10 @@ import {
   VideoCameraIcon,
   XCircleIcon,
 } from "@heroicons/react/solid";
-import { BigHead } from "@bigheads/core";
 import { toast } from "react-toastify";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import AddContactSlideOut from "../../components/contact/AddContactSlideOut";
-import {
-  useFetchContacts,
-  useUpdateContact,
-  useDeleteContactById,
-} from "../../hooks/contacts";
-import { getContactAvatar, getRandomAvatar } from "../../utils/contacts";
+import { useFetchContacts, useDeleteContactById } from "../../hooks/contacts";
 
 const tabs = [{ name: "Contact Info", href: "#", current: true }];
 
@@ -28,6 +22,10 @@ function classNames(...classes) {
 }
 import MainNavigation from "../../components/MainNavigation";
 import { BsLightningChargeFill } from "react-icons/bs";
+import ContactAvatar from "../../components/contact/ContactAvatar";
+import TwitterLink from "../../components/contact/TwitterLink";
+import TwitterConnected from "../../components/contact/TwitterConnected";
+import AvatarRotator from "../../components/contact/AvatarRotator";
 
 const pageTitle = "Contacts";
 
@@ -36,36 +34,7 @@ export const ContactView = ({
   setOpenAddContactForm,
   setSelectedContact,
 }) => {
-  const [showAvatarSave, setShowAvatarSave] = useState(false);
-  const [currentAvatar, setCurrentAvatar] = useState({});
-
   const { mutate: deleteContactById } = useDeleteContactById();
-
-  const onSuccess = () => toast.success("Avatar saved!");
-  const onError = () =>
-    toast.error("Error saving avatar. Please try again later.");
-  const { mutate: updateContact } = useUpdateContact(onSuccess, onError);
-
-  useEffect(() => {
-    if (selectedContact) {
-      setCurrentAvatar({ ...getContactAvatar(selectedContact) });
-    }
-  }, [selectedContact]);
-
-  const handleAvatarRotation = () => {
-    setShowAvatarSave(true);
-    setCurrentAvatar({ ...getRandomAvatar() });
-  };
-
-  const cancelAvatarSave = () => {
-    setShowAvatarSave(false);
-    setCurrentAvatar({ ...getContactAvatar(selectedContact) });
-  };
-
-  const saveNewAvatar = () => {
-    updateContact({ existingContact: selectedContact, avatar: currentAvatar });
-    setShowAvatarSave(false);
-  };
 
   const onSuccessDelete = () => {
     toast.success("Contact successfully deleted!");
@@ -114,41 +83,8 @@ export const ContactView = ({
     <article>
       {/* Profile header */}
       <div>
-        <div className="pb-12 flex flex-col items-center">
-          <div className="flex flex-col items-center">
-            <BigHead
-              {...currentAvatar}
-              className="h-32 w-full object-cover lg:h-48"
-            />
-            <button
-              type="button"
-              onClick={() => handleAvatarRotation()}
-              className="pt-2"
-            >
-              <RefreshIcon
-                className="-ml-1 mr-2 h-6 w-6 text-gray-900"
-                aria-hidden="true"
-              />
-            </button>
-            {showAvatarSave && (
-              <div className="flex space-x-2 pt-4">
-                <button
-                  type="button"
-                  onClick={() => cancelAvatarSave()}
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => saveNewAvatar()}
-                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Save
-                </button>
-              </div>
-            )}
-          </div>
+        <div className="pb-12 flex flex-col items-center mt-8 ">
+          <AvatarRotator contact={selectedContact} />
         </div>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
@@ -158,38 +94,6 @@ export const ContactView = ({
                   {selectedContact && selectedContact.name}
                 </h1>
               </div>
-              {/* <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                <button
-                  type="button"
-                  className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-                >
-                  <ChatAlt2Icon
-                    className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  <span>Message</span>
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-                >
-                  <VideoCameraIcon
-                    className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  <span>Call</span>
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-                >
-                  <BsLightningChargeFill
-                    className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  <span>Send/Receive</span>
-                </button>
-              </div> */}
             </div>
           </div>
           <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
@@ -229,18 +133,6 @@ export const ContactView = ({
       <div className="mt-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
           <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-500">DID</dt>
-            <CopyToClipboard
-              text={selectedContact.did}
-              onCopy={() => toast.info("Copied!")}
-            >
-              <dd className="mt-1 text-sm text-gray-900 hover:bg-gray-50">
-                {selectedContact.did}
-              </dd>
-            </CopyToClipboard>
-          </div>
-          <br />
-          <div className="sm:col-span-1">
             <dt className="text-sm font-medium text-gray-500">Name</dt>
             <CopyToClipboard
               text={selectedContact.name}
@@ -251,6 +143,30 @@ export const ContactView = ({
               </dd>
             </CopyToClipboard>
           </div>
+          <div className="sm:col-span-1">
+            <dt className="text-sm font-medium text-gray-500">DID</dt>
+            <CopyToClipboard
+              text={selectedContact.did}
+              onCopy={() => toast.info("Copied!")}
+            >
+              <dd className="mt-1 text-sm text-gray-900 hover:bg-gray-50">
+                {selectedContact.did}
+              </dd>
+            </CopyToClipboard>
+          </div>
+          {JSON.parse(selectedContact.metadata).twitterUsername && (
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium text-gray-500">Twitter</dt>
+              <dd className="mt-1 text-sm text-gray-900 hover:bg-gray-50">
+                <TwitterLink
+                  contact={selectedContact}
+                  className="text-blue-500 font-medium"
+                />
+              </dd>
+            </div>
+          )}
+
+          <br />
         </dl>
       </div>
       <div className="relative pb-8">
@@ -370,8 +286,8 @@ export default function Contacts() {
                   <p className="mt-1 text-sm text-gray-600">
                     Search contacts below
                   </p>
-                  <form className="mt-6 flex space-x-4" action="#">
-                    <div className="flex-1 min-w-0">
+                  {/* //TODO: need to implement the local search */}
+                  {/* <div className="flex-1 min-w-0">
                       <label htmlFor="search" className="sr-only">
                         Search
                       </label>
@@ -390,8 +306,7 @@ export default function Contacts() {
                           placeholder="Search"
                         />
                       </div>
-                    </div>
-                  </form>
+                    </div> */}
                 </div>
                 {/* Directory list */}
                 <nav
@@ -401,12 +316,12 @@ export default function Contacts() {
                   {directory &&
                     directory.map((d, i) => (
                       <div key={i} className="relative">
-                        <div className="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
+                        <div className="sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
                           <h3>{d[0].name[0].toUpperCase()}</h3>
                         </div>
                         <ul
                           role="list"
-                          className="relative z-0 divide-y divide-gray-200"
+                          className="relative divide-y divide-gray-200"
                         >
                           {d.map((contact, i) => (
                             <li
@@ -415,8 +330,8 @@ export default function Contacts() {
                             >
                               <div className="relative px-6 py-5 flex items-center space-x-3 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary">
                                 <div className="flex-shrink-0">
-                                  <BigHead
-                                    {...getContactAvatar(contact)}
+                                  <ContactAvatar
+                                    contact={contact}
                                     className="h-10 w-10"
                                   />
                                 </div>
@@ -426,9 +341,15 @@ export default function Contacts() {
                                       className="absolute inset-0"
                                       aria-hidden="true"
                                     />
-                                    <p className="text-sm font-medium text-gray-900">
-                                      {contact.name}
-                                    </p>
+                                    <span className="flex items-center space-x-2">
+                                      <p className="text-sm font-medium text-gray-900">
+                                        {contact.name}
+                                      </p>
+                                      <TwitterConnected
+                                        contact={contact}
+                                        className="h-4 w-4"
+                                      />
+                                    </span>
                                     <p className="text-sm text-gray-500 truncate">
                                       {contact.did}
                                     </p>

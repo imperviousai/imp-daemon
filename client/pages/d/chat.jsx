@@ -12,7 +12,6 @@ import {
   XIcon,
   UsersIcon,
 } from "@heroicons/react/outline";
-import { BigHead } from "@bigheads/core";
 import { BsFillLightningChargeFill } from "react-icons/bs";
 import { toast } from "react-toastify";
 import { ContactView } from "./contacts";
@@ -27,15 +26,17 @@ import {
   useDeleteGroupMessages,
   useSaveMessage,
 } from "../../hooks/messages";
-import { getContactAvatar } from "../../utils/contacts";
 import {
   showMessagesAsRead,
   isNotificationExpired,
+  deleteConversation,
 } from "../../utils/messages";
+import { getShortFormId } from "../../utils/id";
 import { sendPeerInvitation, confirmPeerInvite } from "../../utils/peers";
 import {
   readMessagesAtom,
   currentConversationAtom,
+  currentConversationContactAtom,
   lightningEnabledAtom,
 } from "../../stores/messages";
 import { useAtom } from "jotai";
@@ -52,15 +53,11 @@ import dataUriRegex from "data-uri-regex";
 import { encode } from "base64-arraybuffer";
 import FileDownload from "../../components/meeting/FileDownload";
 import useAutosizeTextArea from "../../components/useAutosizeTextArea";
+import ContactAvatar from "../../components/contact/ContactAvatar";
+import { getContactByDid, getContactsByMessage } from "../../utils/contacts";
 
-const isJSON = (msg) => {
-  try {
-    JSON.parse(msg);
-  } catch (e) {
-    return false;
-  }
-  return true;
-};
+const isJSON = (msg) =>
+  (msg.includes("{") || msg.includes("}")) && JSON.parse(msg);
 
 const EmojiPicker = dynamic(() => import("../../components/EmojiPicker"), {
   ssr: false,
@@ -129,33 +126,43 @@ const ConversationsHeader = () => {
   );
 };
 
-const RenderConversationSection = ({ metadata, unreadMessages, contact }) => {
+const RenderConversationSection = ({ unreadMessages, message }) => {
+  const [contact, setContact] = useState();
+  const { data: contactsRes } = useFetchContacts();
+  const { data: myDid } = useFetchMyDid();
+
+  useEffect(() => {
+    const contacts = getContactsByMessage({
+      message,
+      contacts: contactsRes?.data.contacts,
+      myDid,
+    });
+    // TODO: handle group messages here too
+    setContact(contacts[0]);
+  }, [message, contactsRes?.data.contacts, myDid]);
+
   const renderContent = () => {
-    if (metadata.lastMessage?.type === "https://didcomm.org/webrtc/1.0/sdp") {
-      const { signal } = metadata.lastMessage.body.content;
+    if (message?.data.type === "https://didcomm.org/webrtc/1.0/sdp") {
+      const { signal } = message?.data.body.content;
       if (signal.type === "offer") {
-        return <p>Sent an invite to connect</p>;
+        return <span>Sent an invite to connect</span>;
       }
-    } else if (metadata.lastMessage?.type === "file-transfer-done") {
+    } else if (message?.data.type === "file-transfer-done") {
       return "File sent.";
-    } else if (isJSON(metadata.lastMessage?.body.content)) {
-      const { filename, dataUri } = JSON.parse(
-        metadata.lastMessage?.body.content
-      );
+    } else if (isJSON(message?.data.body.content)) {
+      const { filename, dataUri } = JSON.parse(message?.data.body.content);
       if (filename && dataUri) {
         // definitely a file
         return "File sent.";
       }
     } else {
-      return `${metadata.lastMessage?.body.content?.slice(0, 20)}`;
+      return `${message?.data.body.content?.slice(0, 20)}`;
     }
   };
   return (
     <div className="flex items-center justify-between space-x-4">
       <div className="flex space-x-4">
-        {contact && (
-          <BigHead className="h-10 w-10" {...getContactAvatar(contact)} />
-        )}
+        {contact && <ContactAvatar contact={contact} className="w-10 h-10" />}
 
         <div className="flex flex-col">
           <p
@@ -163,7 +170,7 @@ const RenderConversationSection = ({ metadata, unreadMessages, contact }) => {
               unreadMessages > 0 ? "font-bold" : "font-light"
             } text-md`}
           >
-            {metadata.name}
+            {contact?.name}
           </p>
 
           {/* <p className="font-light text-xs">{contact.did}</p> */}
@@ -179,30 +186,37 @@ const RenderConversationSection = ({ metadata, unreadMessages, contact }) => {
       </div>
       <div className="flex flex-col pb-4">
         <p className="text-sm font-light">
-          {moment.unix(metadata.lastUpdated).fromNow()}
+          {moment.unix(message?.data.created_time).fromNow()}
         </p>
       </div>
     </div>
   );
 };
 
-const ListConversations = ({ conversations, selectConversation, contacts }) => {
+const ListConversations = () => {
   const [unreadMessages, setUnreadMessages] = useState({});
+  const { data: contactsRes } = useFetchContacts();
+  const { data: myDid } = useFetchMyDid();
+  const { data: messages } = useFetchMessages({
+    myDid: myDid,
+    contacts: contactsRes?.data.contacts,
+  });
+  const [, setCurrentConversation] = useAtom(currentConversationAtom);
 
   const [readMessages] = useAtom(readMessagesAtom);
 
   useEffect(() => {
     let unreadMessageCount = {};
-    if (conversations) {
-      Object.keys(conversations).map((did, i) => {
-        let c = conversations[did].messages.filter(
+    if (messages?.conversations) {
+      messages?.conversations.forEach((conversation) => {
+        let count = conversation.messages.filter(
           (m) => readMessages.indexOf(m.id) === -1
         ).length;
-        unreadMessageCount[did] = c;
+        unreadMessageCount[conversation.groupId] = count;
       });
     }
     setUnreadMessages(unreadMessageCount);
-  }, [conversations, readMessages]);
+  }, [readMessages, messages]);
 
   return (
     <div className="bg-white lg:min-w-0 lg:flex-1">
@@ -215,20 +229,18 @@ const ListConversations = ({ conversations, selectConversation, contacts }) => {
         role="list"
         className="relative z-0 divide-y divide-gray-200 border-b border-gray-200"
       >
-        {conversations &&
-          Object.keys(conversations).map((did, i) => (
-            <li
-              key={i}
-              className="relative pl-4 pr-6 py-5 hover:bg-gray-50 sm:py-3 sm:pl-6 lg:pl-8 xl:pl-6 blue="
-              onClick={() => selectConversation(did)}
-            >
-              <RenderConversationSection
-                metadata={conversations[did].metadata}
-                unreadMessages={unreadMessages[did]}
-                contact={contacts.find((contact) => contact.did === did)}
-              />
-            </li>
-          ))}
+        {messages?.conversations.map(({ groupId, messages }, i) => (
+          <li
+            key={i}
+            className="relative pl-4 pr-6 py-5 hover:bg-gray-50 sm:py-3 sm:pl-6 lg:pl-8 xl:pl-6 blue="
+            onClick={() => setCurrentConversation(groupId)}
+          >
+            <RenderConversationSection
+              unreadMessages={unreadMessages[groupId]}
+              message={messages.slice(-1)[0]}
+            />
+          </li>
+        ))}
       </ul>
     </div>
   );
@@ -237,11 +249,15 @@ const ListConversations = ({ conversations, selectConversation, contacts }) => {
 const ConversationHeader = ({
   setOpenContactPreview,
   setOpenPayment,
-  deleteConversation,
   sendInvite,
+  activeConversation,
 }) => {
   const [currentConversationPeer] = useAtom(currentConversationPeerAtom);
-  const [currentConversation] = useAtom(currentConversationAtom);
+  const [, setCurrentConversation] = useAtom(currentConversationAtom);
+  const [currentConversationContact, setCurrentConversationContact] = useAtom(
+    currentConversationContactAtom
+  );
+  const { mutate: deleteGroupMessage } = useDeleteGroupMessages();
   const disconnectPeer = () => {
     currentConversationPeer.peer.destroy();
   };
@@ -277,13 +293,13 @@ const ConversationHeader = ({
                   className="flex items-center"
                   onClick={() => setOpenContactPreview(true)}
                 >
-                  <BigHead
-                    {...getContactAvatar(currentConversation)}
+                  <ContactAvatar
+                    contact={currentConversationContact}
                     className="w-10 h-10"
                   />
                   <div className="flex flex-col ml-3">
                     <h1 className="text-lg font-semibold leading-7 text-gray-900 sm:leading-9 sm:truncate">
-                      {currentConversation.name}{" "}
+                      {currentConversationContact?.name}{" "}
                     </h1>
                     {/* <CopyToClipboard
                       text={currentConversation.did}
@@ -383,12 +399,23 @@ const ConversationHeader = ({
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                  <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                     <div className="py-1">
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            onClick={() => deleteConversation()}
+                            onClick={() => {
+                              if (activeConversation) {
+                                deleteConversation({
+                                  groupId: activeConversation.groupId,
+                                  deleteGroupMessage,
+                                  callback: () => {
+                                    setCurrentConversation();
+                                    setCurrentConversationContact();
+                                  },
+                                });
+                              }
+                            }}
                             className={classNames(
                               active
                                 ? "bg-gray-100 text-red-900"
@@ -445,10 +472,10 @@ const NewConversationHeader = ({ setToggleNewContact, toggleNewContact }) => {
 };
 
 const ListContacts = ({
-  contacts,
   setToggleNewContact,
-  selectConversation,
+  setCurrentConversationContact,
 }) => {
+  const { data: contactsRes } = useFetchContacts();
   // maybe we need to set current Conversation upon click, and then quickly createa new conversation
   return (
     <div className="bg-white lg:min-w-0 lg:flex-1">
@@ -459,11 +486,11 @@ const ListContacts = ({
         role="list"
         className="relative z-0 divide-y divide-gray-200 border-b border-gray-200"
       >
-        {contacts.map((contact, i) => (
+        {contactsRes.data.contacts.map((contact, i) => (
           <li
             key={i}
             onClick={() => {
-              selectConversation(contact.did);
+              setCurrentConversationContact(contact);
               setToggleNewContact(false);
             }}
             className="relative pl-4 pr-6 py-5 hover:bg-gray-50 sm:py-3 sm:pl-6 lg:pl-8 xl:pl-6 blue="
@@ -471,7 +498,7 @@ const ListContacts = ({
             {/* probably should be a separate renderContactSection */}
             <div className="flex items-center">
               <div className="flex space-x-4">
-                <BigHead className="h-10 w-10" {...getContactAvatar(contact)} />
+                <ContactAvatar contact={contact} className="h-10 w-10" />
                 <div className="flex flex-col justify-center">
                   <p className="font-base">{contact.name}</p>
                   {/* <p className="font-light text-xs">{contact.did}</p> */}
@@ -491,6 +518,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
   const [currentConversationPeer] = useAtom(currentConversationPeerAtom);
   const [currentConversation] = useAtom(currentConversationAtom);
   const [currentVideoCallId] = useAtom(currentVideoCallAtom);
+  const [currentConversationContact] = useAtom(currentConversationContactAtom);
   const { mutate: saveBasicMessage } = useSaveMessage();
   const textAreaRef = useRef(null);
 
@@ -510,7 +538,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
     sendBasicMessage(
       {
         msg: file ? file : msg,
-        did: currentConversation.did,
+        did: currentConversationContact.did,
         type: "https://didcomm.org/basicmessage/2.0/message",
         amount: lightningEnabled ? 50 : 0,
         reply_to_id: "",
@@ -528,7 +556,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
     const header = {
       timestamp: new Date().toString(),
       from: myDid.id,
-      did: currentConversation.did,
+      did: currentConversationContact.did,
       networkId,
       type,
     };
@@ -566,7 +594,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
           msg: { name, type, size, id, image: reader.result },
           type: "file-transfer-done",
           from: myDid.id,
-          did: currentConversation.did,
+          did: currentConversationContact.did,
         });
       };
     } else {
@@ -574,7 +602,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
         msg: { name, type, size, id, image: "" },
         type: "file-transfer-done",
         from: myDid.id,
-        did: currentConversation.did,
+        did: currentConversationContact.did,
       });
     }
     setFileState(f.id, false);
@@ -633,7 +661,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
 
   const sendMessage = () => {
     if (fileInput) sendFiles();
-    if (msg.length > 0 && currentConversation) {
+    if (msg.length > 0 && (currentConversation || currentConversationContact)) {
       if (currentConversationPeer) {
         // send the message over webrtc
         sendWebRTC(msg, "live-message");
@@ -642,7 +670,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
           msg,
           type: "live-message",
           from: myDid.id,
-          did: currentConversation.did,
+          did: currentConversationContact.did,
         });
         setMsg("");
         return;
@@ -703,12 +731,12 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
   );
 };
 
-const ConversationBody = ({ messages, myDid }) => {
+const ConversationBody = ({ activeConversation }) => {
   const [convo, setConvo] = useState([]);
 
   const { data: contactsRes } = useFetchContacts();
+  const { data: myDid } = useFetchMyDid();
   const [readMessages, setReadMessages] = useAtom(readMessagesAtom);
-  const [currentConversation] = useAtom(currentConversationAtom);
   const [currentConversationPeer] = useAtom(currentConversationPeerAtom);
 
   const bottomRef = useRef(null);
@@ -718,17 +746,15 @@ const ConversationBody = ({ messages, myDid }) => {
   });
 
   useEffect(() => {
-    if (messages?.conversations && currentConversation) {
-      const msgs = messages?.conversations[currentConversation.did]?.messages;
-      if (msgs) {
-        setConvo(msgs);
-        // set these messages as read messages within Jotai state as well...
-        setReadMessages(showMessagesAsRead(readMessages, msgs));
-      } else {
-        setConvo([]);
-      }
+    if (activeConversation) {
+      setConvo(activeConversation.messages);
+      setReadMessages(
+        showMessagesAsRead(readMessages, activeConversation.messages)
+      );
+    } else {
+      setConvo([]);
     }
-  }, [messages, currentConversation, readMessages, setReadMessages]);
+  }, [readMessages, setReadMessages, activeConversation]);
 
   const getTextBodyColor = (from) => {
     if (from === myDid.id) {
@@ -742,23 +768,23 @@ const ConversationBody = ({ messages, myDid }) => {
 
   const renderContent = (message) => {
     if (message.data.type === "https://didcomm.org/webrtc/1.0/sdp") {
-      const knownContact = contactsRes?.data.contacts.find(
-        (contact) => contact.did === message.data.from
-      );
       const { signal } = message.data.body.content;
       if (signal.type === "offer") {
         return (
           <p>
             Sent an invitiation to connect.{" "}
             {isNotificationExpired(message.data.created_time) &&
-              message.data.from !== myDid.id && (
+              getShortFormId(message.data.from) !== myDid.id && (
                 <a
                   className="font-bold underline"
                   onClick={() =>
                     confirmPeerInvite({
                       detail: {
                         message: message.data.body.content,
-                        knownContact: knownContact || null,
+                        knownContact: getContactByDid({
+                          shortFormDid: getShortFormId(message.data.from),
+                          contacts: contactsRes.data.contacts,
+                        }),
                         sourceType: "didcomm",
                       },
                     })
@@ -788,7 +814,7 @@ const ConversationBody = ({ messages, myDid }) => {
           <FileDownload
             message={{
               data: message.data.body.content,
-              from: message.data.from,
+              from: getShortFormId(message.data.from),
             }}
             myDid={myDid.id}
           />
@@ -844,27 +870,32 @@ const ConversationBody = ({ messages, myDid }) => {
         <div
           key={i}
           className={`flex py-1 ${
-            message.data.from === myDid.id ? "pl-4 flex-row-reverse" : "pr-4"
+            getShortFormId(message.data.from) === myDid.id
+              ? "pl-4 flex-row-reverse"
+              : "pr-4"
           }`}
         >
           <div className="flex flex-col">
             <span
               className={`px-4 py-2 rounded-lg inline-block rounded-br-none text-sm whitespace-pre-line ${getTextBodyColor(
-                message.data.from
+                getShortFormId(message.data.from)
               )}`}
             >
               {renderContent(message)}
             </span>
             {message.data.body.payment && (
               <p className="text-sm inline-flex text-center">
-                {message.data.from === myDid.id ? "Sent" : "Received"}: +
-                {parseInt(message.data.body.payment).toLocaleString()} sats{" "}
+                {getShortFormId(message.data.from) === myDid.id
+                  ? "Sent"
+                  : "Received"}
+                : +{parseInt(message.data.body.payment).toLocaleString()} sats{" "}
                 <BsFillLightningChargeFill className="w-3 h-3 mt-1.5 ml-0.5" />
               </p>
             )}
             <div
               className={`flex ${
-                message.data.from === myDid.id && "flex-row-reverse"
+                getShortFormId(message.data.from) === myDid.id &&
+                "flex-row-reverse"
               }`}
             >
               <p className="text-primary opacity-30 text-xs">
@@ -882,13 +913,13 @@ const ConversationBody = ({ messages, myDid }) => {
 const ContactQuickView = ({
   openContactPreview,
   setOpenContactPreview,
-  currentConversation,
+  currentConversationContact,
 }) => {
   return (
     <Transition.Root show={openContactPreview} as={Fragment}>
       <Dialog
         as="div"
-        className="fixed inset-0 overflow-hidden z-30"
+        className="fixed inset-0 overflow-hidden z-10"
         onClose={setOpenContactPreview}
       >
         <div className="absolute inset-0 overflow-hidden">
@@ -927,7 +958,7 @@ const ContactQuickView = ({
                   <div className="relative mt-6 flex-1 px-4 sm:px-6">
                     {/* Replace with your content */}
                     {/* <div className="absolute inset-0 px-4 sm:px-6">check</div> */}
-                    <ContactView selectedContact={currentConversation} />
+                    <ContactView selectedContact={currentConversationContact} />
                     {/* /End replace */}
                   </div>
                 </div>
@@ -944,9 +975,13 @@ export default function Chat() {
   const [openContactPreview, setOpenContactPreview] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
   const [toggleNewContact, setToggleNewContact] = useState(false);
+  const [activeConversation, setActiveConversation] = useState();
 
   const [currentConversation, setCurrentConversation] = useAtom(
     currentConversationAtom
+  );
+  const [currentConversationContact, setCurrentConversationContact] = useAtom(
+    currentConversationContactAtom
   );
 
   const [, addPeer] = useAtom(addPeerAtom);
@@ -959,52 +994,56 @@ export default function Chat() {
     contacts: contactsRes?.data.contacts,
   });
   const { mutate: sendBasicMessage } = useSendMessage();
-  const { mutate: deleteGroupMessage } = useDeleteGroupMessages();
 
-  const selectConversation = (did) => {
-    const contact = contactsRes?.data.contacts.find(
-      (contact) => contact.did === did
-    );
-    setCurrentConversation(contact);
-  };
-
-  const deleteConversation = () => {
-    // this function will change later down the road.
-    currentConversation &&
-      toast(
-        ({ closeToast }) => (
-          <div>
-            <p className="pb-4">Delete this conversation?</p>
-            <div className="flex space-x-4">
-              <button
-                type="button"
-                onClick={() => {
-                  const groupId =
-                    messages.conversations[currentConversation.did]?.metadata
-                      .groupId;
-                  if (groupId) {
-                    deleteGroupMessage({ groupId });
-                    setCurrentConversation();
-                  }
-                  closeToast();
-                }}
-                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Delete
-              </button>
-              <button
-                type="button"
-                onClick={closeToast}
-                className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ),
-        { autoClose: false }
+  // TODO: rework these two useEffecfts, but for now they work
+  useEffect(() => {
+    if (currentConversation) {
+      const conversation = messages?.conversations.find(
+        (c) => c.groupId === currentConversation
       );
-  };
+      if (conversation) {
+        const contacts = getContactsByMessage({
+          message: conversation.messages[0],
+          contacts: contactsRes?.data.contacts,
+          myDid,
+        });
+        setActiveConversation(conversation);
+        // TODO: support group messages
+        setCurrentConversationContact(contacts[0]);
+      }
+    }
+  }, [
+    contactsRes?.data.contacts,
+    currentConversation,
+    messages?.conversations,
+    myDid,
+    setCurrentConversationContact,
+  ]);
+
+  useEffect(() => {
+    if (currentConversationContact) {
+      //attempt to grab relevant conversation
+      let conversation = messages?.conversations.find((c) =>
+        c.messages.find((m) =>
+          m.recipients.includes(currentConversationContact.did)
+        )
+      );
+      if (conversation) {
+        setActiveConversation(conversation);
+      } else {
+        setActiveConversation();
+        setCurrentConversation();
+      }
+    }
+  }, [
+    currentConversation,
+    setCurrentConversationContact,
+    contactsRes?.data.contacts,
+    myDid,
+    messages,
+    currentConversationContact,
+    setCurrentConversation,
+  ]);
 
   const sendInvite = () => {
     // assuming a new network creation is needed
@@ -1015,7 +1054,7 @@ export default function Chat() {
       sendBasicMessage: sendBasicMessage,
       lightningEnabled,
       src: myDid.id,
-      contact: currentConversation,
+      contact: currentConversationContact,
       type: "live-messaging-invitation",
       localStream: false,
     });
@@ -1028,20 +1067,22 @@ export default function Chat() {
       <PaymentsSlideOut
         open={openPayment}
         setOpen={setOpenPayment}
-        selectedContact={currentConversation ? currentConversation : null}
+        selectedContact={
+          currentConversationContact ? currentConversationContact : null
+        }
       />
       <div className="z-20">
         {/* this needs to be fixed as it isn't adhering to the z index for some weird reason */}
         <ContactQuickView
           openContactPreview={openContactPreview}
           setOpenContactPreview={setOpenContactPreview}
-          currentConversation={currentConversation}
+          currentConversationContact={currentConversationContact}
         />
       </div>
       <div className="flex-1 relative z-0 flex overflow-hidden h-full lg:pr-96 lg:mr-16">
         <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white border-r">
           {/* Start main area*/}
-          {currentConversation && (
+          {(currentConversation || currentConversationContact) && (
             <>
               <div className="flex flex-col h-full">
                 <div className="flex-none">
@@ -1049,11 +1090,11 @@ export default function Chat() {
                     setOpenContactPreview={setOpenContactPreview}
                     setOpenPayment={setOpenPayment}
                     sendInvite={sendInvite}
-                    deleteConversation={deleteConversation}
+                    activeConversation={activeConversation}
                   />
                 </div>
                 <div className="grow flex-1 pl-8 pr-4 overflow-hidden">
-                  <ConversationBody messages={messages} myDid={myDid} />
+                  <ConversationBody activeConversation={activeConversation} />
                 </div>
                 <div className="flex-none">
                   <ConversationFooter
@@ -1076,18 +1117,12 @@ export default function Chat() {
           {!toggleNewContact ? (
             <>
               <ConversationsHeader />
-              <ListConversations
-                selectConversation={selectConversation}
-                myDid={myDid}
-                conversations={messages?.conversations}
-                contacts={contactsRes?.data.contacts}
-              />
+              <ListConversations />
             </>
           ) : (
             <ListContacts
               setToggleNewContact={setToggleNewContact}
-              contacts={contactsRes?.data.contacts}
-              selectConversation={selectConversation}
+              setCurrentConversationContact={setCurrentConversationContact}
             />
           )}
           {/* End secondary column */}

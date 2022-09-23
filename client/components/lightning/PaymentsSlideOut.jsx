@@ -9,9 +9,9 @@ import { toast } from "react-toastify";
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { FaBitcoin } from "react-icons/fa";
-import { BigHead } from "@bigheads/core";
 import { useSendMessage } from "../../hooks/messages";
 import { useFetchContacts } from "../../hooks/contacts";
+import ContactAvatar from "../contact/ContactAvatar";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -63,7 +63,10 @@ export const SelectContact = ({ selected, setSelected }) => {
                     {({ selected, active }) => (
                       <>
                         <div className="flex items-center">
-                          <BigHead className="h-4 w-4" />
+                          <ContactAvatar
+                            contact={contact}
+                            className="h-4 w-4"
+                          />
                           <span
                             className={classNames(
                               isSelected(contact)

@@ -1,0 +1,8 @@
+{
+  "permissions": {},
+  "lambdaLayers": [],
+  "secretNames": [
+    "ALGOLIA_ID",
+    "ALGOLIA_API_KEY"
+  ]
+}

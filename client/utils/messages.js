@@ -2,6 +2,8 @@ import { trigger } from "./events";
 import { request } from "./axios-utils";
 import { toast } from "react-toastify";
 import moment from "moment";
+import { getShortFormId } from "./id";
+import { getContactByDid } from "./contacts";
 
 // Utility functions for message handling
 
@@ -85,7 +87,7 @@ export const payloadFromApi = (payload, channel) => {
 export const showPaymentNotification = ({ detail: { msg, knownContact } }) => {
   toast.info(
     `You've just received ${msg.body.payment} sats from ${
-      knownContact.name || "Unknown"
+      (knownContact && knownContact.name) || "Unknown"
     }!`
   );
 };
@@ -95,11 +97,13 @@ export const handleDidCommMessage = ({ data, contacts, pathname }) => {
   const d = JSON.parse(data).result?.data;
   if (d) {
     const msg = JSON.parse(atob(d));
-    const fromId = msg.from.split("?")[0];
+    const fromId = getShortFormId(msg.from);
 
     // check if the incoming message is from a known contact
-    let knownContact =
-      contacts.find((contact) => contact.did === fromId) || null;
+    let knownContact = getContactByDid({
+      shortFormDid: fromId,
+      contacts,
+    });
 
     switch (msg && msg.type) {
       case "https://didcomm.org/basicmessage/2.0/message":
@@ -108,7 +112,9 @@ export const handleDidCommMessage = ({ data, contacts, pathname }) => {
         // the inbound messages via websocket are structured differently that those from the Messages List API
         if (pathname !== "/d/chat") {
           toast.info(
-            `${knownContact.name || "An unknown user"} just messaged you.`
+            `${
+              (knownContact && knownContact.name) || "An unknown user"
+            } just messaged you.`
           );
         }
         if (msg.body.payment) {
@@ -158,6 +164,46 @@ export const showMessagesAsRead = (state, messages) => {
   } else {
     return messages.map((m) => m.id);
   }
+};
+
+// UI action to delete a conversation
+export const deleteConversation = ({
+  groupId,
+  deleteGroupMessage,
+  callback,
+}) => {
+  // this function will change later down the road.
+  groupId &&
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <p className="pb-4">Delete this conversation?</p>
+          <div className="flex space-x-4">
+            <button
+              type="button"
+              onClick={() => {
+                deleteGroupMessage({ groupId });
+                if (callback) {
+                  callback();
+                }
+                closeToast();
+              }}
+              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Delete
+            </button>
+            <button
+              type="button"
+              onClick={closeToast}
+              className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { autoClose: false }
+    );
 };
 
 // set an expiration time for webrtc invitations (in minutes);
@@ -211,3 +257,6 @@ export const deleteGroupMessages = ({ groupId }) => {
     },
   });
 };
+
+export const getConversationByGroupId = ({ messages, groupId }) =>
+  messages.conversations.find((c) => c.groupId === groupId);

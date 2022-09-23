@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import MainNavigation from "../../components/MainNavigation";
 import {
   ChatAlt2Icon,
@@ -13,7 +13,6 @@ import uniqBy from "lodash/uniqBy";
 import { BsFillLightningChargeFill } from "react-icons/bs";
 import { RiUserSharedFill } from "react-icons/ri";
 import { useRouter } from "next/router";
-import { BigHead } from "@bigheads/core";
 import moment from "moment";
 import PaymentsSlideOut from "../../components/lightning/PaymentsSlideOut";
 import { useFetchContacts } from "../../hooks/contacts";
@@ -27,12 +26,21 @@ import {
 import { myAvatarAtom } from "../../stores/settings";
 import { peersAtom } from "../../stores/peers.js";
 import { XIcon } from "@heroicons/react/outline";
-import { isNotificationExpired } from "../../utils/messages";
+import {
+  isNotificationExpired,
+  deleteConversation,
+} from "../../utils/messages";
 import { confirmPeerInvite } from "../../utils/peers";
-import { getContactAvatar } from "../../utils/contacts";
 import { toast } from "react-toastify";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { myDidLongFormDocumentAtom } from "../../stores/id";
+import ContactAvatar from "../../components/contact/ContactAvatar";
+import { getShortFormId, resolveDid } from "../../utils/id";
+import {
+  getRandomAvatar,
+  getContactsByMessage,
+  getContactByDid,
+} from "../../utils/contacts";
 
 const pageTitle = "Dashboard";
 
@@ -46,84 +54,32 @@ const isJSON = (msg) => {
   return true;
 };
 
-const MessagesTable = ({
-  router,
-  conversations,
-  unreadMessages,
-  contacts,
-  myDid,
-  myAvatar,
-  deleteGroupMessage,
-}) => {
+const MessagesTable = ({ conversations, unreadMessages }) => {
   const [, setCurrentConversation] = useAtom(currentConversationAtom);
-  // TODO: perhaps export the below function, but for now it will work
-  const renderAvatar = (did) => {
-    let c = contacts.find((contact) => contact.did === did);
-    if (c) {
-      return getContactAvatar(c);
-    } else if (did === myDid.id) {
-      return myAvatar;
-    } else {
-      return {};
-    }
+  const { data: contactsRes } = useFetchContacts();
+  const { mutate: deleteGroupMessage } = useDeleteGroupMessages();
+  const router = useRouter();
+  const { data: myDid } = useFetchMyDid();
+
+  const goToConversation = (groupId) => {
+    setCurrentConversation(groupId);
+    router.push("/d/chat");
   };
 
-  const goToConversation = (did) => {
-    const c = contacts.find((contact) => contact.did === did);
-    if (c) {
-      setCurrentConversation(c);
-      router.push("/d/chat");
-    }
-  };
-
-  const deleteConversation = (groupId) => {
-    // this function will change later down the road.
-    groupId &&
-      toast(
-        ({ closeToast }) => (
-          <div>
-            <p className="pb-4">Delete this conversation?</p>
-            <div className="flex space-x-4">
-              <button
-                type="button"
-                onClick={() => {
-                  deleteGroupMessage({ groupId });
-                  closeToast();
-                }}
-                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Delete
-              </button>
-              <button
-                type="button"
-                onClick={closeToast}
-                className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ),
-        { autoClose: false }
-      );
-  };
-
-  const renderContent = (metadata) => {
-    if (metadata.lastMessage?.type === "https://didcomm.org/webrtc/1.0/sdp") {
+  const renderContent = (lastMessage) => {
+    if (lastMessage?.data.type === "https://didcomm.org/webrtc/1.0/sdp") {
       return "Sent you an invite to connect.";
-    } else if (metadata.lastMessage?.type === "file-transfer-done") {
+    } else if (lastMessage?.data.type === "file-transfer-done") {
       return "File transfer.";
-    } else if (isJSON(metadata.lastMessage?.body.content)) {
-      const { filename, dataUri } = JSON.parse(
-        metadata.lastMessage?.body.content
-      );
+    } else if (isJSON(lastMessage?.data.body.content)) {
+      const { filename, dataUri } = JSON.parse(lastMessage?.data.body.content);
       if (filename && dataUri) {
         // definitely a file
         return "File transfer.";
       }
     } else {
-      return `${metadata.lastMessage?.body.content?.slice(0, 50)} ${
-        metadata.lastMessage?.body.content.length > 50 ? "..." : ""
+      return `${lastMessage?.data.body.content?.slice(0, 50)} ${
+        lastMessage?.data.body.content.length > 50 ? "..." : ""
       }`;
     }
   };
@@ -147,46 +103,53 @@ const MessagesTable = ({
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
           {conversations &&
-            Object.keys(conversations).map((did, i) => (
+            conversations.map(({ groupId, messages }, i) => (
               <tr
                 key={i}
                 className={`${
-                  unreadMessages[did] > 0 ? "bg-white" : "bg-gray-100"
+                  unreadMessages[groupId] > 0 ? "bg-white" : "bg-gray-100"
                 }`}
               >
                 <td
-                  onClick={() => goToConversation(did)}
+                  onClick={() => goToConversation(groupId)}
                   className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900"
                 >
                   <div className="flex items-center space-x-3 lg:pl-2">
                     <div className="truncate hover:text-gray-600 flex items-center">
-                      <BigHead
-                        key={i}
-                        className="h-10 w-10 pb-2"
-                        {...renderAvatar(did)}
-                      />
-                      <span className="text-gray-900 text-md font-semibold pr-5">
-                        {conversations[did].metadata.name || "Unknown"}
-                      </span>
-                      {unreadMessages[did] > 0 && (
+                      {getContactsByMessage({
+                        message: messages.slice(-1)[0],
+                        contacts: contactsRes?.data.contacts,
+                        myDid,
+                      }).map((contact, i) => (
+                        <Fragment key={i}>
+                          <ContactAvatar
+                            contact={contact}
+                            className="h-10 w-10 pb-2"
+                          />
+                          <span className="pl-2 text-gray-900 text-md font-semibold pr-5">
+                            {contact?.name}
+                          </span>
+                        </Fragment>
+                      ))}
+                      {unreadMessages[groupId] > 0 && (
                         <div className="flex items-center space-x-4 pr-4">
                           <div
                             className="bg-primary flex-shrink-0 w-2.5 h-2.5 rounded-full"
                             aria-hidden="true"
                           />
                           <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
-                            {unreadMessages[did]}
+                            {unreadMessages[groupId]}
                           </span>
                         </div>
                       )}
                       <span
                         className={`${
-                          unreadMessages[did] > 0
+                          unreadMessages[groupId] > 0
                             ? "font-semibold"
                             : "font-normal"
                         }`}
                       >
-                        {renderContent(conversations[did].metadata)}
+                        {renderContent(messages.slice(-1)[0])}
                       </span>
                     </div>
                   </div>
@@ -194,40 +157,43 @@ const MessagesTable = ({
                 <td className="px-6 py-3 text-sm text-gray-500 font-medium">
                   <div className="flex items-center space-x-2">
                     <div className="flex flex-shrink-0 -space-x-1">
-                      {conversations[did].metadata.participants.map(
-                        (did, i) => (
-                          <div key={i}>
-                            {did && (
-                              <BigHead
-                                key={i}
-                                className="h-6 w-6"
-                                {...renderAvatar(did)}
-                              />
-                            )}
-                          </div>
-                        )
-                      )}
+                      {getContactsByMessage({
+                        message: messages.slice(-1)[0],
+                        contacts: contactsRes?.data.contacts,
+                        myDid,
+                      }).map((contact, i) => (
+                        <Fragment key={i}>
+                          <ContactAvatar
+                            key={i}
+                            contact={contact}
+                            className="h-6 w-6"
+                          />
+                        </Fragment>
+                      ))}
                     </div>
                     <span className="flex-shrink-0 text-xs leading-5 font-medium">
-                      +{conversations[did].metadata.participants.length}
+                      +{messages.slice(-1)[0]?.recipients.length}
                     </span>
                   </div>
                 </td>
                 <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
                   {moment
-                    .unix(conversations[did].metadata.lastUpdated)
+                    .unix(messages.slice(-1)[0]?.data.created_time)
                     .fromNow()}
                 </td>
                 <td className="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex space-x-2">
-                    <button onClick={() => goToConversation(did)}>
+                    <button onClick={() => goToConversation(groupId)}>
                       <div className="text-indigo-800 hover:text-indigo-900">
                         View
                       </div>
                     </button>
                     <button
                       onClick={() =>
-                        deleteConversation(conversations[did].metadata.groupId)
+                        deleteConversation({
+                          groupId,
+                          deleteGroupMessage,
+                        })
                       }
                     >
                       <div className="text-red-800 hover:text-red-900">
@@ -244,7 +210,10 @@ const MessagesTable = ({
   );
 };
 
-const RequestsTable = ({ requests }) => {
+const NotificationsTable = ({ notifications }) => {
+  const { data: contactsRes } = useFetchContacts();
+  const { data: myDid } = useFetchMyDid();
+
   return (
     <>
       <table className="min-w-full">
@@ -260,11 +229,11 @@ const RequestsTable = ({ requests }) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
-          {requests.map((request, i) => (
+          {notifications?.map((notification, i) => (
             <tr
               key={i}
               className={`${
-                isNotificationExpired(JSON.parse(request.data).created_time)
+                isNotificationExpired(notification.data.created_time)
                   ? "bg-white"
                   : "bg-gray-100"
               } `}
@@ -272,45 +241,62 @@ const RequestsTable = ({ requests }) => {
               <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
                 <div className="flex items-center space-x-3 lg:pl-2">
                   <div className="flex flex-shrink-0 -space-x-1">
-                    <BigHead
-                      className="w-8 h-8"
-                      {...getContactAvatar(request.metadata.contact)}
-                    />
+                    {getContactsByMessage({
+                      message: notification,
+                      contacts: contactsRes?.data.contacts,
+                      myDid,
+                    }).map((contact, i) => (
+                      <Fragment key={i}>
+                        <ContactAvatar
+                          contact={contact}
+                          className="h-10 w-10 pb-2"
+                        />
+                        <span className="pl-2 text-gray-900 text-md font-semibold pr-5">
+                          {contact?.name}
+                        </span>
+                      </Fragment>
+                    ))}
                   </div>
                   <div href="#" className="truncate hover:text-gray-600">
                     <span
                       className={`${
-                        isNotificationExpired(
-                          JSON.parse(request.data).created_time
-                        )
+                        isNotificationExpired(notification.data.created_time)
                           ? "font-bold"
                           : "font-normal"
                       }`}
                     >
                       <span className="text-gray-500 font-normal">
-                        {request.metadata.contact &&
-                          request.metadata.contact.name}{" "}
-                        {`invited you to connect.`}
+                        {`${
+                          getContactByDid({
+                            shortFormDid: getShortFormId(
+                              notification.data.from
+                            ),
+                            contacts: contactsRes.data.contacts,
+                          }).name
+                        } invited you to connect`}
                       </span>
                     </span>
                   </div>
                 </div>
               </td>
               <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
-                {moment.unix(JSON.parse(request.data).created_time).fromNow()}
+                {moment.unix(notification.data.created_time).fromNow()}
               </td>
               <td className="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
                 <>
                   {/* For now let's set a 5 minute expiration data on invitations */}
-                  {isNotificationExpired(
-                    JSON.parse(request.data).created_time
-                  ) ? (
+                  {isNotificationExpired(notification.data.created_time) ? (
                     <button
                       onClick={() =>
                         confirmPeerInvite({
                           detail: {
-                            message: JSON.parse(request.data).body.content,
-                            knownContact: request.metadata.contact,
+                            message: notification.data.body.content,
+                            knownContact: getContactByDid({
+                              shortFormDid: getShortFormId(
+                                notification.data.from
+                              ),
+                              contacts: contactsRes.data.contacts,
+                            }),
                             sourceType: "didcomm",
                           },
                         })
@@ -377,10 +363,10 @@ const UsersTable = ({ peers, router }) => {
                       aria-hidden="true"
                     />
                   )}
-                  <BigHead
+                  <ContactAvatar
                     key={i}
+                    contact={peer.metadata.contact}
                     className="h-6 w-6"
-                    {...getContactAvatar(peer.metadata.contact)}
                   />
                   <div className="truncate hover:text-gray-600">
                     <span>
@@ -487,17 +473,12 @@ export default function Dashboard() {
   const router = useRouter();
 
   const [readMessages] = useAtom(readMessagesAtom);
-  const [myAvatar] = useAtom(myAvatarAtom);
   const [peers] = useAtom(peersAtom);
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
-
-  const { data: contactsRes } = useFetchContacts();
   const { data: myDid } = useFetchMyDid();
   const { data: messages } = useFetchMessages({
     myDid: myDid,
-    contacts: contactsRes?.data.contacts,
   });
-  const { mutate: deleteGroupMessage } = useDeleteGroupMessages();
 
   useEffect(() => {
     if (peers) {
@@ -513,12 +494,12 @@ export default function Dashboard() {
     if (messages) {
       const { conversations, notifications } = messages;
       if (conversations) {
-        Object.keys(conversations).map((did, i) => {
-          let c = conversations[did].messages.filter(
+        conversations.forEach((conversation) => {
+          let count = conversation.messages.filter(
             (m) => readMessages.indexOf(m.id) === -1
           ).length;
-          unreadMessageCount[did] = c;
-          unreadMessageCount["total"] += c;
+          unreadMessageCount[conversation.groupId] = count;
+          unreadMessageCount["total"] += count;
         });
       }
       if (notifications) {
@@ -648,19 +629,13 @@ export default function Dashboard() {
               <div className="align-middle inline-block min-w-full border-b border-gray-200">
                 {currentTable === "Messages" && (
                   <MessagesTable
-                    router={router}
-                    conversations={messages?.conversations}
                     unreadMessages={unreadMessages}
-                    contacts={contactsRes?.data.contacts}
-                    myDid={myDid}
-                    myAvatar={myAvatar}
-                    deleteGroupMessage={deleteGroupMessage}
+                    conversations={messages?.conversations}
                   />
                 )}
                 {currentTable === "Notifications" && (
-                  <RequestsTable
-                    requests={messages?.notifications.slice(-20)}
-                    contacts={contactsRes?.data.contacts}
+                  <NotificationsTable
+                    notifications={messages?.notifications.slice(-20)}
                   />
                 )}
                 {currentTable === "Connected Users" && (

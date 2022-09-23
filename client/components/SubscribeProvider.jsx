@@ -15,7 +15,11 @@ import {
   handleForwardedSignal,
   peers,
 } from "../utils/peers";
-import { useSendMessage, useSaveMessage } from "../hooks/messages";
+import {
+  useSendMessage,
+  useSaveMessage,
+  useFetchMessages,
+} from "../hooks/messages";
 import { useAtom } from "jotai";
 import {
   peersAtom,
@@ -66,6 +70,10 @@ const SubscribeProvider = ({ children }) => {
   const { mutate: saveBasicMessage } = useSaveMessage();
   const { data: contactsRes } = useFetchContacts();
   const { data: myDid } = useFetchMyDid();
+  const { data: messages } = useFetchMessages({
+    myDid: myDid,
+    contacts: contactsRes?.data.contacts,
+  });
 
   const router = useRouter();
   // adding router to useCallback triggers infinite loop, using ref instead
@@ -118,12 +126,31 @@ const SubscribeProvider = ({ children }) => {
   // acceptInvite is a handler function to create and send peer responses (SDP offers) back to accepted invitations
   const acceptInvite = useCallback(
     ({ detail: { message, knownContact, stream, sourceType } }) => {
-      const { networkId, networkOwner, signal, src, type } = message;
+      const {
+        networkId,
+        networkOwner,
+        signal,
+        src,
+        type,
+        currentConversation,
+      } = message;
       const currentPeer = peers.find(
         (peer) =>
           peer.metadata.dest === knownContact.did &&
           peer.metadata.networkId === networkId
       );
+
+      const getGroupIdFromContact = (contact) => {
+        // TODO: get rid of this function to support group messages
+        if (messages) {
+          let message = messages?.conversations.find((convo) =>
+            convo.messages.find((m) => m.recipients?.includes(contact.did))
+          );
+          if (message) {
+            return message.groupId;
+          }
+        }
+      };
 
       // there cannot be a duplicate peer on the same network, prevents duplicate webrtc answers clashing
       if (currentPeer && sourceType !== "webrtc") {
@@ -160,8 +187,11 @@ const SubscribeProvider = ({ children }) => {
       }
       if (type === "live-messaging-invitation") {
         // setcurrent converssation
-        setCurrentConversation(knownContact);
-        routerRef.current.push("/d/chat");
+
+        setCurrentConversation(getGroupIdFromContact(knownContact));
+        if (router.pathname !== "/d/chat") {
+          routerRef.current.push("/d/chat");
+        }
       }
     },
     [
@@ -173,6 +203,8 @@ const SubscribeProvider = ({ children }) => {
       setCurrentLiveDocId,
       setLocalStream,
       setCurrentVideoCallId,
+      messages,
+      router.pathname,
     ]
   );
 

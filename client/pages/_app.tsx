@@ -6,10 +6,20 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import Auth from "../components/Auth";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallback from "../components/ErrorFallback";
+import { Auth0Provider } from "@auth0/auth0-react";
+import auth0Config from "../auth0_config.json";
+import { useRouter } from "next/router";
+import { Amplify } from "aws-amplify";
+import awsExports from "../aws-exports";
+import ApolloWrapper from "../components/ApolloWrapper";
 
 import "../styles.css";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import "@algolia/autocomplete-theme-classic";
+import "../components/navigation/autocomplete.css";
+
+Amplify.configure(awsExports);
 
 const queryClient = new QueryClient();
 
@@ -23,6 +33,27 @@ const SafeHydrate = ({ children }) => {
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+  const onRedirectCallback = (appState) => {
+    const { pathname } = appState;
+    router.push({
+      pathname,
+    });
+  };
+
+  let redirectUri = "";
+  if (typeof window !== "undefined") {
+    redirectUri = window.location.origin;
+  }
+
+  const auth0ProviderConfig = {
+    domain: auth0Config.domain,
+    clientId: auth0Config.clientId,
+    audience: auth0Config.audience,
+    redirectUri: redirectUri,
+    onRedirectCallback,
+  };
+
   return (
     <>
       <SafeHydrate>
@@ -33,7 +64,14 @@ function MyApp({ Component, pageProps }: AppProps) {
               FallbackComponent={ErrorFallback}
               onReset={() => console.log("resetting")}
             >
-              <Component {...pageProps} />
+              <Auth0Provider
+                {...auth0ProviderConfig}
+                cacheLocation="localstorage"
+              >
+                <ApolloWrapper>
+                  <Component {...pageProps} />
+                </ApolloWrapper>
+              </Auth0Provider>
             </ErrorBoundary>
           </Auth>
           <ReactQueryDevtools initialIsOpen={false} position="top-left" />

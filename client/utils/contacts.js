@@ -1,6 +1,10 @@
 import { request } from "./axios-utils";
+import { gql } from "@apollo/client";
 
 // Utility functions for the contacts management
+export const ALGOLIA_ID = "2AT1J9F6CY";
+export const ALGOLIA_API_KEY = "87c6424da600d8a843e353e17b27ecfa"; // not a sensitive token, just the public Algolia Search-Only API Key
+export const ALGOLIA_DID_INDEX = "did_registry";
 
 // Used to generate random avatars using bighead.io
 const bigHeadAttributes = {
@@ -61,12 +65,14 @@ export const addContact = (data) => {
   //     didDocument - didDocument of the contact
   //     name - supply a name/nickname for the contact
   // }
-  const { didDocument, name, myDid } = data;
+  const { didDocument, name, myDid, twitterUsername, avatarUrl } = data;
   // each new contact gets a generated, random bighead avatar.
   const randomAvatar = getRandomAvatar();
-  const initialMetadata = {
+  const metadata = JSON.stringify({
     avatar: randomAvatar,
-  };
+    twitterUsername: twitterUsername || "",
+    avatarUrl: avatarUrl || "",
+  });
   return request({
     url: "/v1/contacts/create",
     method: "post",
@@ -76,7 +82,7 @@ export const addContact = (data) => {
         didDocument: JSON.stringify(didDocument),
         name,
         userDID: myDid.id,
-        metadata: JSON.stringify(initialMetadata),
+        metadata,
       },
     },
     headers: {
@@ -86,8 +92,17 @@ export const addContact = (data) => {
 };
 
 export const updateContact = (data) => {
-  const { longFormDid, name, existingContact, avatar } = data;
+  const {
+    longFormDid,
+    name,
+    existingContact,
+    avatar,
+    twitterUsername,
+    avatarUrl,
+  } = data;
   const updatedContact = existingContact;
+  if (twitterUsername) updatedContact = { ...updatedContact, twitterUsername };
+  if (avatarUrl) updatedContact = { ...updatedContact, avatarUrl };
   if (name) updatedContact = { ...updatedContact, name };
   if (longFormDid) updatedContact = { ...updatedContact, did: longFormDid };
   if (avatar) {
@@ -139,14 +154,49 @@ export const getRandomAvatar = () => {
   return result;
 };
 
-// the avatar attributes are stored in the DB as a stringified JSON object, need to return
-// the real object
-export const getContactAvatar = (contact) => {
-  if (contact) {
-    return contact.metadata.length > 0
-      ? JSON.parse(contact.metadata).avatar
-      : {};
-  } else {
-    return {};
+export const GET_DID_BY_TWITTER = gql`
+  query getDIDByTwitter($twitterUsername: String!) {
+    listDIDS(filter: { twitterUsername: { eq: $twitterUsername } }, limit: 1) {
+      items {
+        avatarUrl
+        id
+        lastUpdated
+        longFormDid
+        shortFormDid
+        name
+        twitterUsername
+      }
+    }
   }
+`;
+
+// getContactByDid will attempt to return a contact associated with the given did. If there is not a saved contact,
+// we will return an unknown contact object instead
+// TODO: perform automatic lookups in algolia for the contact, if the contact is not saved
+export const getContactByDid = ({ shortFormDid, contacts }) => {
+  let c = contacts.find((contact) => contact.did === shortFormDid);
+  if (!c) {
+    return {
+      did: shortFormDid,
+      name: "Unknown",
+      hasContacts: false,
+      metadata: JSON.stringify({
+        avatar: getRandomAvatar(),
+        avatarUrl: "",
+      }),
+    };
+  }
+  return c;
+};
+
+// getContactsbyMessage returns a list of contacts (excluding you) per recipient (did) that are in a given messsage
+// if the recipient does not have a saved contact, we return an "unknown contact"
+// TODO: perform automatic lookups in algolia for the contact, if the contact is not saved yet
+export const getContactsByMessage = ({ message, contacts, myDid }) => {
+  let f = message.recipients.filter((r) => r !== myDid.id);
+  return f.map((recipient) => {
+    if (recipient !== myDid.id) {
+      return getContactByDid({ shortFormDid: recipient, contacts });
+    }
+  });
 };

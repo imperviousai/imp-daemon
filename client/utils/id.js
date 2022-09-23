@@ -1,5 +1,7 @@
 import { request } from "./axios-utils";
 
+export const getShortFormId = (did) => did.split("?")[0];
+
 // Utility functions for ID management
 export const fetchDids = () => {
   return request({

@@ -1,0 +1,9 @@
+type DID @model @auth(rules: [{ allow: private, provider: oidc }]) {
+  id: ID!
+  twitterUsername: String!
+  longFormDid: String!
+  shortFormDid: String
+  avatarUrl: String
+  lastUpdated: AWSTimestamp
+  name: String
+}

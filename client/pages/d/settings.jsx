@@ -1,22 +1,11 @@
 import { useState, useEffect } from "react";
 import { Switch } from "@headlessui/react";
-import {
-  BellIcon,
-  CogIcon,
-  KeyIcon,
-  LinkIcon,
-  PhotographIcon,
-  RefreshIcon,
-} from "@heroicons/react/outline";
+import { LinkIcon, PhotographIcon } from "@heroicons/react/outline";
 import { ChevronLeftIcon } from "@heroicons/react/solid";
 import MainNavigation from "../../components/MainNavigation";
-import { BigHead } from "@bigheads/core";
-import { useAtom } from "jotai";
-import { myAvatarAtom } from "../../stores/settings";
-import { getRandomAvatar } from "../../utils/contacts";
-import { resolveDid } from "../../utils/id";
-import { useFetchMyDid } from "../../hooks/id";
 import RelayLightningSettings from "../../components/settings/RelayLightningSettings";
+import { useRouter } from "next/router";
+import IdentitySettings from "../../components/settings/IdentitySettings";
 
 const subNavigation = [
   // {
@@ -125,147 +114,6 @@ const SecuritySettings = () => {
           </button>
         </div>
       </div>
-    </div>
-  );
-};
-
-const IdentitySettings = () => {
-  const [showAvatarSave, setShowAvatarSave] = useState(false);
-  const [currentAvatar, setCurrentAvatar] = useState({});
-
-  const [myAvatar, setMyAvatar] = useAtom(myAvatarAtom);
-
-  const { data: myDid } = useFetchMyDid();
-
-  const [longFormDid, setLongFormDid] = useState("");
-
-  useEffect(() => {
-    if (myDid) {
-      resolveDid(myDid.id)
-        .then((res) => {
-          setLongFormDid(res.data.longFormDid);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [myDid]);
-
-  useEffect(() => {
-    setCurrentAvatar(myAvatar);
-  }, [myAvatar]);
-
-  const handleAvatarRotation = () => {
-    setShowAvatarSave(true);
-    setCurrentAvatar({ ...getRandomAvatar() });
-  };
-
-  const cancelAvatarSave = () => {
-    setShowAvatarSave(false);
-    setCurrentAvatar(myAvatar);
-  };
-
-  const saveNewAvatar = () => {
-    setMyAvatar(currentAvatar);
-    setShowAvatarSave(false);
-  };
-
-  return (
-    <div className="max-w-3xl mx-auto py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
-      <h1 className="text-3xl font-extrabold text-blue-gray-900">Identity</h1>
-
-      <form className="mt-6 space-y-8 divide-y divide-y-blue-gray-200">
-        <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-6 sm:gap-x-6">
-          <div className="sm:col-span-6">
-            <h2 className="text-xl font-medium text-blue-gray-900">Profile</h2>
-            <p className="mt-1 text-sm text-blue-gray-500">
-              Manage your decentalized identity from this section.
-            </p>
-          </div>
-
-          <div className="sm:col-span-6">
-            <label
-              htmlFor="photo"
-              className="block text-sm font-medium text-blue-gray-900"
-            >
-              Photo
-            </label>
-            <div className="pb-12 flex flex-col items-center">
-              <div className="flex flex-col items-center">
-                <BigHead
-                  {...currentAvatar}
-                  className="h-32 w-full object-cover lg:h-48"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleAvatarRotation()}
-                  className="pt-2"
-                >
-                  <RefreshIcon
-                    className="-ml-1 mr-2 h-6 w-6 text-gray-900"
-                    aria-hidden="true"
-                  />
-                </button>
-                {showAvatarSave && (
-                  <div className="flex space-x-2 pt-4">
-                    <button
-                      type="button"
-                      onClick={() => cancelAvatarSave()}
-                      className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => saveNewAvatar()}
-                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Save
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="sm:col-span-6">
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-blue-gray-900"
-            >
-              Decentralized Identifier
-            </label>
-            <div className="mt-1">
-              <textarea
-                id="description"
-                name="description"
-                disabled
-                rows={4}
-                className="block w-full border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-primary focus:border-blue-500"
-                defaultValue={longFormDid}
-              />
-            </div>
-            <p className="mt-3 text-sm text-blue-gray-500">
-              This is the long form decentralized identity that you share with
-              your connections.
-            </p>
-          </div>
-        </div>
-        <div className="pt-8 flex justify-end">
-          <button
-            type="button"
-            className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-blue-gray-900 hover:bg-blue-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-          >
-            Save
-          </button>
-        </div>
-      </form>
     </div>
   );
 };
@@ -433,6 +281,8 @@ const NotificationSettings = () => {
 
 export default function Settings() {
   const [settingsPage, setSettingsPage] = useState("Relay & Lightning");
+  const router = useRouter();
+
   return (
     <>
       <MainNavigation currentPage={pageTitle}>

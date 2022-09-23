@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import localforage from "localforage";
-import { currentConversationAtom } from "./messages";
+import { currentConversationContactAtom } from "./messages";
 
 // primitive atom to represent the user's local stream if available
 export const localStreamAtom = atom();
@@ -124,9 +124,9 @@ export const activeVideoMessagesAtom = atom((get) =>
 
 // derived atom to grab the peer connection that matches the currentConversationAtom, if either exists
 export const currentConversationPeerAtom = atom((get) => {
-  if (get(currentConversationAtom) && get(peersAtom).length > 0) {
+  if (get(currentConversationContactAtom) && get(peersAtom).length > 0) {
     const peer = get(peersAtom).find(
-      (p) => p.metadata.contact.did === get(currentConversationAtom).did
+      (p) => p.metadata.contact?.did === get(currentConversationContactAtom).did
     );
     if (peer) {
       return peer;
