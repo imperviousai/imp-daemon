@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "impextension",
+    "serviceName": "AppSync",
+    "defaultAuthType": {
+      "mode": "OPENID_CONNECT",
+      "openIDProviderName": "Auth0Provider",
+      "openIDIssuerURL": "https://dev-m-xk8f0l.us.auth0.com/",
+      "openIDClientID": "LB8Jfodmi9leeheiI2OOgSO1Ajjf8auG",
+      "openIDAuthTTL": "0",
+      "openIDIatTTL": "0"
+    }
+  }
+}

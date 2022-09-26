@@ -83,6 +83,7 @@ func DefaultConfig() Config {
 			GrpcAddr:    "127.0.0.1:8881",
 			HttpAddr:    "127.0.0.1:8882",
 			HttpDIDAddr: "127.0.0.1:8883",
+			ClientAddr:  "127.0.0.1:8080",
 		},
 		Sql: Sql{
 			ConnectionString: fmt.Sprintf("file:%s?_auth&_auth_user=admin&_auth_pass=supersecretpassword&_auth_crypt=sha256", sqlPath),
@@ -150,6 +151,7 @@ type Server struct {
 	GrpcAddr    string `yaml:"grpc_addr"`
 	HttpAddr    string `yaml:"http_addr"`
 	HttpDIDAddr string `yaml:"http_did_addr"`
+	ClientAddr  string `yaml:"client_addr"`
 }
 
 type ION struct {

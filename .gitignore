@@ -25,4 +25,5 @@ vendor/
 local.config.yml
 imp.db*
 config/*.config.yml
-.idea
+.idea/*
+main

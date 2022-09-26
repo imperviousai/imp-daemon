@@ -2,7 +2,6 @@
 
 ## Running
 
-
 Install go libaries you might not have
 
 ```
@@ -15,6 +14,14 @@ This starts the deamon/server and all the services. Go into `config/config.yml` 
 
 ```
 go run cmd/impd/main.go
+```
+
+### UI
+
+This builds and exports the UI into a static SPA so that the daemon can serve it. Be sure to run the follow prior to `go run cmd/impd/main.go` if you want it.
+
+```
+cd client && yarn && yarn export
 ```
 
 ### CLI
@@ -90,16 +97,16 @@ docker push teamimp/imp-daemon:{version}
 
 A few additional dependencies needed for day to day development. Mostly around protobuf. The Makefile attempts to install a few things but some additional things are needed.
 
-
 Run the makefile dependencies installation
+
 ```
 make dep
 ```
 
 This will install some things but not all. Figuring out how to put some of these into the makefile would be a nice to have.
 
-
 Install protoc-gen-grpc-web:
+
 ```
 npm install -g protoc-gen-grpc-web
 ```
@@ -111,6 +118,7 @@ curl https://sh.rustup.rs -sSf | sh
 ```
 
 Install protoc-gen-rust
+
 ```
 cargo install protoc-gen-rust
 ```
@@ -122,11 +130,13 @@ rustup default nightly && rustup update
 ```
 
 Install protobuf-codegen
+
 ```
 cargo install protobuf-codegen
 ```
 
 Add rust executables to your environment path (zsh,bash, etc):
+
 ```
 PATH="$HOME/.cargo/bin:$PATH"
 ```
@@ -159,13 +169,11 @@ Code coverage test with:
 go test -race -covermode=atomic -coverprofile=coverage.out ./...
 ```
 
-
 View code coverage results:
 
 ```
 go tool cover -html=coverage.out
 ```
-
 
 ### Testing Tools
 
@@ -198,7 +206,6 @@ git push -u origin {branch-name}
 ```
 
 3. Create the release on github, tag it with the next version number.
-
 
 4. Create & push the docker image:
 

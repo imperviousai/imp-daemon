@@ -1,0 +1,16 @@
+{
+  "addons": {
+    "{fb005b54-5431-46cc-a3b2-7b6291bbf7cd}": {
+      "updates": [
+        {
+          "version": "0.1.0",
+          "update_link": "https://github.com/imperviousai/imp-extension/releases/download/0.1.0-alpha/impervious-plugin-0.1.0.xpi"
+        },
+        {
+          "version": "0.1.1",
+          "update_link": "https://github.com/imperviousai/imp-extension/releases/download/0.1.1-alpha/impervious-plugin-0.1.1.xpi"
+        }
+      ]
+    }
+  }
+}

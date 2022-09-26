@@ -4,6 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
+	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/ipfs"
+	"go.uber.org/zap"
+	"io/fs"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -17,7 +21,6 @@ import (
 	config_server "github.com/imperviousai/imp-daemon/server/config"
 	contacts_server "github.com/imperviousai/imp-daemon/server/contacts"
 	id_server "github.com/imperviousai/imp-daemon/server/id"
-	ipfs_server "github.com/imperviousai/imp-daemon/server/ipfs"
 	key_server "github.com/imperviousai/imp-daemon/server/key"
 	lightning_server "github.com/imperviousai/imp-daemon/server/lightning"
 	message_server "github.com/imperviousai/imp-daemon/server/message"
@@ -26,14 +29,15 @@ import (
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
 
+	"embed"
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/runtime/middleware"
+	filemux "github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	auth_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/auth"
 	config_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/config"
 	contacts_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/contacts"
 	id_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/id"
-	ipfs_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/ipfs"
 	key_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/key"
 	lightning_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/lightning"
 	messaging_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/messaging"
@@ -43,17 +47,20 @@ import (
 	config_openapi "github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/config"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/contacts"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/id"
-	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/ipfs"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/key"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/lightning"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/messaging"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/relay"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/websocket"
 	"github.com/tmc/grpc-websocket-proxy/wsproxy"
-	"go.uber.org/zap"
 )
 
 var configPath = flag.String("config", "", "The path of the config file")
+
+// this path must be inside cmd/impd/
+//
+//go:embed all:out/*
+var content embed.FS
 
 func main() {
 	flag.Parse()
@@ -81,12 +88,12 @@ func main() {
 
 	var grpcServer *grpc.Server
 	var httpProxy *http.Server
+	var fileServer *http.Server
 
 	// Graceful shutdowns
 	var wg sync.WaitGroup
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, os.Interrupt)
-
 	for {
 		if !shouldRestart {
 			zap.L().Info("Daemon restart was not requested, shutting down...")
@@ -122,7 +129,6 @@ func main() {
 				}
 				grpcServer = grpc.NewServer(serverOpts...)
 				messaging_proto.RegisterMessagingServer(grpcServer, message_server.NewMessagingServer(ctx.Core))
-				ipfs_proto.RegisterIPFSServer(grpcServer, ipfs_server.NewIPFSServer(ctx.Core))
 				relay_proto.RegisterRelayServer(grpcServer, relay_server.NewRelayServer(ctx.Core))
 				contacts_proto.RegisterContactsServer(grpcServer, contacts_server.NewContactsServer(ctx.Core))
 				auth_proto.RegisterAuthServer(grpcServer, auth_server.NewAuthServer(ctx.Core))
@@ -150,10 +156,7 @@ func main() {
 				if err != nil {
 					zap.L().Error(err.Error())
 				}
-				err = ipfs_proto.RegisterIPFSHandlerFromEndpoint(ctxProxy, mux, globalConfig.GetConfig().Server.GrpcAddr, opts)
-				if err != nil {
-					zap.L().Error(err.Error())
-				}
+
 				err = relay_proto.RegisterRelayHandlerFromEndpoint(ctxProxy, mux, globalConfig.GetConfig().Server.GrpcAddr, opts)
 				if err != nil {
 					zap.L().Error(err.Error())
@@ -193,6 +196,19 @@ func main() {
 					ReadHeaderTimeout: 10 * time.Second,
 				}
 				injectSpecsMiddleware(httpProxy)
+
+				r := filemux.NewRouter()
+				serverRoot, err := fs.Sub(content, "out") //creates a filesystem under a subdir
+				if err != nil {
+					log.Fatal(err)
+				}
+				r.PathPrefix("").Handler(http.StripPrefix("", http.FileServer(http.FS(serverRoot))))
+
+				fileServer = &http.Server{
+					Addr:              globalConfig.GetConfig().Server.ClientAddr,
+					Handler:           r,
+					ReadHeaderTimeout: 10 * time.Second,
+				}
 
 				wg.Add(2)
 
@@ -235,6 +251,16 @@ func main() {
 			}
 			// Webserver started..
 
+			wg.Add(1) // for static web server
+			go func() {
+				defer wg.Done()
+				zap.L().Debug("Starting static file server")
+				err := fileServer.ListenAndServe()
+				if err != nil {
+					zap.L().Error(err.Error())
+				}
+			}()
+
 			wg.Add(1) // for core
 
 			zap.L().Info("IMPD started!")
@@ -258,6 +284,13 @@ func main() {
 					// Ideally a graceful stop, but need to shut down
 					// the grpc subscriber
 					grpcServer.Stop()
+
+					// Shutdown FileServer
+					zap.L().Debug("Shutting down fileserver")
+					err := fileServer.Shutdown(context.Background())
+					if err != nil {
+						zap.L().Error(err.Error())
+					}
 
 					// Shutdown http didcomm
 					if ctx.HttpDIDComm != nil {
