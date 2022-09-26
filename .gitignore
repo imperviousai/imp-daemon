@@ -26,5 +26,7 @@ local.config.yml
 imp.db*
 config/*.config.yml
 .idea/*
-
+.next/
+client/out/
 main
+cmd/impd/out/
