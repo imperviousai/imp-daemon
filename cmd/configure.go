@@ -14,7 +14,6 @@ import (
 	"github.com/imperviousai/imp-daemon/contacts"
 	"github.com/imperviousai/imp-daemon/core"
 	"github.com/imperviousai/imp-daemon/id"
-	"github.com/imperviousai/imp-daemon/ipfs"
 	"github.com/imperviousai/imp-daemon/key"
 	"github.com/imperviousai/imp-daemon/lightning"
 	"github.com/imperviousai/imp-daemon/lightning/node"
@@ -35,7 +34,6 @@ type ConfigureContext struct {
 	// Global things that don't need to be hot reloaded typically
 	KeyManager key.KeyManager
 	DB         state.DBManager
-	IPFS       ipfs.IPFS
 }
 
 func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext) *ConfigureContext {
@@ -46,7 +44,6 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 
 	// If being reloaded, transfer previous global contexts
 	var keyManager key.KeyManager
-	var ipfsSvc ipfs.IPFS
 	var db state.DBManager
 	if prevContext != nil {
 		if prevContext.DB != nil {
@@ -55,9 +52,7 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 		if prevContext.KeyManager != nil {
 			keyManager = prevContext.KeyManager
 		}
-		if prevContext.IPFS != nil {
-			ipfsSvc = prevContext.IPFS
-		}
+
 	}
 
 	// setup didcomm http server
@@ -194,18 +189,6 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 		zap.L().Panic(err.Error())
 	}
 
-	// Setup IPFS - 15 Sep 2022 - markcryptohash - disabled IPFS because we no longer need it.
-	// Setup IPFS - 15 Sep 2022 - stewIMP - Added config option to disable instead
-	if ipfsSvc == nil && cfg.IPFS.Active {
-		zap.L().Debug("[Cfg] Setting up IPFS")
-		ipfsSvc, err = ipfs.SetupIPFS(&ipfs.Config{
-			DirectoryPath: cfg.IPFS.Directory,
-		})
-		if err != nil {
-			zap.L().Panic(err.Error())
-		}
-	}
-
 	// Setup Contacts manager
 	zap.L().Debug("[Cfg] Setting up Contacts")
 	contactsManager, err := contacts.New(&contacts.Config{
@@ -230,7 +213,6 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 		ServiceHandler:   serviceHandler,
 		LightningManager: lightningManager,
 		Id:               identity,
-		IPFS:             ipfsSvc,
 		KeyManager:       keyManager,
 		ContactsManager:  contactsManager,
 		MessageManager:   messagesManager,
@@ -247,7 +229,6 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 		KeyManager:  keyManager,
 		Auth:        authService,
 		DB:          db,
-		IPFS:        ipfsSvc,
 		Websocket:   ws,
 		HttpDIDComm: httpDIDCommServer,
 	}

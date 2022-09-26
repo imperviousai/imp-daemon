@@ -8,7 +8,6 @@ import (
 	"github.com/imperviousai/imp-daemon/config"
 	"github.com/imperviousai/imp-daemon/contacts"
 	"github.com/imperviousai/imp-daemon/id"
-	"github.com/imperviousai/imp-daemon/ipfs"
 	"github.com/imperviousai/imp-daemon/key"
 	"github.com/imperviousai/imp-daemon/lightning"
 	"github.com/imperviousai/imp-daemon/messages"
@@ -92,19 +91,6 @@ type Core interface {
 	UpdateDID(document string) (*id.DIDUpdateInfo, error)
 
 	//
-	// IPFS Commands
-	//
-
-	// AddFile will add data to a file and pin to IPFS to return it's CID
-	AddFile(data []byte, name string, updatable bool) (string, error)
-
-	// RetrieveFile will retrieve a file from IPFS
-	RetrieveFile(cid string) ([]byte, error)
-
-	// ListFiles will retrieve a list of files from IPFS
-	ListFiles() ([]string, error)
-
-	//
 	// Relay Commands
 	//
 
@@ -175,7 +161,6 @@ type core struct {
 	serviceHandler   service.Handler
 	lightningManager lightning.LightningManager
 	id               id.Identity
-	ipfs             ipfs.IPFS
 	keyManager       key.KeyManager
 	dbManager        state.DBManager
 	contactsManager  contacts.Contacts
@@ -189,7 +174,6 @@ type Config struct {
 	ServiceHandler   service.Handler
 	LightningManager lightning.LightningManager
 	Id               id.Identity
-	IPFS             ipfs.IPFS
 	KeyManager       key.KeyManager
 	DBManager        state.DBManager
 	ContactsManager  contacts.Contacts
@@ -204,7 +188,6 @@ func NewImpCore(cfg *Config) (Core, error) {
 		serviceHandler:   cfg.ServiceHandler,
 		lightningManager: cfg.LightningManager,
 		id:               cfg.Id,
-		ipfs:             cfg.IPFS,
 		keyManager:       cfg.KeyManager,
 		dbManager:        cfg.DBManager,
 		contactsManager:  cfg.ContactsManager,
@@ -251,15 +234,6 @@ func (c *core) Stop() error {
 		return err
 	}
 	zap.L().Debug("[Core] service handler stopped")
-
-	// Stop IPFS
-	if c.ipfs != nil {
-		zap.L().Debug("[Core] Stopping IPFS")
-		if err := c.ipfs.Stop(); err != nil {
-			zap.L().Error("[Core] IPFS failed to stop", zap.String("error", err.Error()))
-		}
-		zap.L().Debug("[Core] IPFS stoppped")
-	}
 
 	// Stop DIDComm
 	if c.didComm != nil {
