@@ -7,7 +7,7 @@
     "start": "next start",
     "lint": "next lint",
     "bundle": "./build_extension.sh",
-    "export": "next build && next export"
+    "export": "next build && next export -o ../cmd/impd/out"
   },
   "dependencies": {
     "@algolia/autocomplete-js": "^1.7.1",
