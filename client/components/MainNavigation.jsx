@@ -240,8 +240,13 @@ const TwitterConnect = () => {
   const [, setAuth0Token] = useAtom(auth0TokenAtom);
   const router = useRouter();
 
-  const { user, isAuthenticated, loginWithRedirect, getAccessTokenSilently } =
-    useAuth0();
+  const {
+    user,
+    isAuthenticated,
+    loginWithRedirect,
+    getAccessTokenSilently,
+    loginWithPopup,
+  } = useAuth0();
 
   useEffect(() => {
     const getToken = async () => {
@@ -258,19 +263,12 @@ const TwitterConnect = () => {
     returnUrl = window.location.origin;
   }
 
-  const redirectAppState = {
-    appState: {
-      targetUrl: returnUrl,
-      pathname: router.pathname,
-    },
-  };
-
   return (
     <>
       {!isAuthenticated ? (
         <button
           type="button"
-          onClick={() => loginWithRedirect(redirectAppState)}
+          onClick={() => loginWithPopup()}
           className="text-white bg-blue-400 hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-400/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
         >
           <svg
