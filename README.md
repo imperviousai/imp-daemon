@@ -21,7 +21,7 @@ go run cmd/impd/main.go
 This builds and exports the UI into a static SPA so that the daemon can serve it. Be sure to run the follow prior to `go run cmd/impd/main.go` if you want it.
 
 ```
-cd client && yarn export
+cd client && yarn && yarn export
 ```
 
 ### CLI
