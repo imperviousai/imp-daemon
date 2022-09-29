@@ -514,7 +514,7 @@ const ListContacts = ({
 
 // TODO: this component needs to merge with client/components/meeting/ConversationFooter. DRY
 const ConversationFooter = ({ sendBasicMessage, myDid }) => {
-  const chunkSize = 1048576 * 3; //its 3MB, increase the number measure in mb
+  const chunkSize = 1000 * 16; //its 12KB, increase the number measure in mb
   const [msg, setMsg] = useState("");
   const [fileInput, setFileInput] = useState();
   const [counter, setCounter] = useState(1);
@@ -568,10 +568,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
     if (counter <= chunkCount) {
       const { name, type } = sendingFile;
       var chunk = sendingFile.slice(startingChunk, endingChunk);
-      sendWebRTC(
-        { name, type, id: fileId, data: chunk },
-        "file-transfer-chunk"
-      );
+      sendWebRTC({ id: fileId, data: chunk }, "file-transfer-chunk");
       setStartingChunk(endingChunk);
       setEndingChunk(endingChunk + chunkSize);
       if (counter == chunkCount) {
@@ -609,9 +606,17 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
   };
 
   const sendWebRTC = (data, type) => {
+    if (type === "file-transfer-chunk") {
+      const p = new Blob([data.id, data.data]);
+
+      p.arrayBuffer().then((b) => {
+        currentConversationPeer?.peer.write(encode(b));
+      });
+      return;
+    }
     const networkId =
-      currentConversationPeer.metadata.networkId !== currentVideoCallId
-        ? currentConversationPeer.metadata.networkId
+      currentConversationPeer?.metadata.networkId !== currentVideoCallId
+        ? currentConversationPeer?.metadata.networkId
         : null;
     const header = {
       timestamp: new Date().toString(),
@@ -622,7 +627,8 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
     };
     const payload =
       type === "live-message" ? { msg: data, ...header } : { data, ...header };
-    currentConversationPeer.peer.write(JSON.stringify(payload));
+
+    currentConversationPeer?.peer.write(JSON.stringify(payload));
   };
 
   const completeFileSending = () => {
