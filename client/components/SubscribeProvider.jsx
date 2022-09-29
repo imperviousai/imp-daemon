@@ -99,25 +99,27 @@ const SubscribeProvider = ({ children }) => {
   };
 
   const addFileChunk = useCallback(
-    ({ name, type, id, data: chunk }) => {
-      if (type.split("/")[0] === "image") {
-        // handle images chunk differently
-        setPeerFiles((prev) => {
-          if (prev.find((f) => f?.id === id)) {
-            return prev.map((f) => {
-              if (f?.id === id) {
-                f.chunks.push(chunk);
-                return f;
-              }
-            });
-          } else {
-            prev.push({ type, id, name, chunks: [chunk] });
-            return prev;
-          }
-        });
-      } else {
-        filesWorker.current.postMessage({ name, type, id, chunk });
-      }
+    (data) => {
+      const chunk = decode(String.fromCharCode(...data));
+      filesWorker.current.postMessage({ chunk: new Blob([chunk]) });
+      // if (type.split("/")[0] === "image") {
+      //   // handle images chunk differently
+      //   setPeerFiles((prev) => {
+      //     if (prev.find((f) => f?.id === id)) {
+      //       return prev.map((f) => {
+      //         if (f?.id === id) {
+      //           f.chunks.push(chunk);
+      //           return f;
+      //         }
+      //       });
+      //     } else {
+      //       prev.push({ type, id, name, chunks: [chunk] });
+      //       return prev;
+      //     }
+      //   });
+      // } else {
+      //   filesWorker.current.postMessage({ name, type, id, chunk });
+      // }
     },
     [setPeerFiles]
   );

@@ -21,14 +21,20 @@ self.addEventListener("message", (event) => {
       files = [];
     }
   } else {
-    const f = files.find((f) => f.id === id);
-    if (f) {
-      f.chunks.push(chunk);
-      files = files.map((file) => {
-        return file.id === f.id ? f : file;
+    chunk
+      .slice(0, 36)
+      .text()
+      .then((id) => {
+        let fileChunk = chunk.slice(36, chunk.size);
+        const f = files.find((f) => f.id === id);
+        if (f) {
+          f.chunks.push(fileChunk);
+          files = files.map((file) => {
+            return file.id === f.id ? f : file;
+          });
+          return;
+        }
+        files = [...files, { id, chunks: [chunk] }];
       });
-      return;
-    }
-    files = [...files, { name, type, id, chunks: [chunk] }];
   }
 });
