@@ -99,8 +99,7 @@ const SubscribeProvider = ({ children }) => {
   };
 
   const addFileChunk = useCallback(
-    ({ name, type, id, data }) => {
-      const chunk = decode(data);
+    ({ name, type, id, data: chunk }) => {
       if (type.split("/")[0] === "image") {
         // handle images chunk differently
         setPeerFiles((prev) => {

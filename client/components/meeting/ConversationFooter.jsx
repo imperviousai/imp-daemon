@@ -1,22 +1,81 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ArrowCircleRightIcon, XIcon } from "@heroicons/react/solid";
 import { toast } from "react-toastify";
 import FileUploader from "../FileUploader";
 import SelectedFileInput from "../SelectedFileInput";
-import { encode } from "base64-arraybuffer";
 import useAutosizeTextArea from "../../components/useAutosizeTextArea";
+import { v4 as uuidv4 } from "uuid";
 
 //  this needs to be reworked with flex grow
 const ConversationFooter = ({ sendPeerMessage, peers }) => {
+  const chunkSize = 1048576 * 3; //its 3MB, increase the number measure in mb
   const [messageInput, setMessageInput] = useState("");
-  const [fileInput, setFileInput] = useState([]);
+  const [fileInput, setFileInput] = useState();
+  const [counter, setCounter] = useState(1);
+  const [sendingFile, setSendingFile] = useState({});
+  const [startingChunk, setStartingChunk] = useState(0);
+  const [endingChunk, setEndingChunk] = useState(chunkSize);
+  const [progress, setProgress] = useState(0);
+  const [fileId, setFileId] = useState("");
+  const [fileSize, setFileSize] = useState(0);
+  const [chunkCount, setChunkCount] = useState(0);
 
   const textAreaRef = useRef(null);
 
   useAutosizeTextArea(textAreaRef.current, messageInput);
 
+  useEffect(() => {
+    if (fileSize > 0) {
+      fileUpload(counter);
+    }
+  }, [sendingFile, progress]);
+
+  const startWebRTCFileTransfer = () => {
+    resetChunkProperties();
+    setFileSize(fileInput.size);
+    const _totalCount =
+      fileInput.size % chunkSize == 0
+        ? fileInput.size / chunkSize
+        : Math.floor(fileInput.size / chunkSize) + 1; // Total count of chunks will have been upload to finish the file
+    setChunkCount(_totalCount);
+    console.log("fileInput", fileInput);
+    setSendingFile(fileInput);
+    setFileId(uuidv4());
+  };
+
+  const fileUpload = () => {
+    setCounter(counter + 1);
+    if (counter <= chunkCount) {
+      const { name, type } = sendingFile;
+      var chunk = sendingFile.slice(startingChunk, endingChunk);
+      sendPeerMessage(
+        { name, type, id: fileId, data: chunk },
+        "file-transfer-chunk"
+      );
+      setStartingChunk(endingChunk);
+      setEndingChunk(endingChunk + chunkSize);
+      if (counter == chunkCount) {
+        console.log("Process is complete, counter", counter);
+        setProgress(100);
+        completeFileSending();
+      } else {
+        var percentage = (counter / chunkCount) * 100;
+        setProgress(percentage);
+        console.log("SENDING FILE TRANSFER, PERCENTILE", percentage);
+        console.log("CHUNK: ", chunk);
+      }
+    }
+  };
+
+  const resetChunkProperties = () => {
+    setProgress(0);
+    setCounter(1);
+    setStartingChunk(0);
+    setEndingChunk(chunkSize);
+  };
+
   const sendMessage = (e) => {
-    if (fileInput) sendFiles();
+    if (fileInput) sendFile();
     if (peers.length === 0) {
       toast.error("Start a call with someone to use ephemeral chat.");
       return;
@@ -25,56 +84,19 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
     setMessageInput("");
   };
 
-  // TODO: logic to send file-transfer-start && file-transfer-done message types
-  const sendFiles = () => {
-    if (fileInput.length > 0) {
-      fileInput.forEach((f) => sendFile(f));
-    }
-  };
-
-  const removeFile = (id) => {
-    setFileInput((prev) => prev.filter((f) => f.id !== id));
-  };
-
-  const setFileState = (id, state) => {
-    setFileInput((prev) =>
-      prev.map((f) => {
-        return f.id === id ? { ...f, isUploading: state } : f;
-      })
-    );
-  };
-
-  const completeFileSending = (f) => {
+  const completeFileSending = () => {
     // id references the file that the other peer has locally to download from the worker
-    console.log("File transfer is complete: ", f);
-    const {
-      file: { name, type, size },
-      id,
-    } = f;
-    sendPeerMessage({ name, type, size, id }, "file-transfer-done");
-    setFileState(f.id, false);
-    removeFile(f.id);
+    const { name, type, size } = fileInput;
+    console.log("File transfer is complete: ", fileInput);
+    sendPeerMessage({ name, type, size, id: fileId }, "file-transfer-done");
+    setFileInput();
+    setSendingFile();
+    setProgress(0);
   };
 
-  const sendFile = (f) => {
-    const { name, type } = f.file;
-    console.log("Sending file: ", name);
-    setFileState(f.id, true);
-
-    f.file.arrayBuffer().then((buffer) => {
-      const chunkSize = 16 * 1024;
-      while (buffer.byteLength) {
-        const chunk = buffer.slice(0, chunkSize);
-        buffer = buffer.slice(chunkSize, buffer.byteLength);
-        // turn ArrayBuffer to string to fit inside JSON object
-        const base64chunk = encode(chunk);
-        sendPeerMessage(
-          { name, type, id: f.id, data: base64chunk },
-          "file-transfer-chunk"
-        );
-      }
-      completeFileSending(f);
-    });
+  const sendFile = () => {
+    console.log("Sending file: ", fileInput.name);
+    startWebRTCFileTransfer();
   };
 
   const handleKeyDown = (e) => {
@@ -92,13 +114,19 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
   // even in a default CRA application. For now, this will do.
   const handleChange = (e) => {
     if (e.target.value !== "\n") {
-      setMsg(e.target.value);
+      setMessageInput(e.target.value);
     }
   };
 
   return (
     <>
-      <SelectedFileInput fileInput={fileInput} setFileInput={setFileInput} />
+      {fileInput && (
+        <SelectedFileInput
+          fileInput={fileInput}
+          setFileInput={setFileInput}
+          progress={progress}
+        />
+      )}
       <div className="flex flex-row w-full items-end">
         <textarea
           type="text"

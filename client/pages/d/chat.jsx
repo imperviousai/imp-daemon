@@ -15,7 +15,7 @@ import {
 import { BsFillLightningChargeFill } from "react-icons/bs";
 import { toast } from "react-toastify";
 import { ContactView } from "./contacts";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+import { TailSpin } from "react-loader-spinner";
 import moment from "moment";
 import PaymentsSlideOut from "../../components/lightning/PaymentsSlideOut";
 import { useFetchContacts } from "../../hooks/contacts";
@@ -512,8 +512,20 @@ const ListContacts = ({
   );
 };
 
+// TODO: this component needs to merge with client/components/meeting/ConversationFooter. DRY
 const ConversationFooter = ({ sendBasicMessage, myDid }) => {
+  const chunkSize = 1048576 * 3; //its 3MB, increase the number measure in mb
   const [msg, setMsg] = useState("");
+  const [fileInput, setFileInput] = useState();
+  const [counter, setCounter] = useState(1);
+  const [sendingFile, setSendingFile] = useState({});
+  const [startingChunk, setStartingChunk] = useState(0);
+  const [endingChunk, setEndingChunk] = useState(chunkSize);
+  const [progress, setProgress] = useState(0);
+  const [fileId, setFileId] = useState("");
+  const [fileSize, setFileSize] = useState(0);
+  const [chunkCount, setChunkCount] = useState(0);
+
   const [lightningEnabled] = useAtom(lightningEnabledAtom);
   const [currentConversationPeer] = useAtom(currentConversationPeerAtom);
   const [currentConversation] = useAtom(currentConversationAtom);
@@ -524,14 +536,62 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
 
   useAutosizeTextArea(textAreaRef.current, msg);
 
-  const [fileInput, setFileInput] = useState([]);
-
   const onErrorSendMessage = () => {
     toast.error("Error sending message. Please try again.");
   };
 
   const onEmojiSelect = (emoji) => {
     setMsg((msg) => msg.concat(` ${emoji.native} `));
+  };
+
+  useEffect(() => {
+    if (fileSize > 0) {
+      fileUpload(counter);
+    }
+  }, [sendingFile, progress]);
+
+  const startWebRTCFileTransfer = () => {
+    resetChunkProperties();
+    setFileSize(fileInput.size);
+    const _totalCount =
+      fileInput.size % chunkSize == 0
+        ? fileInput.size / chunkSize
+        : Math.floor(fileInput.size / chunkSize) + 1; // Total count of chunks will have been upload to finish the file
+    setChunkCount(_totalCount);
+    console.log("fileInput", fileInput);
+    setSendingFile(fileInput);
+    setFileId(uuidv4());
+  };
+
+  const fileUpload = () => {
+    setCounter(counter + 1);
+    if (counter <= chunkCount) {
+      const { name, type } = sendingFile;
+      var chunk = sendingFile.slice(startingChunk, endingChunk);
+      sendWebRTC(
+        { name, type, id: fileId, data: chunk },
+        "file-transfer-chunk"
+      );
+      setStartingChunk(endingChunk);
+      setEndingChunk(endingChunk + chunkSize);
+      if (counter == chunkCount) {
+        console.log("Process is complete, counter", counter);
+        setProgress(100);
+        completeFileSending();
+      } else {
+        var percentage = (counter / chunkCount) * 100;
+        setProgress(percentage);
+        console.log("SENDING FILE TRANSFER, PERCENTILE", percentage);
+        console.log("CHUNK: ", chunk);
+      }
+    }
+  };
+
+  const resetChunkProperties = () => {
+    setProgress(0);
+    setCounter(1);
+    setStartingChunk(0);
+    setEndingChunk(chunkSize);
   };
 
   const sendDidComm = (file) => {
@@ -565,33 +625,18 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
     currentConversationPeer.peer.write(JSON.stringify(payload));
   };
 
-  const setFileState = (id, state) => {
-    setFileInput((prev) =>
-      prev.map((f) => {
-        return f.id === id ? { ...f, isUploading: state } : f;
-      })
-    );
-  };
-
-  const removeFile = (id) => {
-    setFileInput((prev) => prev.filter((f) => f.id !== id));
-  };
-
-  const completeFileSending = (f) => {
+  const completeFileSending = () => {
     // id references the file that the other peer has locally to download from the worker
-    console.log("File transfer is complete: ", f);
-    const {
-      file: { name, type, size },
-      id,
-    } = f;
-    sendWebRTC({ name, type, size, id }, "file-transfer-done");
+    const { name, type, size } = fileInput;
+    console.log("File transfer is complete: ", name);
+    sendWebRTC({ name, type, size, id: fileId }, "file-transfer-done");
     if (type.split("/")[0] === "image") {
       // grab the dataurl from the image and include it in the message
       const reader = new FileReader();
-      reader.readAsDataURL(f.file);
+      reader.readAsDataURL(fileInput);
       reader.onloadend = () => {
         saveBasicMessage({
-          msg: { name, type, size, id, image: reader.result },
+          msg: { name, type, size, id: fileId, image: reader.result },
           type: "file-transfer-done",
           from: myDid.id,
           did: currentConversationContact.did,
@@ -599,68 +644,44 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
       };
     } else {
       saveBasicMessage({
-        msg: { name, type, size, id, image: "" },
+        msg: { name, type, size, id: fileId, image: "" },
         type: "file-transfer-done",
         from: myDid.id,
         did: currentConversationContact.did,
       });
     }
-    setFileState(f.id, false);
-    removeFile(f.id);
+    setFileInput();
+    setSendingFile();
+    setProgress(0);
   };
 
-  const sendFile = (f) => {
-    const { name, type } = f.file;
-    console.log("Sending file: ", name);
-    setFileState(f.id, true);
-
-    f.file.arrayBuffer().then((buffer) => {
-      const chunkSize = 16 * 1024;
-      while (buffer.byteLength) {
-        const chunk = buffer.slice(0, chunkSize);
-        buffer = buffer.slice(chunkSize, buffer.byteLength);
-        // turn ArrayBuffer to string to fit inside JSON object
-        const base64chunk = encode(chunk);
-        sendWebRTC(
-          { name, type, id: f.id, data: base64chunk },
-          "file-transfer-chunk"
+  const sendFile = () => {
+    if (currentConversationPeer) {
+      startWebRTCFileTransfer();
+      return;
+    }
+    if (!currentConversationPeer && fileInput.size > 2000000) {
+      toast.error(
+        "File size is too large to send. (Max 2MB). Please connect with user to send larger files."
+      );
+    } else {
+      // otherwise, send file chunked over didcomm given it is a small file
+      const reader = new FileReader();
+      reader.readAsDataURL(fileInput);
+      reader.onloadend = () => {
+        sendDidComm(
+          JSON.stringify({
+            data: { name: fileInput.name },
+            dataUri: reader.result,
+          })
         );
-      }
-      completeFileSending(f);
-    });
-  };
-
-  const sendFiles = () => {
-    fileInput.forEach((f) => {
-      if (!currentConversationPeer && f.file.size > 2000000) {
-        toast.error(
-          "File size is too large to send. (Max 2MB). Please connect with user to send larger files."
-        );
-      } else {
-        if (currentConversationPeer) {
-          // send over webrtc chunked
-          sendFile(f);
-          return;
-        } else {
-          // otherwise, send file chunked over didcomm given it is a small file
-          const reader = new FileReader();
-          reader.readAsDataURL(f.file);
-          reader.onloadend = () => {
-            sendDidComm(
-              JSON.stringify({
-                data: { name: f.file.name },
-                dataUri: reader.result,
-              })
-            );
-            removeFile(f.id);
-          };
-        }
-      }
-    });
+        setFileInput();
+      };
+    }
   };
 
   const sendMessage = () => {
-    if (fileInput) sendFiles();
+    if (fileInput) sendFile();
     if (msg.length > 0 && (currentConversation || currentConversationContact)) {
       if (currentConversationPeer) {
         // send the message over webrtc
@@ -700,9 +721,15 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
   };
 
   return (
-    <div className="bg-white shadow">
-      <SelectedFileInput fileInput={fileInput} setFileInput={setFileInput} />
-      <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
+    <div className="bg-white shadow px-4">
+      {fileInput && (
+        <SelectedFileInput
+          fileInput={fileInput}
+          setFileInput={setFileInput}
+          progress={progress}
+        />
+      )}
+      <div className="px-2 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
         <div className="py-2 md:flex md:items-center md:justify-between lg:border-t lg:border-gray-200">
           <div className="mt-6 flex space-x-3 md:mt-0 md:ml-4 w-full items-end">
             <EmojiPicker onEmojiSelect={onEmojiSelect} />
