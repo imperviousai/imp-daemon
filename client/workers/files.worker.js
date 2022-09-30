@@ -1,7 +1,7 @@
 let files = [];
 
 self.addEventListener("message", (event) => {
-  const { name, type, id, action, chunk, msgType, did, from } = event.data;
+  const { name, type, id, action, chunk, did, from } = event.data;
   if (action) {
     if (action === "download") {
       console.log("prepping file for download: ", id);
@@ -15,7 +15,7 @@ self.addEventListener("message", (event) => {
       const file = new File([blob], name, { type });
       // console.log("BLOB TO DOWNLOAD: ", blob);
       // console.log("FILD TO DOWNLOAD: ", fileObj);
-      self.postMessage({ id, file, msgType, did, from });
+      self.postMessage({ id, file, did, from });
       // remove the file after download?
       // files = files.filter((f) => f.id !== id);
     }

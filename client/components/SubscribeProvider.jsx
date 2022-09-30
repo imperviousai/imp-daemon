@@ -336,7 +336,6 @@ const SubscribeProvider = ({ children }) => {
               id: data.id,
               name: data.name,
               type: data.type,
-              msgType: type,
               did,
               from,
             },
@@ -350,13 +349,12 @@ const SubscribeProvider = ({ children }) => {
   );
 
   const handleFileDownload = useCallback(
-    ({ detail: { id, name, type, msgType, did, from } }) => {
+    ({ detail: { id, name, type, did, from } }) => {
       filesWorker.current.postMessage({
         action: "download",
         id,
         name,
         type,
-        msgType,
         did,
         from,
       });
@@ -447,16 +445,12 @@ const SubscribeProvider = ({ children }) => {
     filesWorker.current = new Worker(
       new URL("../workers/files.worker.js", import.meta.url)
     );
-    filesWorker.current.onmessage = ({
-      data: { id, file, msgType, did, from },
-    }) => {
-      // console.log("MESSAGE TYPE: ", msgType);
+    filesWorker.current.onmessage = ({ data: { id, file, did, from } }) => {
       // console.log("GOT AN EVENT FROM A WEB WORKER", file);
-      if (file.type.split("/")[0] === "image") {
-        if (router.pathname === "/d/meeting") {
-          saveAs(file, file.name);
-          return;
-        }
+      if (
+        file.type.split("/")[0] === "image" &&
+        window.location.href.indexOf("/d/chat") > -1
+      ) {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = () => {
@@ -468,15 +462,16 @@ const SubscribeProvider = ({ children }) => {
               id,
               image: reader.result,
             },
-            type: msgType,
+            type: "file-transfer-done",
             did,
             from,
           });
         };
-      } else {
-        saveAs(file, file.name);
+        return;
       }
+      saveAs(file, file.name);
     };
+
     return () => {
       filesWorker.current.terminate();
     };

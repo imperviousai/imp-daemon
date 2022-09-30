@@ -56,8 +56,14 @@ import useAutosizeTextArea from "../../components/useAutosizeTextArea";
 import ContactAvatar from "../../components/contact/ContactAvatar";
 import { getContactByDid, getContactsByMessage } from "../../utils/contacts";
 
-const isJSON = (msg) =>
-  (msg.includes("{") || msg.includes("}")) && JSON.parse(msg);
+const isJSON = (msg) => {
+  try {
+    JSON.parse(msg);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
 
 const EmojiPicker = dynamic(() => import("../../components/EmojiPicker"), {
   ssr: false,
