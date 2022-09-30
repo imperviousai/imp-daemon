@@ -515,10 +515,11 @@ const ListContacts = ({
 // TODO: this component needs to merge with client/components/meeting/ConversationFooter. DRY
 const ConversationFooter = ({ sendBasicMessage, myDid }) => {
   const chunkSize = 1000 * 16; //its 12KB, increase the number measure in mb
+  const MAXIMUM_MESSAGE_SIZE = 65535;
   const [msg, setMsg] = useState("");
   const [fileInput, setFileInput] = useState();
   const [counter, setCounter] = useState(1);
-  const [sendingFile, setSendingFile] = useState({});
+  const [sendingFile, setSendingFile] = useState();
   const [startingChunk, setStartingChunk] = useState(0);
   const [endingChunk, setEndingChunk] = useState(chunkSize);
   const [progress, setProgress] = useState(0);
@@ -550,23 +551,23 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
     }
   }, [sendingFile, progress]);
 
-  const startWebRTCFileTransfer = () => {
+  const startWebRTCFileTransfer = async () => {
     resetChunkProperties();
-    setFileSize(fileInput.size);
-    const _totalCount =
-      fileInput.size % chunkSize == 0
-        ? fileInput.size / chunkSize
-        : Math.floor(fileInput.size / chunkSize) + 1; // Total count of chunks will have been upload to finish the file
-    setChunkCount(_totalCount);
-    console.log("fileInput", fileInput);
-    setSendingFile(fileInput);
     setFileId(uuidv4());
+    const arrayBuffer = await fileInput.arrayBuffer();
+    setFileSize(arrayBuffer.byteLength);
+    const _totalCount =
+      arrayBuffer.byteLength % MAXIMUM_MESSAGE_SIZE == 0
+        ? arrayBuffer.byteLength / MAXIMUM_MESSAGE_SIZE
+        : Math.floor(arrayBuffer.byteLength / MAXIMUM_MESSAGE_SIZE) + 1; // Total count of chunks will have been upload to finish the file
+    setChunkCount(_totalCount);
+    setSendingFile(arrayBuffer);
+    // shareFile(fileInput);
   };
 
   const fileUpload = () => {
     setCounter(counter + 1);
     if (counter <= chunkCount) {
-      const { name, type } = sendingFile;
       var chunk = sendingFile.slice(startingChunk, endingChunk);
       sendWebRTC({ id: fileId, data: chunk }, "file-transfer-chunk");
       setStartingChunk(endingChunk);
@@ -588,7 +589,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
     setProgress(0);
     setCounter(1);
     setStartingChunk(0);
-    setEndingChunk(chunkSize);
+    setEndingChunk(MAXIMUM_MESSAGE_SIZE);
   };
 
   const sendDidComm = (file) => {
@@ -607,11 +608,10 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
 
   const sendWebRTC = (data, type) => {
     if (type === "file-transfer-chunk") {
-      const p = new Blob([data.id, data.data]);
-
-      p.arrayBuffer().then((b) => {
-        currentConversationPeer?.peer.write(encode(b));
-      });
+      const payload = `${data.id}:${encode(data.data)}`;
+      // console.log("FILE: ", data.id);
+      // console.log("Sending payload: ", payload);
+      currentConversationPeer?.peer.write(payload);
       return;
     }
     const networkId =
