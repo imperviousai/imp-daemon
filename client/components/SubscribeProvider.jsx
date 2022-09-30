@@ -331,27 +331,16 @@ const SubscribeProvider = ({ children }) => {
         const { data, type, did, from } = msg;
         if (data.type.split("/")[0] === "image") {
           // turn images to dataUrl and save them into db
-          const f = peerFiles.find((f) => f?.id === data.id);
-          if (f) {
-            const blob = new Blob(f.chunks);
-            const fileObj = new File([blob], data.name, { type: data.type });
-            const reader = new FileReader();
-            reader.readAsDataURL(fileObj);
-            reader.onloadend = () => {
-              saveBasicMessage({
-                msg: {
-                  name: data.name,
-                  type: data.type,
-                  size: data.size,
-                  id: data.id,
-                  image: reader.result,
-                },
-                type,
-                did,
-                from,
-              });
-            };
-          }
+          handleFileDownload({
+            detail: {
+              id: data.id,
+              name: data.name,
+              type: data.type,
+              msgType: type,
+              did,
+              from,
+            },
+          });
         } else {
           saveBasicMessage({ msg: data, type, did, from });
         }
@@ -360,9 +349,20 @@ const SubscribeProvider = ({ children }) => {
     [addPeerMessage, currentVideoCallId, saveBasicMessage, peerFiles]
   );
 
-  const handleFileDownload = useCallback(({ detail: { id, name, type } }) => {
-    filesWorker.current.postMessage({ action: "download", id, name, type });
-  }, []);
+  const handleFileDownload = useCallback(
+    ({ detail: { id, name, type, msgType, did, from } }) => {
+      filesWorker.current.postMessage({
+        action: "download",
+        id,
+        name,
+        type,
+        msgType,
+        did,
+        from,
+      });
+    },
+    []
+  );
 
   const handleReceivedPeerMessage = useCallback(
     ({ detail: { msg, peerId } }) => {
@@ -447,9 +447,35 @@ const SubscribeProvider = ({ children }) => {
     filesWorker.current = new Worker(
       new URL("../workers/files.worker.js", import.meta.url)
     );
-    filesWorker.current.onmessage = (event) => {
-      console.log("GOT AN EVENT FROM A WEB WORKER", event.data);
-      saveAs(event.data, event.data.name);
+    filesWorker.current.onmessage = ({
+      data: { id, file, msgType, did, from },
+    }) => {
+      // console.log("MESSAGE TYPE: ", msgType);
+      // console.log("GOT AN EVENT FROM A WEB WORKER", file);
+      if (file.type.split("/")[0] === "image") {
+        if (router.pathname === "/d/meeting") {
+          saveAs(file, file.name);
+          return;
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          saveBasicMessage({
+            msg: {
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              id,
+              image: reader.result,
+            },
+            type: msgType,
+            did,
+            from,
+          });
+        };
+      } else {
+        saveAs(file, file.name);
+      }
     };
     return () => {
       filesWorker.current.terminate();

@@ -1,7 +1,7 @@
 let files = [];
 
 self.addEventListener("message", (event) => {
-  const { name, type, id, action, chunk } = event.data;
+  const { name, type, id, action, chunk, msgType, did, from } = event.data;
   if (action) {
     if (action === "download") {
       console.log("prepping file for download: ", id);
@@ -12,12 +12,12 @@ self.addEventListener("message", (event) => {
       }
       // console.log("FILE TO DOWLOAD: ", f);
       const blob = new Blob(f.chunks, { type });
-      const fileObj = new File([blob], name, { type });
+      const file = new File([blob], name, { type });
       // console.log("BLOB TO DOWNLOAD: ", blob);
       // console.log("FILD TO DOWNLOAD: ", fileObj);
-      self.postMessage(fileObj);
+      self.postMessage({ id, file, msgType, did, from });
       // remove the file after download?
-      files = files.filter((f) => f.id !== id);
+      // files = files.filter((f) => f.id !== id);
     }
     if (action === "abort") {
       console.log("abording file transfer");
