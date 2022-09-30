@@ -11,6 +11,7 @@ import {
   activeVideoMessagesAtom,
   hasUnreadVideoMessagesAtom,
 } from "../../stores/peers";
+import { encode } from "base64-arraybuffer";
 
 // Messaging Component
 export default function Messaging({
@@ -25,6 +26,16 @@ export default function Messaging({
   const [, setHasUnreadVideoMessages] = useAtom(hasUnreadVideoMessagesAtom);
 
   const sendPeerMessage = (data, type) => {
+    if (type === "file-transfer-chunk") {
+      const payload = `${data.id}:${encode(data.data)}`;
+      // console.log("FILE: ", data.id);
+      // console.log("Sending payload: ", payload);
+      peers.map((p) => {
+        p.peer.write(payload);
+      });
+      return;
+    }
+
     const message = {
       data,
       timestamp: new Date().toString(),

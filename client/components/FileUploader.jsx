@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { PlusSmIcon } from "@heroicons/react/solid";
-import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 
 function FileUploader({ setFile, disabled }) {
@@ -11,11 +10,7 @@ function FileUploader({ setFile, disabled }) {
   };
 
   const handleChange = (event) => {
-    const file = event.target.files[0];
-    setFile((prev) => [
-      ...prev,
-      { file, isError: false, isUploading: false, id: uuidv4() },
-    ]);
+    setFile(event.target.files[0]);
     hiddenFileInput.current.value = null;
   };
 
