@@ -8,13 +8,13 @@ import { v4 as uuidv4 } from "uuid";
 
 //  this needs to be reworked with flex grow
 const ConversationFooter = ({ sendPeerMessage, peers }) => {
-  const chunkSize = 1048576 * 3; //its 3MB, increase the number measure in mb
-  const [messageInput, setMessageInput] = useState("");
+  const MAXIMUM_MESSAGE_SIZE = 65535;
+  const [msg, setMsg] = useState("");
   const [fileInput, setFileInput] = useState();
   const [counter, setCounter] = useState(1);
-  const [sendingFile, setSendingFile] = useState({});
+  const [sendingFile, setSendingFile] = useState();
   const [startingChunk, setStartingChunk] = useState(0);
-  const [endingChunk, setEndingChunk] = useState(chunkSize);
+  const [endingChunk, setEndingChunk] = useState(MAXIMUM_MESSAGE_SIZE);
   const [progress, setProgress] = useState(0);
   const [fileId, setFileId] = useState("");
   const [fileSize, setFileSize] = useState(0);
@@ -22,7 +22,7 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
 
   const textAreaRef = useRef(null);
 
-  useAutosizeTextArea(textAreaRef.current, messageInput);
+  useAutosizeTextArea(textAreaRef.current, msg);
 
   useEffect(() => {
     if (fileSize > 0) {
@@ -30,30 +30,27 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
     }
   }, [sendingFile, progress]);
 
-  const startWebRTCFileTransfer = () => {
+  const startWebRTCFileTransfer = async () => {
     resetChunkProperties();
-    setFileSize(fileInput.size);
-    const _totalCount =
-      fileInput.size % chunkSize == 0
-        ? fileInput.size / chunkSize
-        : Math.floor(fileInput.size / chunkSize) + 1; // Total count of chunks will have been upload to finish the file
-    setChunkCount(_totalCount);
-    console.log("fileInput", fileInput);
-    setSendingFile(fileInput);
     setFileId(uuidv4());
+    const arrayBuffer = await fileInput.arrayBuffer();
+    setFileSize(arrayBuffer.byteLength);
+    const _totalCount =
+      arrayBuffer.byteLength % MAXIMUM_MESSAGE_SIZE == 0
+        ? arrayBuffer.byteLength / MAXIMUM_MESSAGE_SIZE
+        : Math.floor(arrayBuffer.byteLength / MAXIMUM_MESSAGE_SIZE) + 1; // Total count of chunks will have been upload to finish the file
+    setChunkCount(_totalCount);
+    setSendingFile(arrayBuffer);
+    // shareFile(fileInput);
   };
 
   const fileUpload = () => {
     setCounter(counter + 1);
     if (counter <= chunkCount) {
-      const { name, type } = sendingFile;
       var chunk = sendingFile.slice(startingChunk, endingChunk);
-      sendPeerMessage(
-        { name, type, id: fileId, data: chunk },
-        "file-transfer-chunk"
-      );
+      sendPeerMessage({ id: fileId, data: chunk }, "file-transfer-chunk");
       setStartingChunk(endingChunk);
-      setEndingChunk(endingChunk + chunkSize);
+      setEndingChunk(endingChunk + MAXIMUM_MESSAGE_SIZE);
       if (counter == chunkCount) {
         console.log("Process is complete, counter", counter);
         setProgress(100);
@@ -61,8 +58,8 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
       } else {
         var percentage = (counter / chunkCount) * 100;
         setProgress(percentage);
-        console.log("SENDING FILE TRANSFER, PERCENTILE", percentage);
-        console.log("CHUNK: ", chunk);
+        // console.log("SENDING FILE TRANSFER, PERCENTILE", percentage);
+        // console.log("CHUNK: ", chunk);
       }
     }
   };
@@ -71,7 +68,7 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
     setProgress(0);
     setCounter(1);
     setStartingChunk(0);
-    setEndingChunk(chunkSize);
+    setEndingChunk(MAXIMUM_MESSAGE_SIZE);
   };
 
   const sendMessage = (e) => {
@@ -80,8 +77,8 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
       toast.error("Start a call with someone to use ephemeral chat.");
       return;
     }
-    messageInput.length > 0 && sendPeerMessage(messageInput, "chat-message");
-    setMessageInput("");
+    msg.length > 0 && sendPeerMessage(msg, "chat-message");
+    setMsg("");
   };
 
   const completeFileSending = () => {
@@ -95,13 +92,12 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
   };
 
   const sendFile = () => {
-    console.log("Sending file: ", fileInput.name);
     startWebRTCFileTransfer();
   };
 
   const handleKeyDown = (e) => {
     if (e.shiftKey && e.key === "Enter") {
-      setMessageInput(`${messageInput}`);
+      setMsg(`${msg}`);
       return;
     }
     if (e.key === "Enter") {
@@ -114,7 +110,7 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
   // even in a default CRA application. For now, this will do.
   const handleChange = (e) => {
     if (e.target.value !== "\n") {
-      setMessageInput(e.target.value);
+      setMsg(e.target.value);
     }
   };
 
@@ -136,7 +132,7 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
           className="shadow-sm pl-2 pt-2 block w-full sm:text-sm border border-grey-100 rounded-md"
           placeholder="Type message here ..."
           onKeyDown={handleKeyDown}
-          value={messageInput}
+          value={msg}
           onChange={handleChange}
         />
         <div className="flex">
