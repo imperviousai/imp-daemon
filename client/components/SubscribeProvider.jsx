@@ -100,8 +100,11 @@ const SubscribeProvider = ({ children }) => {
 
   const addFileChunk = useCallback(
     (data) => {
-      const chunk = decode(String.fromCharCode(...data));
-      filesWorker.current.postMessage({ chunk: new Blob([chunk]) });
+      const payload = String.fromCharCode(...data).split(":");
+      filesWorker.current.postMessage({
+        id: payload[0],
+        chunk: decode(payload[1]),
+      });
       // if (type.split("/")[0] === "image") {
       //   // handle images chunk differently
       //   setPeerFiles((prev) => {

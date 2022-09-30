@@ -514,14 +514,13 @@ const ListContacts = ({
 
 // TODO: this component needs to merge with client/components/meeting/ConversationFooter. DRY
 const ConversationFooter = ({ sendBasicMessage, myDid }) => {
-  const chunkSize = 1000 * 16; //its 12KB, increase the number measure in mb
   const MAXIMUM_MESSAGE_SIZE = 65535;
   const [msg, setMsg] = useState("");
   const [fileInput, setFileInput] = useState();
   const [counter, setCounter] = useState(1);
   const [sendingFile, setSendingFile] = useState();
   const [startingChunk, setStartingChunk] = useState(0);
-  const [endingChunk, setEndingChunk] = useState(chunkSize);
+  const [endingChunk, setEndingChunk] = useState(MAXIMUM_MESSAGE_SIZE);
   const [progress, setProgress] = useState(0);
   const [fileId, setFileId] = useState("");
   const [fileSize, setFileSize] = useState(0);
@@ -571,7 +570,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
       var chunk = sendingFile.slice(startingChunk, endingChunk);
       sendWebRTC({ id: fileId, data: chunk }, "file-transfer-chunk");
       setStartingChunk(endingChunk);
-      setEndingChunk(endingChunk + chunkSize);
+      setEndingChunk(endingChunk + MAXIMUM_MESSAGE_SIZE);
       if (counter == chunkCount) {
         console.log("Process is complete, counter", counter);
         setProgress(100);
@@ -579,8 +578,8 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
       } else {
         var percentage = (counter / chunkCount) * 100;
         setProgress(percentage);
-        console.log("SENDING FILE TRANSFER, PERCENTILE", percentage);
-        console.log("CHUNK: ", chunk);
+        // console.log("SENDING FILE TRANSFER, PERCENTILE", percentage);
+        // console.log("CHUNK: ", chunk);
       }
     }
   };

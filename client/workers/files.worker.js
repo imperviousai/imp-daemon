@@ -10,31 +10,29 @@ self.addEventListener("message", (event) => {
         console.log("File is unavailable for download: ", id);
         return;
       }
-      const blob = new Blob(f.chunks);
+      // console.log("FILE TO DOWLOAD: ", f);
+      const blob = new Blob(f.chunks, { type });
       const fileObj = new File([blob], name, { type });
+      // console.log("BLOB TO DOWNLOAD: ", blob);
+      // console.log("FILD TO DOWNLOAD: ", fileObj);
       self.postMessage(fileObj);
-      //   remove the file after download?
-      //   files = files.filter((f) => f.id !== id);
+      // remove the file after download?
+      files = files.filter((f) => f.id !== id);
     }
     if (action === "abort") {
       console.log("abording file transfer");
       files = [];
     }
   } else {
-    chunk
-      .slice(0, 36)
-      .text()
-      .then((id) => {
-        let fileChunk = chunk.slice(36, chunk.size);
-        const f = files.find((f) => f.id === id);
-        if (f) {
-          f.chunks.push(fileChunk);
-          files = files.map((file) => {
-            return file.id === f.id ? f : file;
-          });
-          return;
-        }
-        files = [...files, { id, chunks: [chunk] }];
+    // console.log("Adding a recieved file chunk: ", chunk);
+    const f = files.find((f) => f.id === id);
+    if (f) {
+      f.chunks.push(chunk);
+      files = files.map((file) => {
+        return file.id === f.id ? f : file;
       });
+      return;
+    }
+    files = [...files, { id, chunks: [chunk] }];
   }
 });
