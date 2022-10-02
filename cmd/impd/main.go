@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
-	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/ipfs"
-	"go.uber.org/zap"
 	"io/fs"
 	"log"
 	"net"
@@ -14,6 +12,10 @@ import (
 	"os/signal"
 	"sync"
 	"time"
+
+	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/ipfs"
+	"go.uber.org/zap"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/imperviousai/imp-daemon/cmd"
 	"github.com/imperviousai/imp-daemon/config"
@@ -31,6 +33,7 @@ import (
 	"google.golang.org/grpc"
 
 	"embed"
+
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/runtime/middleware"
 	filemux "github.com/gorilla/mux"
@@ -150,7 +153,7 @@ func main() {
 					runtime.WithIncomingHeaderMatcher(CustomMatcher),
 				)
 				opts := []grpc.DialOption{
-					grpc.WithInsecure(),
+					grpc.WithTransportCredentials(insecure.NewCredentials()),
 					grpc.WithDefaultCallOptions(
 						grpc.MaxCallRecvMsgSize(1*1024*1024*200),
 						grpc.MaxCallSendMsgSize(1*1024*1024*200),
@@ -206,7 +209,7 @@ func main() {
 				injectSpecsMiddleware(httpProxy)
 
 				r := filemux.NewRouter()
-				serverRoot, err := fs.Sub(content, "out") //creates a filesystem under a subdir
+				serverRoot, err := fs.Sub(content, "out") // creates a filesystem under a subdir
 				if err != nil {
 					log.Fatal(err)
 				}

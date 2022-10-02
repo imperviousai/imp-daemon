@@ -24,7 +24,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-//*
+// *
 // Represents an invoice creation request from your lightning node.
 type GenerateInvoiceRequest struct {
 	state         protoimpl.MessageState
@@ -81,7 +81,7 @@ func (x *GenerateInvoiceRequest) GetMemo() string {
 	return ""
 }
 
-//*
+// *
 // Represents a response back from an invoice generation request.
 type GenerateInvoiceResponse struct {
 	state         protoimpl.MessageState
@@ -130,7 +130,7 @@ func (x *GenerateInvoiceResponse) GetInvoice() string {
 	return ""
 }
 
-//*
+// *
 // Represents an invoice that will be paid by your lightning node.
 type PayInvoiceRequest struct {
 	state         protoimpl.MessageState
@@ -179,7 +179,7 @@ func (x *PayInvoiceRequest) GetInvoice() string {
 	return ""
 }
 
-//*
+// *
 // Represents a response back from the payment result.
 type PayInvoiceResponse struct {
 	state         protoimpl.MessageState
@@ -228,7 +228,7 @@ func (x *PayInvoiceResponse) GetPreimage() string {
 	return ""
 }
 
-//*
+// *
 // Represents an request to check an invoice.
 type CheckInvoiceRequest struct {
 	state         protoimpl.MessageState
@@ -277,7 +277,7 @@ func (x *CheckInvoiceRequest) GetInvoice() string {
 	return ""
 }
 
-//*
+// *
 // Represents a response back from the invoice check.
 type CheckInvoiceResponse struct {
 	state         protoimpl.MessageState

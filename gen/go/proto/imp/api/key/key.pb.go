@@ -24,7 +24,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-//*
+// *
 // Represents an init seed request to initialize the master seed.
 type InitSeedRequest struct {
 	state         protoimpl.MessageState
@@ -81,7 +81,7 @@ func (x *InitSeedRequest) GetPassphrase() string {
 	return ""
 }
 
-//*
+// *
 // Represents a response back from an init seed request.
 type InitSeedResponse struct {
 	state         protoimpl.MessageState
@@ -138,7 +138,7 @@ func (x *InitSeedResponse) GetApiKey() string {
 	return ""
 }
 
-//*
+// *
 // Represents an unlock seed request to unlock the master seed.
 type UnlockSeedRequest struct {
 	state         protoimpl.MessageState
@@ -187,7 +187,7 @@ func (x *UnlockSeedRequest) GetPassphrase() string {
 	return ""
 }
 
-//*
+// *
 // Represents a response back from an unlock seed request.
 type UnlockSeedResponse struct {
 	state         protoimpl.MessageState
@@ -227,7 +227,7 @@ func (*UnlockSeedResponse) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_key_key_proto_rawDescGZIP(), []int{3}
 }
 
-//*
+// *
 // Represents an status request message.
 type StatusRequest struct {
 	state         protoimpl.MessageState
@@ -267,7 +267,7 @@ func (*StatusRequest) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_key_key_proto_rawDescGZIP(), []int{4}
 }
 
-//*
+// *
 // Represents a response back from a status request.
 type StatusResponse struct {
 	state         protoimpl.MessageState

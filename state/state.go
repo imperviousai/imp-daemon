@@ -4,16 +4,17 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/boltdb/bolt"
-	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/mutecomm/go-sqlcipher/v4"
-	"go.uber.org/zap"
-	_ "modernc.org/sqlite"
 	"net/url"
 	"os"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/boltdb/bolt"
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/mutecomm/go-sqlcipher/v4"
+	"go.uber.org/zap"
+	_ "modernc.org/sqlite"
 )
 
 //go:generate mockgen --destination=./mock/db_mock.go --package=mock github.com/imperviousai/imp-daemon/state DBManager
@@ -82,7 +83,7 @@ func (d *dbManager) GetKey(key []byte) (string, error) {
 	if err != nil {
 		return "fail", err
 	}
-	o := string(out[:])
+	o := string(out)
 	return o, err
 }
 

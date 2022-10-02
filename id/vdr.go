@@ -90,7 +90,7 @@ func (v *VDR) Close() error {
 	return v.childVDR.Close()
 }
 
-//nolint: funlen,gocyclo
+// nolint: funlen,gocyclo
 func build(didDoc *did.Doc, docOpts *vdrapi.DIDMethodOpts) (*did.DocResolution, error) {
 	if len(didDoc.VerificationMethod) == 0 && len(didDoc.KeyAgreement) == 0 {
 		return nil, fmt.Errorf("verification method and key agreement are empty, at least one should be set")

@@ -200,13 +200,14 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 		zap.L().Panic(err.Error())
 	}
 
-	//Setup Kv manager
-	//kvdb, err := bolt.Open(cfg.Kv.Db, 0600, nil)
+	// Setup Kv manager
 	zap.L().Debug("[Cfg] Setting up Key Value Store")
-	//kvdb := db.KVDB()
 	kvManager, err := kv.New(&kv.Config{
 		Kvdb: db,
 	})
+	if err != nil {
+		zap.L().Panic(err.Error())
+	}
 
 	// Setup services
 	zap.L().Debug("[Cfg] Registering services")
