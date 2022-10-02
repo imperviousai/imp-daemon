@@ -5,6 +5,7 @@
 package mock
 
 import (
+	"github.com/boltdb/bolt"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -15,6 +16,39 @@ import (
 type MockDBManager struct {
 	ctrl     *gomock.Controller
 	recorder *MockDBManagerMockRecorder
+}
+
+func (m *MockDBManager) GetKey(key []byte) (string, error) {
+	//TODO implement me
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetKey")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (m *MockDBManager) SetKey(key []byte, value []byte) error {
+	//TODO implement me
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetKey")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (m *MockDBManager) DelKey(key []byte) error {
+	//TODO implement me
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DelKey")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (m *MockDBManager) KVDB() *bolt.DB {
+	//TODO implement me
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "KVDB")
+	ret0, _ := ret[0].(*bolt.DB)
+	return ret0
 }
 
 // MockDBManagerMockRecorder is the mock recorder for MockDBManager.
