@@ -64,8 +64,9 @@ import (
 var configPath = flag.String("config", "", "The path of the config file")
 
 // this path must be inside cmd/impd/
+
+// nolint
 //
-//nolint:all
 //go:embed all:out/*
 var content embed.FS
 
