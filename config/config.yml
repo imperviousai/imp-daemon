@@ -42,8 +42,8 @@ lightning:
     admin_macaroon: #/path/to/admin.macaroon
     admin_macaroon_hex: # can use hex encoded macaroon instead of file
     listening: false # turn on if you would like to use LND
-ipfs:
-  directory: ~/.imp/ipfs #Directory for IPFS data if not default (~/.imp/ipfs)
+kv:
+  db_file: ~/.imp/kv.db #Directory for Key Value store, if not default (~/.imp/kv.db)
 ion:
   url: http://localhost:3000  #Url for the ION node
   active: true # turn on if you would like to use ION

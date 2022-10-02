@@ -4,19 +4,22 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/boltdb/bolt"
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/mutecomm/go-sqlcipher/v4"
+	"go.uber.org/zap"
+	_ "modernc.org/sqlite"
 	"net/url"
 	"os"
 	"strings"
 	"sync"
 	"time"
-
-	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/mutecomm/go-sqlcipher/v4"
-	"go.uber.org/zap"
-	_ "modernc.org/sqlite"
 )
 
 //go:generate mockgen --destination=./mock/db_mock.go --package=mock github.com/imperviousai/imp-daemon/state DBManager
+
+// KV DB Needs a "Bucket name"
+var world = []byte("world")
 
 type DBManager interface {
 	/// IsReady will indicate if the SQL connection is ready
@@ -41,6 +44,17 @@ type DBManager interface {
 	SafeQuery(query string, args ...interface{}) (Rows, error)
 	// SafeExec will query safely if the DB is ready
 	SafeExec(query string, args ...interface{}) (Result, error)
+
+	// GetKey gets a value
+	GetKey(key []byte) (string, error)
+
+	// SetKey sets a key with a value
+	SetKey(key []byte, value []byte) error
+
+	// DelKey deletes a key
+	DelKey(key []byte) error
+
+	KVDB() *bolt.DB
 }
 
 type dbManager struct {
@@ -51,9 +65,66 @@ type dbManager struct {
 	isReady     bool
 	initScripts []string
 	initLock    sync.RWMutex
+
+	kvdb *bolt.DB
 }
 
-func NewDB(dbType, connection string) (DBManager, error) {
+func (d *dbManager) GetKey(key []byte) (string, error) {
+	var out []byte
+	err := d.kvdb.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(world)
+		if bucket == nil {
+			return fmt.Errorf("Bucket %q not found!", world)
+		}
+		out = bucket.Get(key)
+		return nil
+	})
+	if err != nil {
+		return "fail", err
+	}
+	o := string(out[:])
+	return o, err
+}
+
+func (d *dbManager) SetKey(key []byte, value []byte) error {
+	err := d.kvdb.Update(func(tx *bolt.Tx) error {
+		b, err := tx.CreateBucketIfNotExists(world)
+		if err != nil {
+			return err
+		}
+		err = b.Put(key, value)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *dbManager) DelKey(key []byte) error {
+	err := d.kvdb.Update(func(tx *bolt.Tx) error {
+		b, err := tx.CreateBucketIfNotExists(world)
+		if err != nil {
+			return err
+		}
+		err = b.Delete(key)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func NewDB(dbType, connection string, kvdbpath string) (DBManager, error) {
 	// because time is hard to process...
 	connection += "?parseTime=true"
 
@@ -86,13 +157,25 @@ func NewDB(dbType, connection string) (DBManager, error) {
 		isReady = true
 
 	}
+
+	kvdb, err := bolt.Open(kvdbpath, 0600, nil)
+	zap.L().Debug("[STATE] KV Bolt DB opened.", zap.String("Filepath", kvdbpath))
+	if err != nil {
+		zap.L().Error("[STATE] KV Bolt DB unable to open.", zap.String("error", err.Error()))
+	}
+
 	return &dbManager{
 		db:         db,
 		dbType:     dbType,
 		connection: connection,
 		isReady:    isReady,
 		initLock:   sync.RWMutex{},
+		kvdb:       kvdb,
 	}, nil
+}
+
+func (d *dbManager) KVDB() *bolt.DB {
+	return d.kvdb
 }
 
 func (d *dbManager) DB() *sql.DB {

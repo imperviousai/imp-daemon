@@ -9,6 +9,7 @@ import (
 	"github.com/imperviousai/imp-daemon/contacts"
 	"github.com/imperviousai/imp-daemon/id"
 	"github.com/imperviousai/imp-daemon/key"
+	"github.com/imperviousai/imp-daemon/kv"
 	"github.com/imperviousai/imp-daemon/lightning"
 	"github.com/imperviousai/imp-daemon/messages"
 	"github.com/imperviousai/imp-daemon/service"
@@ -25,6 +26,19 @@ type Core interface {
 
 	// Stop will stop the IMP core
 	Stop() error
+
+	//
+	// KV commands
+	//
+
+	// GetKey gets a value
+	GetKey(key string) (string, error)
+
+	// SetKey sets a key with a value
+	SetKey(key string, value string) error
+
+	// DelKey deletes a key
+	DelKey(key string) error
 
 	//
 	// Message Commands
@@ -121,6 +135,14 @@ type Core interface {
 
 	contacts.Contacts
 
+	/*type Contacts interface {
+		GetContacts() ([]*ContactInfo, error)
+		GetContact(id int64) (*ContactInfo, error)
+		CreateContact(*ContactInfo) (*ContactInfo, error)
+		UpdateContact(*ContactUpdate) (*ContactInfo, error)
+		DeleteContact(int64) error
+	}*/
+
 	CreateContacts([]*contacts.ContactInfo) ([]*contacts.ContactInfo, error)
 
 	//
@@ -167,6 +189,7 @@ type core struct {
 	messageManager   messages.MessageManager
 	didComm          comm.DIDComm
 	globalConfig     config.GlobalConfig
+	kvManager        kv.KvManager
 }
 
 type Config struct {
@@ -180,6 +203,7 @@ type Config struct {
 	MessageManager   messages.MessageManager
 	DIDComm          comm.DIDComm
 	GlobalConfig     config.GlobalConfig
+	KvManager        kv.KvManager
 }
 
 func NewImpCore(cfg *Config) (Core, error) {
@@ -194,6 +218,7 @@ func NewImpCore(cfg *Config) (Core, error) {
 		messageManager:   cfg.MessageManager,
 		didComm:          cfg.DIDComm,
 		globalConfig:     cfg.GlobalConfig,
+		kvManager:        cfg.KvManager,
 	}
 
 	return core, nil

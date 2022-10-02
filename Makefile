@@ -1,4 +1,4 @@
-.PHONY: proto lightning id ipfs relay key contacts config auth
+.PHONY: proto lightning id kv relay key contacts config
 
 ### Proto Generation ###
 
@@ -53,10 +53,12 @@ messaging: proto/imp/api/messaging/messaging.proto | $(PROTOC_GEN_GO_GRPC) $(PRO
 		--grpc-gateway_out ./gen/go \
 		--grpc-gateway_opt logtostderr=true \
     		--grpc-gateway_opt paths=source_relative \
-		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
+		--go_out=./gen/go \
+		--go_opt=paths=source_relative \
+		--go-grpc_out=./gen/go \
+		--go-grpc_opt=paths=source_relative \
 		--js_out=import_style=commonjs,binary:./gen/js \
 		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
-		--rust_out="./gen/rust" \
 		--openapiv2_out ./gen/openapiv2 \
 		--openapiv2_opt logtostderr=true \
 		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,messaging.md \
@@ -70,10 +72,12 @@ websocket: proto/imp/api/websocket/websocket.proto | $(PROTOC_GEN_GO_GRPC) $(PRO
 		--grpc-gateway_out ./gen/go \
 		--grpc-gateway_opt logtostderr=true \
     		--grpc-gateway_opt paths=source_relative \
-		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
+		--go_out=./gen/go \
+                --go_opt=paths=source_relative \
+                --go-grpc_out=./gen/go \
+                --go-grpc_opt=paths=source_relative \
 		--js_out=import_style=commonjs,binary:./gen/js \
 		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
-		--rust_out="./gen/rust" \
 		--openapiv2_out ./gen/openapiv2 \
 		--openapiv2_opt logtostderr=true \
 		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,websocket.md \
@@ -87,10 +91,12 @@ lightning: proto/imp/api/lightning/lightning.proto | $(PROTOC_GEN_GO_GRPC) $(PRO
 		--grpc-gateway_out ./gen/go \
 		--grpc-gateway_opt logtostderr=true \
     		--grpc-gateway_opt paths=source_relative \
-		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
+                --go_out=./gen/go \
+                --go_opt=paths=source_relative \
+                --go-grpc_out=./gen/go \
+                --go-grpc_opt=paths=source_relative \
 		--js_out=import_style=commonjs,binary:./gen/js \
 		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
-		--rust_out="./gen/rust" \
 		--openapiv2_out ./gen/openapiv2 \
 		--openapiv2_opt logtostderr=true \
 		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,lightning.md \
@@ -104,10 +110,12 @@ id: proto/imp/api/id/id.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_OPENAPIV2) $(
 		--grpc-gateway_out ./gen/go \
 		--grpc-gateway_opt logtostderr=true \
     		--grpc-gateway_opt paths=source_relative \
-		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
+                --go_out=./gen/go \
+                --go_opt=paths=source_relative \
+                --go-grpc_out=./gen/go \
+                --go-grpc_opt=paths=source_relative \
 		--js_out=import_style=commonjs,binary:./gen/js \
 		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
-		--rust_out="./gen/rust" \
 		--openapiv2_out ./gen/openapiv2 \
 		--openapiv2_opt logtostderr=true \
 		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,id.md \
@@ -116,32 +124,18 @@ id: proto/imp/api/id/id.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_OPENAPIV2) $(
 	cat ./gen/openapiv2/proto/imp/api/id/id.swagger.json >> ./gen/openapiv2/proto/imp/api/id/id.go
 	echo "\`" >> ./gen/openapiv2/proto/imp/api/id/id.go
 
-ipfs: proto/imp/api/ipfs/ipfs.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_OPENAPIV2) $(PROTOC_GEN_GRPC_GATEWAY) $(PROTOC_GEN_GO) $(PROTOC_GEN_DOC) $(PROTOC)
-	protoc -I. -I./proto \
-		--grpc-gateway_out ./gen/go \
-		--grpc-gateway_opt logtostderr=true \
-    		--grpc-gateway_opt paths=source_relative \
-		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
-		--js_out=import_style=commonjs,binary:./gen/js \
-		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
-		--rust_out="./gen/rust" \
-		--openapiv2_out ./gen/openapiv2 \
-		--openapiv2_opt logtostderr=true \
-		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,ipfs.md \
-		proto/imp/api/ipfs/ipfs.proto
-	echo "package ipfs\n\nvar SwaggerJSON = \`" > ./gen/openapiv2/proto/imp/api/ipfs/ipfs.go
-	cat ./gen/openapiv2/proto/imp/api/ipfs/ipfs.swagger.json >> ./gen/openapiv2/proto/imp/api/ipfs/ipfs.go
-	echo "\`" >> ./gen/openapiv2/proto/imp/api/ipfs/ipfs.go
 
 relay: proto/imp/api/relay/relay.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_OPENAPIV2) $(PROTOC_GEN_GRPC_GATEWAY) $(PROTOC_GEN_GO) $(PROTOC_GEN_DOC) $(PROTOC)
 	protoc -I. -I./proto \
 		--grpc-gateway_out ./gen/go \
 		--grpc-gateway_opt logtostderr=true \
     		--grpc-gateway_opt paths=source_relative \
-		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
+                --go_out=./gen/go \
+                --go_opt=paths=source_relative \
+                --go-grpc_out=./gen/go \
+                --go-grpc_opt=paths=source_relative \
 		--js_out=import_style=commonjs,binary:./gen/js \
 		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
-		--rust_out="./gen/rust" \
 		--openapiv2_out ./gen/openapiv2 \
 		--openapiv2_opt logtostderr=true \
 		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,relay.md \
@@ -155,10 +149,12 @@ contacts: proto/imp/api/contacts/contacts.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC
 		--grpc-gateway_out ./gen/go \
 		--grpc-gateway_opt logtostderr=true \
     		--grpc-gateway_opt paths=source_relative \
-		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
+                --go_out=./gen/go \
+                --go_opt=paths=source_relative \
+                --go-grpc_out=./gen/go \
+                --go-grpc_opt=paths=source_relative \
 		--js_out=import_style=commonjs,binary:./gen/js \
 		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
-		--rust_out="./gen/rust" \
 		--openapiv2_out ./gen/openapiv2 \
 		--openapiv2_opt logtostderr=true \
 		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,contacts.md \
@@ -172,10 +168,12 @@ config: proto/imp/api/config/config.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_O
 		--grpc-gateway_out ./gen/go \
 		--grpc-gateway_opt logtostderr=true \
     		--grpc-gateway_opt paths=source_relative \
-		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
+                --go_out=./gen/go \
+                --go_opt=paths=source_relative \
+                --go-grpc_out=./gen/go \
+                --go-grpc_opt=paths=source_relative \
 		--js_out=import_style=commonjs,binary:./gen/js \
 		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
-		--rust_out="./gen/rust" \
 		--openapiv2_out ./gen/openapiv2 \
 		--openapiv2_opt logtostderr=true \
 		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,config.md \
@@ -190,10 +188,12 @@ key: proto/imp/api/key/key.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_OPENAPIV2)
 		--grpc-gateway_out ./gen/go \
 		--grpc-gateway_opt logtostderr=true \
     		--grpc-gateway_opt paths=source_relative \
-		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
+                --go_out=./gen/go \
+                --go_opt=paths=source_relative \
+                --go-grpc_out=./gen/go \
+                --go-grpc_opt=paths=source_relative \
 		--js_out=import_style=commonjs,binary:./gen/js \
 		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
-		--rust_out="./gen/rust" \
 		--openapiv2_out ./gen/openapiv2 \
 		--openapiv2_opt logtostderr=true \
 		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,key.md \
@@ -202,31 +202,48 @@ key: proto/imp/api/key/key.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_OPENAPIV2)
 	cat ./gen/openapiv2/proto/imp/api/key/key.swagger.json >> ./gen/openapiv2/proto/imp/api/key/key.go
 	echo "\`" >> ./gen/openapiv2/proto/imp/api/key/key.go
 
-auth: proto/imp/api/auth/auth.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_OPENAPIV2) $(PROTOC_GEN_GRPC_GATEWAY) $(PROTOC_GEN_GO) $(PROTOC_GEN_DOC) $(PROTOC)
+kv: proto/imp/api/kv/kv.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_OPENAPIV2) $(PROTOC_GEN_GRPC_GATEWAY) $(PROTOC_GEN_GO) $(PROTOC_GEN_DOC) $(PROTOC)
 	protoc -I. -I./proto \
 		--grpc-gateway_out ./gen/go \
 		--grpc-gateway_opt logtostderr=true \
     		--grpc-gateway_opt paths=source_relative \
-		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
+                --go_out=./gen/go \
+                --go_opt=paths=source_relative \
+                --go-grpc_out=./gen/go \
+                --go-grpc_opt=paths=source_relative \
 		--js_out=import_style=commonjs,binary:./gen/js \
 		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
-		--rust_out="./gen/rust" \
 		--openapiv2_out ./gen/openapiv2 \
 		--openapiv2_opt logtostderr=true \
-		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,auth.md \
-		proto/imp/api/auth/auth.proto
-	echo "package auth\n\nvar SwaggerJSON = \`" > ./gen/openapiv2/proto/imp/api/auth/auth.go
-	cat ./gen/openapiv2/proto/imp/api/auth/auth.swagger.json >> ./gen/openapiv2/proto/imp/api/auth/auth.go
-	echo "\`" >> ./gen/openapiv2/proto/imp/api/auth/auth.go
+		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,key.md \
+		proto/imp/api/kv/kv.proto
+	echo "package kv\n\nvar SwaggerJSON = \`" > ./gen/openapiv2/proto/imp/api/kv/kv.go
+	cat ./gen/openapiv2/proto/imp/api/kv/kv.swagger.json >> ./gen/openapiv2/proto/imp/api/kv/kv.go
+	echo "\`" >> ./gen/openapiv2/proto/imp/api/kv/kv.go
 
 
 proto: messaging
 proto: websocket
 proto: lightning
 proto: id
-proto: ipfs
 proto: relay
 proto: key
 proto: contacts
 proto: config
-proto: auth
+proto: kv
+publish:
+	# Assumes release directory in ../imp-releases/
+	#
+	# Make sure in latest main
+	git checkout main && git pull
+
+	# Copy proto files
+	find . -name '*.proto' -path '*proto/imp/api/*/*' -exec ditto \{\} ../imp-releases/proto \;
+
+	# Copy generated code
+	cp -a ./gen/. ../imp-releases/
+
+	# Copy lateset config example
+	cp ./config/config.yml ../imp-releases/config.yml
+
+	### Now commit your changes in imp release ###

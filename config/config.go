@@ -57,10 +57,10 @@ type Config struct {
 	DID         DID        `yaml:"did"`
 	ServiceList []Services `yaml:"service_list"`
 	Lightning   Lightning  `yaml:"lightning"`
-	IPFS        IPFS       `yaml:"ipfs"`
 	ION         ION        `yaml:"ion"`
 	Log         Log        `yaml:"log"`
 	Key         Key        `yaml:"key"`
+	Kv          Kv         `yaml:"kv"`
 }
 
 func DefaultConfig() Config {
@@ -75,7 +75,7 @@ func DefaultConfig() Config {
 	}
 
 	sqlPath := homePath + "/imp.db"
-	ipfsPath := homePath + "/ipfs"
+	kvPath := homePath + "/kv.db"
 
 	return Config{
 		Server: Server{
@@ -88,6 +88,9 @@ func DefaultConfig() Config {
 		Sql: Sql{
 			ConnectionString: fmt.Sprintf("file:%s?_auth&_auth_user=admin&_auth_pass=supersecretpassword&_auth_crypt=sha256", sqlPath),
 			Type:             "sqlite",
+		},
+		Kv: Kv{
+			Db: kvPath,
 		},
 		DID: DID{
 			UniversalResolverUrls: []string{
@@ -105,10 +108,6 @@ func DefaultConfig() Config {
 				Active:            true,
 				CustomMessageType: "https://impervious.ai/didcomm/relay-registration/1.0",
 			},
-		},
-		IPFS: IPFS{
-			Directory: ipfsPath,
-			Active:    false,
 		},
 		ION: ION{
 			Url:    "http://localhost:3000",
@@ -128,9 +127,8 @@ type Log struct {
 	IgnoreFileWrite bool `yaml:"ignore_file_write"`
 }
 
-type IPFS struct {
-	Directory string `yaml:"directory"`
-	Active    bool   `yaml:"active"`
+type Kv struct {
+	Db string `yaml:"db_file"`
 }
 
 type Lightning struct {

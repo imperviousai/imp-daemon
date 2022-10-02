@@ -22,6 +22,7 @@ import (
 	contacts_server "github.com/imperviousai/imp-daemon/server/contacts"
 	id_server "github.com/imperviousai/imp-daemon/server/id"
 	key_server "github.com/imperviousai/imp-daemon/server/key"
+	kv_server "github.com/imperviousai/imp-daemon/server/kv"
 	lightning_server "github.com/imperviousai/imp-daemon/server/lightning"
 	message_server "github.com/imperviousai/imp-daemon/server/message"
 	relay_server "github.com/imperviousai/imp-daemon/server/relay"
@@ -39,6 +40,7 @@ import (
 	contacts_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/contacts"
 	id_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/id"
 	key_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/key"
+	kv_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/kv"
 	lightning_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/lightning"
 	messaging_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/messaging"
 	relay_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/relay"
@@ -48,6 +50,7 @@ import (
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/contacts"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/id"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/key"
+	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/kv"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/lightning"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/messaging"
 	"github.com/imperviousai/imp-daemon/gen/openapiv2/proto/imp/api/relay"
@@ -137,6 +140,7 @@ func main() {
 				websocket_proto.RegisterWebsocketServer(grpcServer, websocket_server.NewWebsocketServer(ctx.Websocket))
 				lightning_proto.RegisterLightningServer(grpcServer, lightning_server.NewLightningServer(ctx.Core))
 				id_proto.RegisterIDServer(grpcServer, id_server.NewIDServer(ctx.Core))
+				kv_proto.RegisterKVServer(grpcServer, kv_server.NewKVServer(ctx.Core))
 
 				// Http proxy
 				zap.L().Debug("Setting up http proxy", zap.String("addr", globalConfig.GetConfig().Server.HttpAddr))
@@ -166,6 +170,10 @@ func main() {
 					zap.L().Error(err.Error())
 				}
 				err = key_proto.RegisterKeyHandlerFromEndpoint(ctxProxy, mux, globalConfig.GetConfig().Server.GrpcAddr, opts)
+				if err != nil {
+					zap.L().Error(err.Error())
+				}
+				err = kv_proto.RegisterKVHandlerFromEndpoint(ctxProxy, mux, globalConfig.GetConfig().Server.GrpcAddr, opts)
 				if err != nil {
 					zap.L().Error(err.Error())
 				}
@@ -393,6 +401,11 @@ func injectSpecsMiddleware(s *http.Server) {
 		zap.L().Error(err.Error())
 		return
 	}
+	kvSpec, err := loads.Analyzed(json.RawMessage([]byte(kv.SwaggerJSON)), "")
+	if err != nil {
+		zap.L().Error(err.Error())
+		return
+	}
 	websocketSpec, err := loads.Analyzed(json.RawMessage([]byte(websocket.SwaggerJSON)), "")
 	if err != nil {
 		zap.L().Error(err.Error())
@@ -434,6 +447,10 @@ func injectSpecsMiddleware(s *http.Server) {
 	s.Handler = middleware.Spec("/key",
 		keySpec.Raw(),
 		middleware.Redoc(middleware.RedocOpts{BasePath: "/docs", Path: "key", SpecURL: "/key/swagger.json"}, s.Handler),
+	)
+	s.Handler = middleware.Spec("/kv",
+		kvSpec.Raw(),
+		middleware.Redoc(middleware.RedocOpts{BasePath: "/docs", Path: "kv", SpecURL: "/kv/swagger.json"}, s.Handler),
 	)
 	s.Handler = middleware.Spec("/websocket",
 		websocketSpec.Raw(),
