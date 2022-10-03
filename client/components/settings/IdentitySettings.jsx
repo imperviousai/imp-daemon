@@ -1,26 +1,16 @@
 import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { resolveDid } from "../../utils/id";
 import { useFetchMyDid } from "../../hooks/id";
 import Identity from "./Identity";
 import AvatarRotator from "../contact/AvatarRotator";
+import { useAtom } from "jotai";
+import { myDidLongFormDocumentAtom } from "../../stores/id";
 
 const IdentitySettings = () => {
   const [longFormDid, setLongFormDid] = useState("");
   const { data: myDid } = useFetchMyDid();
   const { isAuthenticated } = useAuth0();
-
-  useEffect(() => {
-    if (myDid) {
-      resolveDid(myDid.id)
-        .then((res) => {
-          setLongFormDid(res.data.longFormDid);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [myDid]);
+  const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
@@ -64,7 +54,7 @@ const IdentitySettings = () => {
               disabled
               rows={4}
               className="block w-full p-4 border border-blue-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-primary focus:border-blue-500"
-              defaultValue={longFormDid}
+              defaultValue={myDidLongFormDocument}
             />
           </div>
         </div>
@@ -81,7 +71,7 @@ const IdentitySettings = () => {
               Peers can search for your Twitter username in the Registry to find
               your latest Identity.
             </p>
-            <Identity longFormDid={longFormDid} />
+            <Identity />
           </div>
         )}
       </div>

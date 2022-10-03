@@ -13,7 +13,6 @@ import {
 } from "@heroicons/react/outline";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useAtom } from "jotai";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import { getAlgoliaResults } from "@algolia/autocomplete-js";
 import algoliasearch from "algoliasearch";
@@ -22,7 +21,12 @@ import AddContactSlideOut from "../components/contact/AddContactSlideOut";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { toast } from "react-toastify";
 import { useFetchMyDid } from "../hooks/id";
-import { myDidDocumentAtom, myDidLongFormDocumentAtom } from "../stores/id";
+import {
+  myDidDocumentAtom,
+  myDidLongFormDocumentAtom,
+  publishedDidAtom,
+  currentRegistryUserAtom,
+} from "../stores/id";
 import { auth0TokenAtom } from "../stores/auth";
 import {
   EmailShareButton,
@@ -36,7 +40,7 @@ import {
   WhatsappShareButton,
   WhatsappIcon,
 } from "react-share";
-import { resolveDid } from "../utils/id";
+import { createDid, resolveDid } from "../utils/id";
 import { useAddContact } from "../hooks/contacts";
 import LightningToggle from "./LightingToggle";
 import { Autocomplete } from "./navigation/Autocomplete";
@@ -46,6 +50,9 @@ import {
   ALGOLIA_DID_INDEX,
 } from "../utils/contacts";
 import { AutocompleteItem } from "./navigation/AutocompleteItem";
+import { createDID } from "../src/graphql/mutations";
+import { GET_DID_BY_TWITTER } from "../utils/contacts";
+import { useLazyQuery, useMutation, gql } from "@apollo/client";
 
 const sidebarNavigation = [
   { name: "Dashboard", href: "/d/dashboard", icon: HomeIcon, current: false },
@@ -238,30 +245,67 @@ const TwitterProfileMenu = () => {
 
 const TwitterConnect = () => {
   const [, setAuth0Token] = useAtom(auth0TokenAtom);
-  const router = useRouter();
+  const { data: myDid } = useFetchMyDid();
+  const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
+  const [, setPublishedDid] = useAtom(publishedDidAtom);
+  const [currentRegistryUser, setCurrentRegistryUser] = useAtom(
+    currentRegistryUserAtom
+  );
+  const { user, isAuthenticated, getAccessTokenSilently, loginWithPopup } =
+    useAuth0();
 
-  const {
-    user,
-    isAuthenticated,
-    loginWithRedirect,
-    getAccessTokenSilently,
-    loginWithPopup,
-  } = useAuth0();
+  const [getDidsbyTwitter, { data, loading, error }] =
+    useLazyQuery(GET_DID_BY_TWITTER);
+
+  useEffect(() => {
+    if (data?.listDIDS?.items?.length > 0) {
+      setPublishedDid(data.listDIDS.items[0]);
+    } else {
+      setPublishedDid("");
+    }
+  }, [data]);
 
   useEffect(() => {
     const getToken = async () => {
       if (user) {
         const accessToken = await getAccessTokenSilently();
         setAuth0Token(accessToken);
+        setCurrentRegistryUser(user);
+        getDidsbyTwitter({
+          variables: { twitterUsername: user?.nickname },
+        });
+        if (user?.nickname !== currentRegistryUser?.nickname) {
+          publishDid()
+            .then(() =>
+              console.log("Successfuly published did to the registery")
+            )
+            .catch((e) =>
+              console.error("Unable published did to the registery", e)
+            );
+        }
       }
     };
     getToken();
-  }, [getAccessTokenSilently, user, setAuth0Token]);
+  }, [getAccessTokenSilently, user, setAuth0Token, currentRegistryUser]);
 
   let returnUrl = "";
   if (typeof window !== "undefined") {
     returnUrl = window.location.origin;
   }
+
+  const [publishDid] = useMutation(gql(createDID), {
+    variables: {
+      input: {
+        longFormDid: myDidLongFormDocument,
+        shortFormDid: myDid?.id,
+        twitterUsername: user?.nickname,
+        avatarUrl: user?.picture,
+        name: user?.nickname,
+        lastUpdated: new Date().getTime(),
+      },
+    },
+    refetchQueries: [{ query: GET_DID_BY_TWITTER }, "getDIDByTwitter"],
+  });
 
   return (
     <>

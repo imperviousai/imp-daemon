@@ -303,7 +303,7 @@ function Onboard() {
         return relayRequest(relayEndpoint);
       })
       .then(() => {
-        console.log("Successfully registered to relay.", res.data);
+        console.log("Successfully registered to relay.");
         setIsLoading(false);
       })
       .catch((err) => {
