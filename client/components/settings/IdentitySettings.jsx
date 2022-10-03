@@ -9,7 +9,7 @@ import { myDidLongFormDocumentAtom } from "../../stores/id";
 const IdentitySettings = () => {
   const [longFormDid, setLongFormDid] = useState("");
   const { data: myDid } = useFetchMyDid();
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated, user } = useAuth0();
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
 
   return (
@@ -23,18 +23,44 @@ const IdentitySettings = () => {
           </p>
         </div>
 
-        <div className="sm:col-span-6">
-          <label
-            htmlFor="photo"
-            className="block text-xl font-medium text-blue-gray-900"
-          >
-            Avatar
-          </label>
-          <p className="mt-1 text-md text-blue-gray-500">
-            Here is your avatar, you can rotate your avatar at any time.
-          </p>
-          <AvatarRotator />
-        </div>
+        {user ? (
+          <div className="sm:col-span-6">
+            <p
+              htmlFor="photo"
+              className="block text-xl font-medium text-blue-gray-900 pb-4"
+            >
+              Signed into Twitter:{" "}
+            </p>
+            <span>
+              <img
+                className="inline-block h-8 w-8 rounded-full"
+                src={user.picture}
+                alt=""
+              />
+              <a
+                href={`https://twitter.com/${user.nickname}`}
+                rel="noreferrer"
+                target="_blank"
+                className="text-blue-500 pl-2 text-xl"
+              >
+                @{user.nickname}
+              </a>
+            </span>
+          </div>
+        ) : (
+          <div className="sm:col-span-6">
+            <label
+              htmlFor="photo"
+              className="block text-xl font-medium text-blue-gray-900"
+            >
+              Avatar
+            </label>
+            <p className="mt-1 text-md text-blue-gray-500">
+              Here is your avatar, you can rotate your avatar at any time.
+            </p>
+            <AvatarRotator />
+          </div>
+        )}
 
         <div className="sm:col-span-6">
           <label

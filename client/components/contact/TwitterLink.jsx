@@ -7,6 +7,7 @@ function TwitterLink({ contact, className }) {
       {twitterUsername && (
         <a
           className={className}
+          target="_blank"
           href={`https://twitter.com/${twitterUsername}`}
         >
           @{twitterUsername}

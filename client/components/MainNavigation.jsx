@@ -41,7 +41,7 @@ import {
   WhatsappIcon,
 } from "react-share";
 import { createDid, resolveDid } from "../utils/id";
-import { useAddContact } from "../hooks/contacts";
+import { useAddContact, useFetchContacts } from "../hooks/contacts";
 import LightningToggle from "./LightingToggle";
 import { Autocomplete } from "./navigation/Autocomplete";
 import {
@@ -344,6 +344,7 @@ export default function MainNavigation({ children, currentPage }) {
   const [openAddContactForm, setOpenAddContactForm] = useState(false);
   const { data: myDid } = useFetchMyDid();
   const { mutate: addContact } = useAddContact();
+  const { data: contactsRes } = useFetchContacts();
 
   const isCurrent = (name) => currentPage === name;
 
@@ -378,6 +379,7 @@ export default function MainNavigation({ children, currentPage }) {
             Import contact{" "}
             <a
               href={`https://twitter.com/${item.twitterUsername}`}
+              target="_blank"
               className="text-md text-blue-400"
             >
               @{item.twitterUsername}
