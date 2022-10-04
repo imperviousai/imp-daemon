@@ -3,6 +3,14 @@ import Peer from "simple-peer";
 import { v4 as uuidv4 } from "uuid";
 import { trigger } from "./events";
 
+const isJSON = (msg) => {
+  try {
+    JSON.parse(msg);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
 // createPeer creates a peer instances with base event handlers, attaches metadata and returns an object with peer and metadata
 export const createPeer = ({
   initiator,
@@ -25,9 +33,25 @@ export const createPeer = ({
   });
 
   peer.on("data", (data) => {
-    const msg = JSON.parse(String.fromCharCode(...data));
-    // TODO: will need to handle file data, since it will not always be JSON parse-able
-    trigger("received-peer-message", { msg, peerId: peer._id });
+    if (isJSON(String.fromCharCode(...data))) {
+      const msg = JSON.parse(String.fromCharCode(...data));
+      trigger("received-peer-message", { msg, peerId: peer._id });
+      return;
+    }
+    trigger("received-peer-message", {
+      msg: { data, type: "file-transfer-chunk" },
+      peerId: peer._id,
+    });
+    // let msg;
+    // try {
+    //   const s = String.fromCharCode(...data);
+    //   msg = JSON.parse(s);
+    // } catch (e) {
+    //   console.log(e);
+    //   console.log("MESSAGE WAS FILE TRANSFER CHUNK");
+    //   msg = { data, type: "file-transfer-chunk" };
+    // }
+    //
   });
   peer.on("connect", () => {
     trigger("new-peer-connection", { peerId: peer._id });
