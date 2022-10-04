@@ -4,128 +4,127 @@
 <!--
 ## Table of Contents
 
-- [proto/imp/api/key/key.proto](#proto/imp/api/key/key.proto)
-    - [InitSeedRequest](#key.InitSeedRequest)
-    - [InitSeedResponse](#key.InitSeedResponse)
-    - [StatusRequest](#key.StatusRequest)
-    - [StatusResponse](#key.StatusResponse)
-    - [UnlockSeedRequest](#key.UnlockSeedRequest)
-    - [UnlockSeedResponse](#key.UnlockSeedResponse)
+- [proto/imp/api/kv/kv.proto](#proto/imp/api/kv/kv.proto)
+    - [DelKeyRequest](#kv.DelKeyRequest)
+    - [DelKeyResponse](#kv.DelKeyResponse)
+    - [GetKeyRequest](#kv.GetKeyRequest)
+    - [GetKeyResponse](#kv.GetKeyResponse)
+    - [SetKeyRequest](#kv.SetKeyRequest)
+    - [SetKeyResponse](#kv.SetKeyResponse)
   
-    - [Key](#key.Key)
+    - [KV](#kv.KV)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="proto/imp/api/key/key.proto"></a>
+<a name="proto/imp/api/kv/kv.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
 -->
 
-## proto/imp/api/key/key.proto
-Allows for p2p messaging between Impervious nodes
+## proto/imp/api/kv/kv.proto
+Allows for IPFS actions for Impervious nodes
 
 
 
-<a name="key.Key"></a>
+<a name="kv.KV"></a>
 
-### Key
-Key service allows key manager actions on the Impervious daemon.
+### KV
+KV service allows KV actions from the Impervious node.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| InitSeed | InitSeedRequest | InitSeedResponse | InitSeed initializes the master seed for the daemon, and encrypts using the passphrase. |
-| UnlockSeed | UnlockSeedRequest | UnlockSeedResponse | UnlockSeed unlocks the master seed for the daemon, and decrypts using the passphrase. |
-| Status | StatusRequest | StatusResponse | Status gives the status of the daemon db/key. |
+| GetKey | GetKeyRequest | GetKeyResponse | GetKey will retrieve a key |
+| SetKey | SetKeyRequest | SetKeyResponse | SetKey will set a key |
+| DelKey | DelKeyRequest | DelKeyResponse | DelKey will delete a key |
 
 
 #### HTTP bindings
 
 | Method Name | Method | Pattern |
 | ----------- | ------ | ------- |
-| `InitSeed` | `POST` | `/v1/key/initSeed`
-| `UnlockSeed` | `POST` | `/v1/key/unlockSeed`
-| `Status` | `GET` | `/v1/key/status` <!-- end services -->
+| `GetKey` | `POST` | `/v1/kv/getkey`
+| `SetKey` | `POST` | `/v1/kv/setkey`
+| `DelKey` | `POST` | `/v1/kv/delkey` <!-- end services -->
 
 
 
-<a name="key.InitSeedRequest"></a>
+<a name="kv.DelKeyRequest"></a>
 
-### InitSeedRequest
-Represents an init seed request to initialize the master seed.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| mnenomic | string |  | The optional mnenomic to set if you already have a seed you want to use with this daemon |
-| passphrase | string |  | The passphrase to encrypt the mnenomic, necessary for unlocking the daemon on restarts |
-
-
-
-
-
-
-<a name="key.InitSeedResponse"></a>
-
-### InitSeedResponse
-Represents a response back from an init seed request.
+### DelKeyRequest
+Represents a request to delete a key and value.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| mnenomic | string |  | The mnenomic that the seed was generated from, should be the same if one was passed in |
-| api_key | string |  | The api key for the user to send authenticated requests |
+| key | string |  | The name of the key to del |
 
 
 
 
 
 
-<a name="key.StatusRequest"></a>
+<a name="kv.DelKeyResponse"></a>
 
-### StatusRequest
-Represents an status request message.
-
-
-
-
-
-
-<a name="key.StatusResponse"></a>
-
-### StatusResponse
-Represents a response back from a status request.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| status | string |  | The status of the daemon db/key. NOT_INITIALIZED means an InitSeed() is needed. LOCKED means an UnlockSeed() is needed. READY means the daemon is ready. |
+### DelKeyResponse
+Represents a response for deletion HTTP 200=Deleted
 
 
 
 
 
 
-<a name="key.UnlockSeedRequest"></a>
+<a name="kv.GetKeyRequest"></a>
 
-### UnlockSeedRequest
-Represents an unlock seed request to unlock the master seed.
+### GetKeyRequest
+Represents a request to get a key and value.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| passphrase | string |  | The passphrase to decrypt the seed, necessary for unlocking the daemon on restarts |
+| key | string |  | The name of the key to get |
 
 
 
 
 
 
-<a name="key.UnlockSeedResponse"></a>
+<a name="kv.GetKeyResponse"></a>
 
-### UnlockSeedResponse
-Represents a response back from an unlock seed request.
+### GetKeyResponse
+Represents a response containing the value
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| value | string |  | The contents of the value |
+
+
+
+
+
+
+<a name="kv.SetKeyRequest"></a>
+
+### SetKeyRequest
+Represents a request to get a key and value.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | string |  | The name of the key to set |
+| value | string |  | The value to set |
+
+
+
+
+
+
+<a name="kv.SetKeyResponse"></a>
+
+### SetKeyResponse
+Represents a response for HTTP 200=Set
 
 
 

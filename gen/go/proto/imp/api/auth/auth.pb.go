@@ -91,7 +91,7 @@ func (x *AuthAPIKey) GetDescription() string {
 	return ""
 }
 
-//*
+// *
 // Represents a request to get a list of the auth API keys.
 type GetAuthKeysRequest struct {
 	state         protoimpl.MessageState
@@ -131,7 +131,7 @@ func (*GetAuthKeysRequest) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_auth_auth_proto_rawDescGZIP(), []int{1}
 }
 
-//*
+// *
 // Represents a response the list of auth API keys.
 type GetAuthKeysResponse struct {
 	state         protoimpl.MessageState
@@ -180,7 +180,7 @@ func (x *GetAuthKeysResponse) GetKeys() []*AuthAPIKey {
 	return nil
 }
 
-//*
+// *
 // Represents a request to create a new auth API key.
 type CreateAuthKeyRequest struct {
 	state         protoimpl.MessageState
@@ -237,7 +237,7 @@ func (x *CreateAuthKeyRequest) GetDescription() string {
 	return ""
 }
 
-//*
+// *
 // Represents a response containing the new auth API key.
 type CreateAuthKeyResponse struct {
 	state         protoimpl.MessageState
@@ -286,7 +286,7 @@ func (x *CreateAuthKeyResponse) GetKey() string {
 	return ""
 }
 
-//*
+// *
 // Represents a request to update an auth API key.
 type UpdateAuthKeyRequest struct {
 	state         protoimpl.MessageState
@@ -351,7 +351,7 @@ func (x *UpdateAuthKeyRequest) GetDescription() string {
 	return ""
 }
 
-//*
+// *
 // Represents a response containing the update results.
 type UpdateAuthKeyResponse struct {
 	state         protoimpl.MessageState
@@ -391,7 +391,7 @@ func (*UpdateAuthKeyResponse) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_auth_auth_proto_rawDescGZIP(), []int{6}
 }
 
-//*
+// *
 // Represents a request to delete an auth API key.
 type DeleteAuthKeyRequest struct {
 	state         protoimpl.MessageState
@@ -440,7 +440,7 @@ func (x *DeleteAuthKeyRequest) GetId() int64 {
 	return 0
 }
 
-//*
+// *
 // Represents a response containing the deletion results.
 type DeleteAuthKeyResponse struct {
 	state         protoimpl.MessageState

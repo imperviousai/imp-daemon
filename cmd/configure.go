@@ -15,6 +15,7 @@ import (
 	"github.com/imperviousai/imp-daemon/core"
 	"github.com/imperviousai/imp-daemon/id"
 	"github.com/imperviousai/imp-daemon/key"
+	"github.com/imperviousai/imp-daemon/kv"
 	"github.com/imperviousai/imp-daemon/lightning"
 	"github.com/imperviousai/imp-daemon/lightning/node"
 	"github.com/imperviousai/imp-daemon/messages"
@@ -34,6 +35,7 @@ type ConfigureContext struct {
 	// Global things that don't need to be hot reloaded typically
 	KeyManager key.KeyManager
 	DB         state.DBManager
+	KV         kv.KvManager
 }
 
 func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext) *ConfigureContext {
@@ -67,7 +69,6 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 		if err != nil {
 			zap.L().Panic(err.Error())
 		}
-
 		// if passphrase is passed in the config, then auto unlock
 		if !db.IsReady() && cfg.Key.Passphrase != "" {
 			// Double check if db file even exiss
@@ -199,6 +200,15 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 		zap.L().Panic(err.Error())
 	}
 
+	// Setup Kv manager
+	zap.L().Debug("[Cfg] Setting up Key Value Store")
+	kvManager, err := kv.New(&kv.Config{
+		Kvdb: db,
+	})
+	if err != nil {
+		zap.L().Panic(err.Error())
+	}
+
 	// Setup services
 	zap.L().Debug("[Cfg] Registering services")
 	serviceHandler, err := ConfigureServiceHandler(cfg, msgChan, keyManager, identity, messagesManager, didComm, db, ws)
@@ -219,6 +229,7 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 		DIDComm:          didComm,
 		DBManager:        db,
 		GlobalConfig:     globalCfg,
+		KvManager:        kvManager,
 	})
 	if err != nil {
 		zap.L().Panic(err.Error())
@@ -231,6 +242,7 @@ func ConfigureCore(globalCfg config.GlobalConfig, prevContext *ConfigureContext)
 		DB:          db,
 		Websocket:   ws,
 		HttpDIDComm: httpDIDCommServer,
+		KV:          kvManager,
 	}
 }
 
@@ -422,7 +434,7 @@ func ConfigureLightningNodes(cfg config.Config) (node.Node, error) {
 }
 
 func ConfigureDb(cfg config.Config) (state.DBManager, error) {
-	return state.NewDB(cfg.Sql.Type, cfg.Sql.ConnectionString)
+	return state.NewDB(cfg.Sql.Type, cfg.Sql.ConnectionString, cfg.Kv.Db)
 }
 
 func ConfigureIon(cfg config.Config, db state.DBManager, keymanager key.KeyManager) (id.Ion, error) {
