@@ -21,6 +21,7 @@ import {
   passwordSetAtom,
   commsSelectedAtom,
   recoverySeedAtom,
+  newBrowserAtom,
 } from "../../stores/auth";
 import { saveAs } from "file-saver";
 // import { providedLightningNodes } from "../../mock/lightning";
@@ -28,7 +29,7 @@ import { useSaveLightningConfig } from "../../hooks/config";
 import { Rings } from "react-loader-spinner";
 import { relayRequest } from "../../utils/messages";
 import { ChevronLeftIcon } from "@heroicons/react/outline";
-
+import { setItem } from "../../utils/kv";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -246,7 +247,7 @@ function Onboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [, setCompletedSetup] = useAtom(completedSetupAtom);
   const [passwordSet, setPasswordSet] = useAtom(passwordSetAtom);
-
+  const [newBrowser, setNewBrowser] = useAtom(newBrowserAtom);
   const [recoverySeed, setRecoverySeed] = useAtom(recoverySeedAtom);
 
   const queryClient = useQueryClient();
@@ -290,6 +291,7 @@ function Onboard() {
     const { mnenomic, apiKey } = data.data;
     setRecoverySeed(mnenomic);
     localStorage.setItem("apiKey", apiKey);
+    setNewBrowser(false);
     // set up an initial avatar
     setMyAvatar(getRandomAvatar());
     onboard({
@@ -335,6 +337,58 @@ function Onboard() {
     initSeed({ passphrase }, { onSuccess, onError });
   };
 
+  const recoverKey = () => {
+    try {
+      setIsRecovering(true);
+      const reader = new FileReader();
+      reader.readAsText(file);
+      reader.onloadend = () => {
+        try {
+          const recoveryKit = JSON.parse(reader.result);
+          setRecoveryKit(recoveryKit);
+          console.log("recoveryKit", recoveryKit);
+          const { apiKey } = recoveryKit;
+          initSeed(
+            { passphrase, mnemonic: seed },
+            {
+              onSuccess: ({ data: { apiKey } }) => {
+                localStorage.setItem("apiKey", apiKey);
+                setNewBrowser(false);
+                setMyAvatar(getRandomAvatar());
+                recoverDid(recoveryKit, {
+                  onSuccess: () => {
+                    toast.success("Recovery successful!");
+                    goToDashboard();
+                  },
+                  onError: () => {
+                    toast.error("Unable to recover DID. Please try again.");
+                    setIsRecovering(false);
+                  },
+                });
+              },
+              onError: () => {
+                toast.error("Failed to Initialize. Please try again.");
+                setIsRecovering(false);
+              },
+            }
+          );
+        } catch (e) {
+          toast.error(
+            "Unable to recover using provided file. Please select the recovery kit."
+          );
+          console.log(e);
+          setIsRecovering(false);
+        }
+      };
+    } catch (e) {
+      toast.error(
+        "Unable to recover using provided file. Please select the recovery kit."
+      );
+      setIsRecovering(false);
+      console.log(e);
+    }
+  };
+
   const recover = () => {
     try {
       setIsRecovering(true);
@@ -350,6 +404,7 @@ function Onboard() {
             {
               onSuccess: ({ data: { apiKey } }) => {
                 localStorage.setItem("apiKey", apiKey);
+                setNewBrowser(false);
                 setMyAvatar(getRandomAvatar());
                 recoverDid(recoveryKit, {
                   onSuccess: () => {
@@ -390,8 +445,15 @@ function Onboard() {
   };
 
   const goToDashboard = () => {
-    setCompletedSetup(true);
-    queryClient.invalidateQueries("fetch-key-status");
+    setRecoverySeed("");
+    setItem("completedSetup", "true")
+      .then(() => {
+        queryClient.invalidateQueries("fetch-key-status");
+        setCompletedSetup(true);
+      })
+      .catch((e) =>
+        console.log(`Unable to set key value "completedSetupItem" - `, e)
+      );
   };
 
   const setupComms = () => {
@@ -509,6 +571,88 @@ function Onboard() {
             )}
           </>
         )} */}
+      </div>
+    );
+  };
+
+  const recoveryApiKey = () => {
+    return (
+      <div className="flex w-full justify-center flex-col items-center">
+        {!isRecovering ? (
+          <>
+            <h1 className="font-bold text-xl mb-1">
+              New Browser Session Detected
+            </h1>
+            <p className="mt-1 text-lg text-base text-gray-800 pt-2 pb-4">
+              Looks like you are on a new browser session, please provide your
+              recovery kit to continue your session.
+            </p>
+            <form
+              className="w-full flex flex-col items-center justify-center w-full"
+              autoComplete="on"
+              onSubmit={(e) => {
+                e.preventDefault();
+                recoverKey();
+              }}
+            >
+              <p className="mt-1 text-lg text-base text-gray-800 pt-2 pb-4">
+                Please select your recovery kit.
+              </p>
+              {file && (
+                <p className="pb-2">
+                  File Selected:{" "}
+                  <span className="text-semibold">{file.name}</span>{" "}
+                </p>
+              )}
+              <>
+                <button
+                  type="button"
+                  onClick={handleClick}
+                  className="w-1/2 items-center px-6 py-3 border-2 border-primary text-base font-medium rounded-md shadow-sm text-primary bg-white hover:text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Select Recovery Kit
+                </button>
+                <input
+                  type="file"
+                  ref={hiddenFileInput}
+                  onChange={handleChange}
+                  style={{ display: "none" }}
+                />
+              </>
+              {file ? (
+                <button
+                  type="submit"
+                  className="w-1/2 items-center px-6 py-3 mt-4  border-2 border-primary text-base font-medium rounded-md shadow-sm text-white bg-primary hover:text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Continue
+                </button>
+              ) : (
+                <></>
+              )}
+            </form>
+
+            <button
+              type="button"
+              onClick={() => {
+                setShowingRecovery(false);
+              }}
+              className="w-1/2 mt-4 inline-flex justify-center items-center px-8 py-3 border border-gray-600 text-base font-medium rounded-md shadow-sm text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            >
+              <ChevronLeftIcon className="h-5 w-5" />
+              Back
+            </button>
+          </>
+        ) : (
+          <>
+            <h1 className="font-semibold text-2xl my-4">Recovering ...</h1>
+            <Rings
+              height="100"
+              width="100"
+              color="#312e81"
+              ariaLabel="loading"
+            />
+          </>
+        )}
       </div>
     );
   };
@@ -731,7 +875,7 @@ function Onboard() {
               type="checkbox"
               value={recoverySeedSaved}
               onChange={(e) => {
-                setRecoverySeedSaved(true);
+                setRecoverySeedSaved(e.target.value);
               }}
               className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
             />
@@ -763,21 +907,20 @@ function Onboard() {
               </h1>
             </div>
             <div className="pt-4 flex flex-col items-center">
-              {showingRecovery
+              {newBrowser
+                ? recoveryApiKey()
+                : showingRecovery
                 ? showRecovery()
                 : showPasswordScreen
                 ? passwordSet
                   ? copySeed()
                   : enterPassword()
                 : setupComms()}
-              {recoverySeedSaved && (
+              {recoverySeedSaved && !newBrowser && (
                 <div className="flex w-full justify-center flex-col items-center pt-4">
                   <button
                     type="button"
-                    onClick={() => {
-                      setRecoverySeed("");
-                      goToDashboard();
-                    }}
+                    onClick={goToDashboard}
                     className="w-1/2 inline-flex items-center px-6 py-3 border-4 border-primary shadow-sm text-base font-medium rounded-md text-primary bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Take me to the Peer to Peer Internet!
