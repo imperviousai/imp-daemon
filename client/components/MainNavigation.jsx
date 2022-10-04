@@ -53,6 +53,7 @@ import { AutocompleteItem } from "./navigation/AutocompleteItem";
 import { createDID } from "../src/graphql/mutations";
 import { GET_DID_BY_TWITTER } from "../utils/contacts";
 import { useLazyQuery, useMutation, gql } from "@apollo/client";
+import { getItem, setItem } from "../utils/kv";
 
 const sidebarNavigation = [
   { name: "Dashboard", href: "/d/dashboard", icon: HomeIcon, current: false },
@@ -266,10 +267,19 @@ const TwitterConnect = () => {
   }, [data, setPublishedDid]);
 
   useEffect(() => {
+    getItem("currentRegistryUser").then((res) => {
+      if (res.data.value) {
+        setCurrentRegistryUser(JSON.parse(res.data.value));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     const getToken = async () => {
       if (user) {
         const accessToken = await getAccessTokenSilently();
         setAuth0Token(accessToken);
+        await setItem("currentRegistryUser", JSON.stringify(user));
         setCurrentRegistryUser(user);
         getDidsbyTwitter({
           variables: { twitterUsername: user?.nickname },

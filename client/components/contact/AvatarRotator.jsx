@@ -6,6 +6,7 @@ import { myAvatarAtom } from "../../stores/settings";
 import { getRandomAvatar } from "../../utils/contacts";
 import { useUpdateContact } from "../../hooks/contacts";
 import ContactAvatar from "./ContactAvatar";
+import { getItem, setItem } from "../../utils/kv";
 
 const AvatarRotator = ({ contact }) => {
   const [showAvatarSave, setShowAvatarSave] = useState(false);
@@ -17,6 +18,16 @@ const AvatarRotator = ({ contact }) => {
   const onSuccess = () => toast.success("Avatar saved!");
   const onError = () =>
     toast.error("Error saving avatar. Please try again later.");
+
+  useEffect(() => {
+    getItem("myAvatar")
+      .then((res) => {
+        if (res.data.value) {
+          setMyAvatar(JSON.parse(res.data.value));
+        }
+      })
+      .catch((e) => console.log("Unable to fetch myAvatar: ", e));
+  }, []);
 
   useEffect(() => {
     if (contact) {
@@ -41,6 +52,7 @@ const AvatarRotator = ({ contact }) => {
       // update the contacts avatar, not yours
       updateContact({ existingContact: contact, avatar: currentAvatar });
     } else {
+      setItem("myAvatar", JSON.stringify(currentAvatar));
       setMyAvatar(currentAvatar);
     }
 
