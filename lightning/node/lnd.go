@@ -8,7 +8,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"sort"
 	"strconv"
 	"sync"
@@ -83,7 +83,7 @@ func NewLndNode(cfg *LndConfig) (node LndNode, err error) {
 	var macaroonBytes []byte
 	switch {
 	case cfg.MacaroonPath != "":
-		macaroonBytes, err = ioutil.ReadFile(cfg.MacaroonPath)
+		macaroonBytes, err = os.ReadFile(cfg.MacaroonPath)
 		if err != nil {
 			zap.L().Error("[LND] NewLndNode failed to read macaroon", zap.String("error", err.Error()))
 			return nil, errors.New("Cannot read macaroon file")
