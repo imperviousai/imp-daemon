@@ -156,7 +156,7 @@ export const getRandomAvatar = () => {
 
 export const GET_DID_BY_TWITTER = gql`
   query getDIDByTwitter($twitterUsername: String!) {
-    listDIDS(filter: { twitterUsername: { eq: $twitterUsername } }, limit: 1) {
+    listDIDS(filter: { twitterUsername: { eq: $twitterUsername } }) {
       items {
         avatarUrl
         id

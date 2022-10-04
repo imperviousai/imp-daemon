@@ -7,11 +7,14 @@ import { CheckCircleIcon } from "@heroicons/react/solid";
 import { LockClosedIcon } from "@heroicons/react/outline";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useFetchMyDid } from "../../hooks/id";
+import { useAtom } from "jotai";
+import { publishedDidAtom, myDidLongFormDocumentAtom } from "../../stores/id";
 
 function Identity({ longFormDid }) {
-  const [publishedDid, setPublishedDid] = useState("");
+  const [publishedDid, setPublishedDid] = useAtom(publishedDidAtom);
   const { user } = useAuth0();
   const { data: myDid } = useFetchMyDid();
+  const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
 
   const { data, loading, error } = useQuery(GET_DID_BY_TWITTER, {
     variables: { twitterUsername: user?.nickname },
@@ -23,12 +26,12 @@ function Identity({ longFormDid }) {
     } else {
       setPublishedDid("");
     }
-  }, [data]);
+  }, [data, setPublishedDid]);
 
   const [publishDid] = useMutation(gql(createDID), {
     variables: {
       input: {
-        longFormDid: longFormDid,
+        longFormDid: myDidLongFormDocument,
         shortFormDid: myDid?.id,
         twitterUsername: user?.nickname,
         avatarUrl: user?.picture,
@@ -43,7 +46,7 @@ function Identity({ longFormDid }) {
     variables: {
       input: {
         id: publishedDid?.id,
-        longFormDid: longFormDid,
+        longFormDid: myDidLongFormDocument,
         shortFormDid: myDid?.id,
         twitterUsername: user?.nickname,
         avatarUrl: user?.picture,
