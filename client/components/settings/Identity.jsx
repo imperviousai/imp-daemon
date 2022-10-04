@@ -26,7 +26,7 @@ function Identity({ longFormDid }) {
     } else {
       setPublishedDid("");
     }
-  }, [data]);
+  }, [data, setPublishedDid]);
 
   const [publishDid] = useMutation(gql(createDID), {
     variables: {

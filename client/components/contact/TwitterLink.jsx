@@ -8,6 +8,7 @@ function TwitterLink({ contact, className }) {
         <a
           className={className}
           target="_blank"
+          rel="noreferrer"
           href={`https://twitter.com/${twitterUsername}`}
         >
           @{twitterUsername}

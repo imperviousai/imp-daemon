@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { IP, PORT } from "../utils/axios-utils";
 import {
   handleDidCommMessage,
@@ -98,34 +98,31 @@ const SubscribeProvider = ({ children }) => {
     peers.forEach((peer) => peer.peer.destroy());
   };
 
-  const addFileChunk = useCallback(
-    (data) => {
-      const payload = String.fromCharCode(...data).split(":");
-      filesWorker.current.postMessage({
-        id: payload[0],
-        chunk: decode(payload[1]),
-      });
-      // if (type.split("/")[0] === "image") {
-      //   // handle images chunk differently
-      //   setPeerFiles((prev) => {
-      //     if (prev.find((f) => f?.id === id)) {
-      //       return prev.map((f) => {
-      //         if (f?.id === id) {
-      //           f.chunks.push(chunk);
-      //           return f;
-      //         }
-      //       });
-      //     } else {
-      //       prev.push({ type, id, name, chunks: [chunk] });
-      //       return prev;
-      //     }
-      //   });
-      // } else {
-      //   filesWorker.current.postMessage({ name, type, id, chunk });
-      // }
-    },
-    [setPeerFiles]
-  );
+  const addFileChunk = useCallback((data) => {
+    const payload = String.fromCharCode(...data).split(":");
+    filesWorker.current.postMessage({
+      id: payload[0],
+      chunk: decode(payload[1]),
+    });
+    // if (type.split("/")[0] === "image") {
+    //   // handle images chunk differently
+    //   setPeerFiles((prev) => {
+    //     if (prev.find((f) => f?.id === id)) {
+    //       return prev.map((f) => {
+    //         if (f?.id === id) {
+    //           f.chunks.push(chunk);
+    //           return f;
+    //         }
+    //       });
+    //     } else {
+    //       prev.push({ type, id, name, chunks: [chunk] });
+    //       return prev;
+    //     }
+    //   });
+    // } else {
+    //   filesWorker.current.postMessage({ name, type, id, chunk });
+    // }
+  }, []);
 
   // acceptInvite is a handler function to create and send peer responses (SDP offers) back to accepted invitations
   const acceptInvite = useCallback(
@@ -345,7 +342,7 @@ const SubscribeProvider = ({ children }) => {
         }
       }
     },
-    [addPeerMessage, currentVideoCallId, saveBasicMessage, peerFiles]
+    [addPeerMessage, currentVideoCallId, saveBasicMessage, handleFileDownload]
   );
 
   const handleFileDownload = useCallback(
@@ -475,7 +472,7 @@ const SubscribeProvider = ({ children }) => {
     return () => {
       filesWorker.current.terminate();
     };
-  }, []);
+  }, [saveBasicMessage]);
 
   useEffect(() => {
     // subscribe to the impervious daemon to listen for events/messages

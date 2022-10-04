@@ -263,7 +263,7 @@ const TwitterConnect = () => {
     } else {
       setPublishedDid("");
     }
-  }, [data]);
+  }, [data, setPublishedDid]);
 
   useEffect(() => {
     const getToken = async () => {
@@ -286,7 +286,15 @@ const TwitterConnect = () => {
       }
     };
     getToken();
-  }, [getAccessTokenSilently, user, setAuth0Token, currentRegistryUser]);
+  }, [
+    getAccessTokenSilently,
+    user,
+    setAuth0Token,
+    currentRegistryUser,
+    getDidsbyTwitter,
+    setCurrentRegistryUser,
+    publishDid,
+  ]);
 
   let returnUrl = "";
   if (typeof window !== "undefined") {
@@ -380,6 +388,7 @@ export default function MainNavigation({ children, currentPage }) {
             <a
               href={`https://twitter.com/${item.twitterUsername}`}
               target="_blank"
+              rel="noreferrer"
               className="text-md text-blue-400"
             >
               @{item.twitterUsername}

@@ -20,6 +20,7 @@ export function AutocompleteItem({ item, saveContactConfirm }) {
           <p className="text-lg text-gray-900">{item.name}</p>
           <a
             target="_blank"
+            rel="noreferrer"
             href={`https://twitter.com/${item.twitterUsername}`}
             className="text-sm text-blue-400"
           >
