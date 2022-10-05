@@ -69,23 +69,12 @@ type Config struct {
 func DefaultConfig() Config {
 	// create home path if not exists
 
-	parentProc := os.Getppid()
-	parentFoundProc, err := ps.FindProcess(parentProc)
-	if err != nil {
-		zap.L().Panic(err.Error())
-	}
-	parentName := parentFoundProc.Executable()
-
 	homePath, err := os.UserHomeDir()
 	if err != nil {
 		zap.L().Panic(err.Error())
 	}
 
-	if runtime.GOOS == "darwin" && strings.Contains(parentName, "Impervious") { // is the electron app the parent?
-		homePath += "/Library/Application Support/Impervious/.imp"
-	} else {
-		homePath += "/.imp"
-	}
+	homePath = getImpPath(homePath) // send user home dir, get .imp dir back
 
 	if err := os.MkdirAll(filepath.Dir(homePath), 0750); err != nil {
 		zap.L().Panic(err.Error())
@@ -203,6 +192,23 @@ func processError(err error) {
 	os.Exit(2)
 }
 
+func getImpPath(inputPath string) string {
+	homePath := inputPath
+	parentProc := os.Getppid()
+	parentFoundProc, err := ps.FindProcess(parentProc)
+	if err != nil {
+		zap.L().Panic(err.Error())
+	}
+	parentName := parentFoundProc.Executable()
+
+	if runtime.GOOS == "darwin" && strings.Contains(parentName, "Impervious") { // is the electron app the parent?
+		homePath += "/Library/Application Support/Impervious/.imp"
+	} else {
+		homePath += "/.imp"
+	}
+	return homePath
+}
+
 func readFile(cfg *Config, path string) {
 	pathPri := determinePath(path)
 
@@ -242,12 +248,6 @@ func (cfg *Config) writeFile(path string) error {
 
 func determinePath(path string) string {
 	// Priority: path, local config, default
-	parentProc := os.Getppid()
-	parentFoundProc, err := ps.FindProcess(parentProc)
-	if err != nil {
-		zap.L().Panic(err.Error())
-	}
-	parentName := parentFoundProc.Executable()
 
 	if path == "" {
 		if _, err := os.Stat("config/config.yml"); os.IsNotExist(err) {
@@ -257,11 +257,7 @@ func determinePath(path string) string {
 				zap.L().Panic(err.Error())
 			}
 
-			if runtime.GOOS == "darwin" && strings.Contains(parentName, "Impervious") { // is the electron app the parent?
-				homePath += "/Library/Application Support/Impervious/.imp"
-			} else {
-				homePath += "/.imp"
-			}
+			homePath = getImpPath(homePath) // send home dir, get .imp dir back
 
 			if err := os.MkdirAll(filepath.Dir(homePath), 0750); err != nil {
 				zap.L().Panic(err.Error())
