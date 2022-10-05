@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { Listbox, Transition } from "@headlessui/react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useInitSeed } from "../../hooks/key";
-import { useRecoverDid } from "../../hooks/id";
+import { useRecoverDid, useUpdateMyAvatar } from "../../hooks/id";
 import {
   CheckIcon,
   SelectorIcon,
@@ -12,7 +12,6 @@ import {
 } from "@heroicons/react/solid";
 import { onboard, didCommRelayEndpoints } from "../../utils/onboard";
 import { useQueryClient } from "react-query";
-import { myAvatarAtom } from "../../stores/settings";
 import { useAtom } from "jotai";
 import { getRandomAvatar } from "../../utils/contacts";
 import {
@@ -239,8 +238,8 @@ function Onboard() {
   const { mutateAsync: saveLightningConfig } = useSaveLightningConfig();
   const { mutate: initSeed } = useInitSeed();
   const { mutate: recoverDid } = useRecoverDid();
+  const { mutate: updateMyAvatar } = useUpdateMyAvatar();
 
-  const [, setMyAvatar] = useAtom(myAvatarAtom);
   const [recoverySeedSaved, setRecoverySeedSaved] = useAtom(
     recoverySeedSavedAtom
   );
@@ -292,9 +291,10 @@ function Onboard() {
     setRecoverySeed(mnenomic);
     localStorage.setItem("apiKey", apiKey);
     // set up an initial avatar
-    let avatar = getRandomAvatar();
-    setItem("myAvatar", JSON.stringify(avatar));
-    setMyAvatar(avatar);
+    updateMyAvatar({
+      key: "myAvatar",
+      value: JSON.stringify(getRandomAvatar()),
+    });
     onboard({
       lndEndpoint,
       relayEndpoint: customRelayEndpoint || relayEndpoint,

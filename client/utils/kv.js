@@ -3,7 +3,7 @@ import { request } from "./axios-utils";
 // Utility functions for the Key/Value store management in the daemon
 
 // sets a key/value pair in the daemon with a supplied key and value
-export const setItem = async (key, value) => {
+export const setItem = async ({ key, value }) => {
   return await request({
     url: "/v1/kv/setkey",
     method: "post",

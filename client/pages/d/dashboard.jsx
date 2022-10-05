@@ -23,7 +23,6 @@ import {
   readMessagesAtom,
   currentConversationAtom,
 } from "../../stores/messages";
-import { myAvatarAtom } from "../../stores/settings";
 import { peersAtom } from "../../stores/peers.js";
 import { XIcon } from "@heroicons/react/outline";
 import {
@@ -36,11 +35,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { myDidLongFormDocumentAtom } from "../../stores/id";
 import ContactAvatar from "../../components/contact/ContactAvatar";
 import { getShortFormId, resolveDid } from "../../utils/id";
-import {
-  getRandomAvatar,
-  getContactsByMessage,
-  getContactByDid,
-} from "../../utils/contacts";
+import { getContactsByMessage, getContactByDid } from "../../utils/contacts";
 
 const pageTitle = "Dashboard";
 
@@ -124,7 +119,7 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                         <Fragment key={i}>
                           <ContactAvatar
                             contact={contact}
-                            className="h-10 w-10 pb-2"
+                            className="h-10 w-10"
                           />
                           <span className="pl-2 text-gray-900 text-md font-semibold pr-5">
                             {contact?.name}
@@ -249,7 +244,7 @@ const NotificationsTable = ({ notifications }) => {
                       <Fragment key={i}>
                         <ContactAvatar
                           contact={contact}
-                          className="h-10 w-10 pb-2"
+                          className="h-10 w-10"
                         />
                         <span className="pl-2 text-gray-900 text-md font-semibold pr-5">
                           {contact?.name}

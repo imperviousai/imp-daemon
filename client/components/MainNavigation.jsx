@@ -20,7 +20,11 @@ import algoliasearch from "algoliasearch";
 import AddContactSlideOut from "../components/contact/AddContactSlideOut";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { toast } from "react-toastify";
-import { useFetchMyDid } from "../hooks/id";
+import {
+  useFetchMyDid,
+  useFetchCurrentRegistryUser,
+  useUpdateCurrentRegistryUser,
+} from "../hooks/id";
 import {
   myDidDocumentAtom,
   myDidLongFormDocumentAtom,
@@ -249,11 +253,11 @@ const TwitterConnect = () => {
   const { data: myDid } = useFetchMyDid();
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
   const [, setPublishedDid] = useAtom(publishedDidAtom);
-  const [currentRegistryUser, setCurrentRegistryUser] = useAtom(
-    currentRegistryUserAtom
-  );
   const { user, isAuthenticated, getAccessTokenSilently, loginWithPopup } =
     useAuth0();
+
+  const { mutate: setCurrentRegistryUser } = useUpdateCurrentRegistryUser();
+  const { data: currentRegistryUser } = useFetchCurrentRegistryUser();
 
   const [getDidsbyTwitter, { data, loading, error }] =
     useLazyQuery(GET_DID_BY_TWITTER);
@@ -267,20 +271,14 @@ const TwitterConnect = () => {
   }, [data, setPublishedDid]);
 
   useEffect(() => {
-    getItem("currentRegistryUser").then((res) => {
-      if (res.data.value) {
-        setCurrentRegistryUser(JSON.parse(res.data.value));
-      }
-    });
-  }, []);
-
-  useEffect(() => {
     const getToken = async () => {
       if (user) {
         const accessToken = await getAccessTokenSilently();
         setAuth0Token(accessToken);
-        await setItem("currentRegistryUser", JSON.stringify(user));
-        setCurrentRegistryUser(user);
+        await setCurrentRegistryUser({
+          key: "currentRegistryUser",
+          value: JSON.stringify(user),
+        });
         getDidsbyTwitter({
           variables: { twitterUsername: user?.nickname },
         });
@@ -300,9 +298,7 @@ const TwitterConnect = () => {
     getAccessTokenSilently,
     user,
     setAuth0Token,
-    currentRegistryUser,
     getDidsbyTwitter,
-    setCurrentRegistryUser,
     publishDid,
   ]);
 

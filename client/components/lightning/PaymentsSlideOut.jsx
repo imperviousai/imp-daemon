@@ -136,7 +136,7 @@ export default function PaymentsSlideOut({ open, setOpen, selectedContact }) {
         },
         { onError: onErrorSendMessage }
       );
-      toast.success("You've just send sats!");
+      toast.success("You've just sent sats!");
     } else {
       confirmPayment();
     }
@@ -160,7 +160,7 @@ export default function PaymentsSlideOut({ open, setOpen, selectedContact }) {
                   isPayment: true,
                 });
                 setMessage("");
-                toast.success("You've just send sats!");
+                toast.success("You've just sent sats!");
                 closeToast();
               }}
               className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

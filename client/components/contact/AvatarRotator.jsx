@@ -2,38 +2,32 @@ import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { BigHead } from "@bigheads/core";
 import { RefreshIcon } from "@heroicons/react/outline";
-import { myAvatarAtom } from "../../stores/settings";
 import { getRandomAvatar } from "../../utils/contacts";
 import { useUpdateContact } from "../../hooks/contacts";
+import { useFetchMyAvatar, useUpdateMyAvatar } from "../../hooks/id";
 import ContactAvatar from "./ContactAvatar";
-import { getItem, setItem } from "../../utils/kv";
 
 const AvatarRotator = ({ contact }) => {
   const [showAvatarSave, setShowAvatarSave] = useState(false);
   const [currentAvatar, setCurrentAvatar] = useState({});
-  const [myAvatar, setMyAvatar] = useAtom(myAvatarAtom);
 
   const { mutate: updateContact } = useUpdateContact(onSuccess, onError);
+  const { mutate: updateMyAvatar } = useUpdateMyAvatar();
+  const { data: myAvatar } = useFetchMyAvatar();
 
   const onSuccess = () => toast.success("Avatar saved!");
   const onError = () =>
     toast.error("Error saving avatar. Please try again later.");
 
   useEffect(() => {
-    getItem("myAvatar")
-      .then((res) => {
-        if (res.data.value) {
-          setMyAvatar(JSON.parse(res.data.value));
-        }
-      })
-      .catch((e) => console.log("Unable to fetch myAvatar: ", e));
-  }, []);
-
-  useEffect(() => {
     if (contact) {
       setCurrentAvatar(JSON.parse(contact.metadata).avatar);
     } else {
-      setCurrentAvatar(myAvatar);
+      if (myAvatar) {
+        setCurrentAvatar(JSON.parse(myAvatar));
+      } else {
+        setCurrentAvatar({ ...getRandomAvatar() });
+      }
     }
   }, [contact, myAvatar]);
 
@@ -52,8 +46,7 @@ const AvatarRotator = ({ contact }) => {
       // update the contacts avatar, not yours
       updateContact({ existingContact: contact, avatar: currentAvatar });
     } else {
-      setItem("myAvatar", JSON.stringify(currentAvatar));
-      setMyAvatar(currentAvatar);
+      updateMyAvatar({ key: "myAvatar", value: JSON.stringify(currentAvatar) });
     }
 
     setShowAvatarSave(false);
