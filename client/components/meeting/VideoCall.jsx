@@ -41,7 +41,7 @@ const Video = ({ peer }) => {
     <div className="flex justify-center bg-gray-100 rounded-lg m-2 px-2">
       <div className="relative">
         <video className="h-full" playsInline ref={ref} autoPlay />
-        <div className="bg-gray-900 opacity-75 text-white rounded-md text-md absolute bottom-0 right-0 px-4 m-2">
+        <div className="bg-gray-900 opacity-75 text-white rounded-md text-sm absolute bottom-0 left-0 px-4 m-2">
           {peer.metadata.contact.name}
         </div>
       </div>
@@ -176,7 +176,7 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
                 ref={userVideo}
                 autoPlay
               />
-              <div className="bg-gray-900 opacity-75 text-white rounded-md text-md absolute bottom-0 right-0 px-4 m-2">
+              <div className="bg-gray-900 opacity-75 text-white rounded-md text-sm absolute bottom-0 left-0 px-4 m-2">
                 You
               </div>
             </div>

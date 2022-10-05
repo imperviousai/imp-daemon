@@ -87,7 +87,7 @@ const Peer = ({ peer, router }) => {
             autoPlay
             muted={router.pathname === "/d/meeting"}
           />
-          <div className="bg-gray-900 opacity-75 text-white rounded-md text-sm absolute bottom-0 right-0 px-4 m-2">
+          <div className="bg-gray-900 opacity-75 text-white rounded-md text-sm absolute bottom-0 left-0 px-4 m-2">
             {peer.metadata.contact.name}
           </div>
         </div>

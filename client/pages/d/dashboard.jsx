@@ -150,8 +150,8 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                   </div>
                 </td>
                 <td className="px-6 py-3 text-sm text-gray-500 font-medium">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex flex-shrink-0 -space-x-1">
+                  <div className="flex items-center space-x-2 justify-center">
+                    <div className="flex flex-shrink-0 -space-x-1 items-center">
                       {getContactsByMessage({
                         message: messages.slice(-1)[0],
                         contacts: contactsRes?.data.contacts,
@@ -166,9 +166,9 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                         </Fragment>
                       ))}
                     </div>
-                    <span className="flex-shrink-0 text-xs leading-5 font-medium">
+                    {/* <span className="flex-shrink-0 text-xs leading-5 font-medium">
                       +{messages.slice(-1)[0]?.recipients.length}
-                    </span>
+                    </span> */}
                   </div>
                 </td>
                 <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
