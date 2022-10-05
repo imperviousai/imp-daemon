@@ -130,6 +130,7 @@ export const handleDidCommMessage = ({ data, contacts, pathname }) => {
               message: msg.body.content,
               knownContact,
               sourceType: "didcomm",
+              timestamp: new Date(),
             });
             break;
           case "answer":
@@ -138,6 +139,7 @@ export const handleDidCommMessage = ({ data, contacts, pathname }) => {
               message: msg,
               knownContact,
               sourceType: "didcomm",
+              timestamp: new Date(),
             });
             break;
         }

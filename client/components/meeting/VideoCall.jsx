@@ -39,7 +39,12 @@ const Video = ({ peer }) => {
 
   return (
     <div className="flex justify-center bg-gray-100 rounded-lg m-2 px-2">
-      <video className="h-full" playsInline ref={ref} autoPlay />
+      <div className="relative">
+        <video className="h-full" playsInline ref={ref} autoPlay />
+        <div className="bg-gray-900 opacity-75 text-white rounded-md text-md absolute bottom-0 right-0 px-4 m-2">
+          {peer.metadata.contact.name}
+        </div>
+      </div>
     </div>
   );
 };
@@ -162,14 +167,19 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
     <div className="bg-gray-50 w-full h-full flex items-center flex-col">
       <div className="h-5/6 w-full pl-12 pr-12 mt-8">
         <div className={`grid w-full h-full ${getGridLayout(peers.length)}`}>
-          <div className="flex justify-center bg-gray-100 rounded-lg m-2 px-2">
-            <video
-              className="h-full"
-              playsInline
-              muted
-              ref={userVideo}
-              autoPlay
-            />
+          <div className="flex justify-center bg-gray-100 rounded-lg m-2 px-2 relative">
+            <div className="relative">
+              <video
+                className="h-full"
+                playsInline
+                muted
+                ref={userVideo}
+                autoPlay
+              />
+              <div className="bg-gray-900 opacity-75 text-white rounded-md text-md absolute bottom-0 right-0 px-4 m-2">
+                You
+              </div>
+            </div>
           </div>
           {peers.map((peer, i) => (
             <Video key={i} peer={peer} />
