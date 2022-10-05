@@ -76,7 +76,7 @@ const Peer = ({ peer, router }) => {
 
   //   need to listen for background audio during video calls and the user switches pages
   return (
-    <div>
+    <div className="z-10">
       {/* <p>{peer.metadata.contact.name}</p> */}
       {peer.peer._remoteStreams.length > 0 && router.pathname !== "/d/meeting" && (
         <div className="relative">
