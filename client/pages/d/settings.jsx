@@ -311,7 +311,7 @@ export default function Settings() {
               {/* Secondary sidebar */}
               <nav
                 aria-label="Sections"
-                className="hidden flex-shrink-0 w-96 bg-white border-r border-blue-gray-200 xl:flex xl:flex-col"
+                className="hidden flex-shrink-0 w-80 bg-white border-r border-blue-gray-200 xl:flex xl:flex-col"
               >
                 {/* <div className="flex-shrink-0 h-16 px-6 border-b border-blue-gray-200 flex items-center">
                   <p className="text-lg font-medium text-blue-gray-900">
@@ -339,7 +339,7 @@ export default function Settings() {
                         <p className="font-medium text-blue-gray-900">
                           {item.name}
                         </p>
-                        <p className="mt-1 text-blue-gray-500">
+                        <p className="mt-1 text-xs text-blue-gray-500">
                           {item.description}
                         </p>
                       </div>

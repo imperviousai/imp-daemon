@@ -45,7 +45,7 @@ import {
   WhatsappIcon,
 } from "react-share";
 import { createDid, resolveDid } from "../utils/id";
-import { useAddContact, useFetchContacts } from "../hooks/contacts";
+import { useAddContact } from "../hooks/contacts";
 import LightningToggle from "./LightingToggle";
 import { Autocomplete } from "./navigation/Autocomplete";
 import {
@@ -358,7 +358,6 @@ export default function MainNavigation({ children, currentPage }) {
   const [openAddContactForm, setOpenAddContactForm] = useState(false);
   const { data: myDid } = useFetchMyDid();
   const { mutate: addContact } = useAddContact();
-  const { data: contactsRes } = useFetchContacts();
 
   const isCurrent = (name) => currentPage === name;
 
@@ -586,7 +585,7 @@ export default function MainNavigation({ children, currentPage }) {
               </button>
               <div className="flex-1 flex justify-between px-4 sm:px-6 items-center">
                 <div>
-                  <h2 className="font-semibold text-primary text-lg">
+                  <h2 className="font-semibold text-primary text-md pr-3">
                     {currentPage}
                   </h2>
                 </div>

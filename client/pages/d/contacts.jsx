@@ -143,13 +143,13 @@ export const ContactView = ({
               </dd>
             </CopyToClipboard>
           </div>
-          <div className="sm:col-span-1">
-            <dt className="text-sm font-medium text-gray-500">DID</dt>
+          <div className="sm:col-span-1 w-">
+            <dt className="text-xs font-medium text-gray-500">DID</dt>
             <CopyToClipboard
               text={selectedContact.did}
               onCopy={() => toast.info("Copied!")}
             >
-              <dd className="mt-1 text-sm text-gray-900 hover:bg-gray-50">
+              <dd className="mt-1 text-xs text-gray-900 hover:bg-gray-50">
                 {selectedContact.did}
               </dd>
             </CopyToClipboard>
@@ -278,7 +278,7 @@ export default function Contacts() {
                   />
                 )}
               </main>
-              <aside className="hidden xl:order-first xl:flex xl:flex-col flex-shrink-0 w-96 border-r border-gray-200">
+              <aside className="hidden xl:order-first xl:flex xl:flex-col flex-shrink-0 w-80 border-r border-gray-200">
                 <div className="px-6 pt-6 pb-4">
                   <h2 className="text-lg font-medium text-gray-900">
                     Directory ({data?.data.contacts.length})

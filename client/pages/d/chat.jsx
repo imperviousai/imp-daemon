@@ -1117,7 +1117,7 @@ export default function Chat() {
           currentConversationContact={currentConversationContact}
         />
       </div>
-      <div className="flex-1 relative z-0 flex overflow-hidden h-full lg:pr-96 lg:mr-16">
+      <div className="flex-1 relative z-0 flex overflow-hidden h-full lg:pr-52 lg:mr-16">
         <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white border-r">
           {/* Start main area*/}
           {(currentConversation || currentConversationContact) && (
@@ -1146,7 +1146,7 @@ export default function Chat() {
 
           {/* End main area */}
         </main>
-        <aside className="hidden relative xl:order-first xl:flex xl:flex-col flex-shrink-0 w-96 border-r border-gray-200 overflow-y-auto">
+        <aside className="hidden relative xl:order-first xl:flex xl:flex-col flex-shrink-0 w-80 border-r border-gray-200 overflow-y-auto">
           {/* Start secondary column (hidden on smaller screens) */}
           <NewConversationHeader
             setToggleNewContact={setToggleNewContact}

@@ -235,7 +235,7 @@ const NotificationsTable = ({ notifications }) => {
             >
               <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
                 <div className="flex items-center space-x-3 lg:pl-2">
-                  <div className="flex flex-shrink-0 -space-x-1">
+                  <div className="flex flex-shrink-0 -space-x-1 items-center">
                     {getContactsByMessage({
                       message: notification,
                       contacts: contactsRes?.data.contacts,
@@ -524,10 +524,10 @@ export default function Dashboard() {
               </h2>
               <ul
                 role="list"
-                className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3"
+                className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3 "
               >
                 <li>
-                  <div className="flex-1 flex items-center px-10 pt-2 truncate space-x-6">
+                  <div className="flex-1 flex items-center pt-2 truncate space-x-6">
                     <div className="flex flex-col items-center pr-2">
                       <button
                         type="button"
