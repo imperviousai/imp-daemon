@@ -3,7 +3,7 @@ import {
   UsersIcon,
   DesktopComputerIcon,
 } from "@heroicons/react/solid";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   BsFillMicMuteFill,
   BsFillMicFill,
@@ -19,6 +19,8 @@ import {
   currentVideoCallAtom,
   hasUnreadVideoMessagesAtom,
 } from "../../stores/peers";
+import { XCircleIcon } from "@heroicons/react/outline";
+import { toast } from "react-toastify";
 
 const Video = ({ peer }) => {
   const ref = useRef();
@@ -63,13 +65,8 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
   const [hasUnreadVideoMessages] = useAtom(hasUnreadVideoMessagesAtom);
 
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true, video: true })
-      .then((stream) => {
-        if (userVideo.current) userVideo.current.srcObject = stream;
-        setLocalStream(stream);
-      });
-  }, [setLocalStream]);
+    connectAudioandVideo();
+  }, []);
 
   useEffect(() => {
     if (peers.length === 0) {
@@ -82,7 +79,34 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
     }
   }, [peers, localStream]);
 
+  const connectAudioandVideo = useCallback(
+    () =>
+      new Promise((resolve, reject) => {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true, video: true })
+          .then((stream) => {
+            if (userVideo.current) userVideo.current.srcObject = stream;
+            setLocalStream(stream);
+            resolve(stream);
+          })
+          .catch((err) => {
+            console.log("Unable to capture video stream: ", err);
+            toast.error("Unable to turn on audio and video. Please try again.");
+            reject(err);
+          });
+      })[setLocalStream]
+  );
+
+  const disconnectAudioandVideo = () => {
+    localStream?.getTracks().forEach((track) => {
+      track.stop();
+    });
+    setLocalStream();
+    userVideo.current.srcObject = undefined;
+  };
+
   const destroyCall = () => {
+    disconnectAudioandVideo();
     // Clear ephemeral messages as well
     setPeerMessages(
       peerMessages.filter((message) => message.networkId !== currentVideoCallId)
@@ -99,12 +123,12 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
           if (stream.getAudioTracks().length > 0) {
             stream.getAudioTracks().forEach((track) => {
               track.enabled = audioOn ? false : true;
-              setAudioOn(!audioOn);
             });
           }
         });
       }
     });
+    setAudioOn(!audioOn);
   };
 
   const toggleVideo = () => {
@@ -114,13 +138,12 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
           if (stream.getVideoTracks().length > 0) {
             stream.getVideoTracks().forEach((track) => {
               track.enabled = videoOn ? false : true;
-
-              setVideoOn(!videoOn);
             });
           }
         });
       }
     });
+    setVideoOn(!videoOn);
   };
 
   const replaceStream = (stream) => {
@@ -155,6 +178,53 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
     }
   };
 
+  const enableVideoConfirm = () => {
+    setOpenParticipants(true);
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <p className="pb-1">Starting a call?</p>
+          <p className="text-xs pb-2">
+            Your audio and video is off, do you want to connect them before
+            starting a call?{" "}
+          </p>
+          <div className="flex space-x-4">
+            <button
+              type="button"
+              onClick={() => {
+                connectAudioandVideo();
+                setOpenParticipants(true);
+                closeToast();
+              }}
+              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Connect A/V
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                closeToast();
+                setOpenParticipants(true);
+              }}
+              className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Continue without A/V
+            </button>
+          </div>
+        </div>
+      ),
+      { autoClose: false }
+    );
+  };
+
+  const handleParticipants = () => {
+    if (!localStream) {
+      enableVideoConfirm();
+      return;
+    }
+    setOpenParticipants(true);
+  };
+
   const getGridLayout = (count) => {
     if (count < 1) return "";
     if (count === 1) return "grid-cols-2";
@@ -176,9 +246,11 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
                 ref={userVideo}
                 autoPlay
               />
-              <div className="bg-gray-900 opacity-75 text-white rounded-md text-sm absolute bottom-0 left-0 px-4 m-2">
-                You
-              </div>
+              {localStream && (
+                <div className="bg-gray-900 opacity-75 text-white rounded-md text-sm absolute bottom-0 left-0 px-4 m-2">
+                  You
+                </div>
+              )}
             </div>
           </div>
           {peers.map((peer, i) => (
@@ -189,44 +261,72 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
       <div className="absolute bottom-0 w-11/12 mb-4 px-6">
         <div className="px-10 h-16 bg-black bg-opacity-40 inset-x-0 bottom-0 flex justify-between items-center rounded-lg">
           <div className="flex space-x-4">
-            {peers.length > 0 && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => toggleMute()}
-                  className="flex flex-col items-center px-2 py-2 text-sm leading-4 font-medium rounded-md text-gray-50 bg-opacity-100 hover:bg-opacity-20 hover:bg-gray-100"
-                >
-                  {audioOn ? (
-                    <BsFillMicFill
-                      className="mb-2 h-6 w-6"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <BsFillMicMuteFill
-                      className="mb-2 h-6 w-6"
-                      aria-hidden="true"
-                    />
+            <>
+              {localStream ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => toggleMute()}
+                    className="flex flex-col items-center px-2 py-2 text-sm leading-4 font-medium rounded-md text-gray-50 bg-opacity-100 hover:bg-opacity-20 hover:bg-gray-100"
+                  >
+                    {audioOn ? (
+                      <BsFillMicFill
+                        className="mb-2 h-6 w-6"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <BsFillMicMuteFill
+                        className="mb-2 h-6 w-6"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {audioOn ? "Mute" : "Unmute"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleVideo()}
+                    className="flex flex-col items-center px-2 py-2 text-sm leading-4 font-medium rounded-md text-gray-50 bg-opacity-100 hover:bg-opacity-20 hover:bg-gray-100"
+                  >
+                    {videoOn ? (
+                      <FaVideo className="mb-2 h-6 w-6" aria-hidden="true" />
+                    ) : (
+                      <FaVideoSlash
+                        className="mb-2 h-6 w-6"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {videoOn ? "Stop Video" : "Start Video"}
+                  </button>
+                  {peers.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => disconnectAudioandVideo()}
+                      className="flex flex-col items-center px-2 py-2 text-sm leading-4 font-medium rounded-md text-gray-50 bg-opacity-100 hover:bg-opacity-20 hover:bg-gray-100"
+                    >
+                      <XCircleIcon
+                        className="mb-2 h-6 w-6"
+                        aria-hidden="true"
+                      />
+                      Disconnect A/V
+                    </button>
                   )}
-                  {audioOn ? "Mute" : "Unmute"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => toggleVideo()}
-                  className="flex flex-col items-center px-2 py-2 text-sm leading-4 font-medium rounded-md text-gray-50 bg-opacity-100 hover:bg-opacity-20 hover:bg-gray-100"
-                >
-                  {videoOn ? (
-                    <FaVideo className="mb-2 h-6 w-6" aria-hidden="true" />
-                  ) : (
-                    <FaVideoSlash className="mb-2 h-6 w-6" aria-hidden="true" />
-                  )}
-                  {videoOn ? "Stop Video" : "Start Video"}
-                </button>
-              </>
-            )}
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => connectAudioandVideo()}
+                    className="flex flex-col items-center px-2 py-2 text-sm leading-4 font-medium rounded-md text-gray-50 bg-opacity-100 hover:bg-opacity-20 hover:bg-gray-100"
+                  >
+                    Connect Audio & Video
+                  </button>
+                </>
+              )}
+            </>
           </div>
           <div className="flex space-x-4">
             <button
-              onClick={() => setOpenParticipants(true)}
+              onClick={handleParticipants}
               type="button"
               className="flex flex-col items-center px-2 py-2 text-sm leading-4 font-medium rounded-md text-gray-50 bg-opacity-100 hover:bg-opacity-20 hover:bg-gray-100"
             >
