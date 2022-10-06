@@ -20,12 +20,15 @@ import algoliasearch from "algoliasearch";
 import AddContactSlideOut from "../components/contact/AddContactSlideOut";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { toast } from "react-toastify";
-import { useFetchMyDid } from "../hooks/id";
+import {
+  useFetchMyDid,
+  useFetchCurrentRegistryUser,
+  useUpdateCurrentRegistryUser,
+} from "../hooks/id";
 import {
   myDidDocumentAtom,
   myDidLongFormDocumentAtom,
   publishedDidAtom,
-  currentRegistryUserAtom,
 } from "../stores/id";
 import { auth0TokenAtom } from "../stores/auth";
 import {
@@ -41,7 +44,7 @@ import {
   WhatsappIcon,
 } from "react-share";
 import { createDid, resolveDid } from "../utils/id";
-import { useAddContact, useFetchContacts } from "../hooks/contacts";
+import { useAddContact } from "../hooks/contacts";
 import LightningToggle from "./LightingToggle";
 import { Autocomplete } from "./navigation/Autocomplete";
 import {
@@ -248,11 +251,11 @@ const TwitterConnect = () => {
   const { data: myDid } = useFetchMyDid();
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
   const [, setPublishedDid] = useAtom(publishedDidAtom);
-  const [currentRegistryUser, setCurrentRegistryUser] = useAtom(
-    currentRegistryUserAtom
-  );
   const { user, isAuthenticated, getAccessTokenSilently, loginWithPopup } =
     useAuth0();
+
+  const { mutate: setCurrentRegistryUser } = useUpdateCurrentRegistryUser();
+  const { data: currentRegistryUser } = useFetchCurrentRegistryUser();
 
   const [getDidsbyTwitter, { data, loading, error }] =
     useLazyQuery(GET_DID_BY_TWITTER);
@@ -270,7 +273,10 @@ const TwitterConnect = () => {
       if (user) {
         const accessToken = await getAccessTokenSilently();
         setAuth0Token(accessToken);
-        setCurrentRegistryUser(user);
+        await setCurrentRegistryUser({
+          key: "currentRegistryUser",
+          value: JSON.stringify(user),
+        });
         getDidsbyTwitter({
           variables: { twitterUsername: user?.nickname },
         });
@@ -290,9 +296,7 @@ const TwitterConnect = () => {
     getAccessTokenSilently,
     user,
     setAuth0Token,
-    currentRegistryUser,
     getDidsbyTwitter,
-    setCurrentRegistryUser,
     publishDid,
   ]);
 
@@ -352,7 +356,6 @@ export default function MainNavigation({ children, currentPage }) {
   const [openAddContactForm, setOpenAddContactForm] = useState(false);
   const { data: myDid } = useFetchMyDid();
   const { mutate: addContact } = useAddContact();
-  const { data: contactsRes } = useFetchContacts();
 
   const isCurrent = (name) => currentPage === name;
 
@@ -580,7 +583,7 @@ export default function MainNavigation({ children, currentPage }) {
               </button>
               <div className="flex-1 flex justify-between px-4 sm:px-6 items-center">
                 <div>
-                  <h2 className="font-semibold text-primary text-lg">
+                  <h2 className="font-semibold text-primary text-md pr-3">
                     {currentPage}
                   </h2>
                 </div>

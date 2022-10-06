@@ -23,7 +23,6 @@ import {
   readMessagesAtom,
   currentConversationAtom,
 } from "../../stores/messages";
-import { myAvatarAtom } from "../../stores/settings";
 import { peersAtom } from "../../stores/peers.js";
 import { XIcon } from "@heroicons/react/outline";
 import {
@@ -36,11 +35,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { myDidLongFormDocumentAtom } from "../../stores/id";
 import ContactAvatar from "../../components/contact/ContactAvatar";
 import { getShortFormId, resolveDid } from "../../utils/id";
-import {
-  getRandomAvatar,
-  getContactsByMessage,
-  getContactByDid,
-} from "../../utils/contacts";
+import { getContactsByMessage, getContactByDid } from "../../utils/contacts";
 
 const pageTitle = "Dashboard";
 
@@ -124,7 +119,7 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                         <Fragment key={i}>
                           <ContactAvatar
                             contact={contact}
-                            className="h-10 w-10 pb-2"
+                            className="h-10 w-10"
                           />
                           <span className="pl-2 text-gray-900 text-md font-semibold pr-5">
                             {contact?.name}
@@ -155,8 +150,8 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                   </div>
                 </td>
                 <td className="px-6 py-3 text-sm text-gray-500 font-medium">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex flex-shrink-0 -space-x-1">
+                  <div className="flex items-center space-x-2 justify-center">
+                    <div className="flex flex-shrink-0 -space-x-1 items-center">
                       {getContactsByMessage({
                         message: messages.slice(-1)[0],
                         contacts: contactsRes?.data.contacts,
@@ -171,9 +166,9 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                         </Fragment>
                       ))}
                     </div>
-                    <span className="flex-shrink-0 text-xs leading-5 font-medium">
+                    {/* <span className="flex-shrink-0 text-xs leading-5 font-medium">
                       +{messages.slice(-1)[0]?.recipients.length}
-                    </span>
+                    </span> */}
                   </div>
                 </td>
                 <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
@@ -240,7 +235,7 @@ const NotificationsTable = ({ notifications }) => {
             >
               <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
                 <div className="flex items-center space-x-3 lg:pl-2">
-                  <div className="flex flex-shrink-0 -space-x-1">
+                  <div className="flex flex-shrink-0 -space-x-1 items-center">
                     {getContactsByMessage({
                       message: notification,
                       contacts: contactsRes?.data.contacts,
@@ -249,7 +244,7 @@ const NotificationsTable = ({ notifications }) => {
                       <Fragment key={i}>
                         <ContactAvatar
                           contact={contact}
-                          className="h-10 w-10 pb-2"
+                          className="h-10 w-10"
                         />
                         <span className="pl-2 text-gray-900 text-md font-semibold pr-5">
                           {contact?.name}
@@ -529,10 +524,10 @@ export default function Dashboard() {
               </h2>
               <ul
                 role="list"
-                className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3"
+                className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3 "
               >
                 <li>
-                  <div className="flex-1 flex items-center px-10 pt-2 truncate space-x-6">
+                  <div className="flex-1 flex items-center pt-2 truncate space-x-6">
                     <div className="flex flex-col items-center pr-2">
                       <button
                         type="button"

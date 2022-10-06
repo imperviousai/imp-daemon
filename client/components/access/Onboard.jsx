@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { Listbox, Transition } from "@headlessui/react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useInitSeed } from "../../hooks/key";
-import { useRecoverDid } from "../../hooks/id";
+import { useRecoverDid, useUpdateMyAvatar } from "../../hooks/id";
 import {
   CheckIcon,
   SelectorIcon,
@@ -12,7 +12,6 @@ import {
 } from "@heroicons/react/solid";
 import { onboard, didCommRelayEndpoints } from "../../utils/onboard";
 import { useQueryClient } from "react-query";
-import { myAvatarAtom } from "../../stores/settings";
 import { useAtom } from "jotai";
 import { getRandomAvatar } from "../../utils/contacts";
 import {
@@ -28,6 +27,7 @@ import { useSaveLightningConfig } from "../../hooks/config";
 import { Rings } from "react-loader-spinner";
 import { relayRequest } from "../../utils/messages";
 import { ChevronLeftIcon } from "@heroicons/react/outline";
+import { setItem } from "../../utils/kv";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -238,8 +238,8 @@ function Onboard() {
   const { mutateAsync: saveLightningConfig } = useSaveLightningConfig();
   const { mutate: initSeed } = useInitSeed();
   const { mutate: recoverDid } = useRecoverDid();
+  const { mutate: updateMyAvatar } = useUpdateMyAvatar();
 
-  const [, setMyAvatar] = useAtom(myAvatarAtom);
   const [recoverySeedSaved, setRecoverySeedSaved] = useAtom(
     recoverySeedSavedAtom
   );
@@ -291,7 +291,10 @@ function Onboard() {
     setRecoverySeed(mnenomic);
     localStorage.setItem("apiKey", apiKey);
     // set up an initial avatar
-    setMyAvatar(getRandomAvatar());
+    updateMyAvatar({
+      key: "myAvatar",
+      value: JSON.stringify(getRandomAvatar()),
+    });
     onboard({
       lndEndpoint,
       relayEndpoint: customRelayEndpoint || relayEndpoint,
@@ -350,7 +353,13 @@ function Onboard() {
             {
               onSuccess: ({ data: { apiKey } }) => {
                 localStorage.setItem("apiKey", apiKey);
-                setMyAvatar(getRandomAvatar());
+                getItem("myAvatar")
+                  .then((res) => {
+                    if (res.data.value) {
+                      setMyAvatar(avatar);
+                    }
+                  })
+                  .then(() => setItem("myAvatar", myAvatar));
                 recoverDid(recoveryKit, {
                   onSuccess: () => {
                     toast.success("Recovery successful!");

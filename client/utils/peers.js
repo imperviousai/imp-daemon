@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import Peer from "simple-peer";
 import { v4 as uuidv4 } from "uuid";
 import { trigger } from "./events";
+import moment from "moment";
 
 const isJSON = (msg) => {
   try {
@@ -203,18 +204,18 @@ export const acceptPeerInvitation = ({
 // confirmPeerInvite provides a toast notification allowing the user to accept/decline an invitation
 // if the user accepts, the inbound messages is forwarded to the accept-peer-invitation event handler
 export const confirmPeerInvite = ({
-  detail: { message, knownContact, sourceType },
+  detail: { message, knownContact, sourceType, timestamp },
 }) => {
   // TODO: Grab the contact information and view it in the toast notification
   const contact = knownContact ? knownContact.name : "An unknown user";
   const { type } = message;
   const invitationType = () => {
     if (type === "video-call-invitation")
-      return "has invited you to a video call.";
+      return "has invited you to a video call";
     if (type === "doc-collab-request")
-      return "has invited you to work on a live document.";
+      return "has invited you to work on a live document";
     if (type === "live-messaging-invitation")
-      return "has invited you to live messaging.";
+      return "has invited you to live messaging";
   };
   const accept = () => {
     if (type === "video-call-invitation") {
@@ -247,7 +248,10 @@ export const confirmPeerInvite = ({
   toast(
     ({ closeToast }) => (
       <div>
-        <p>{`${contact} ${invitationType()}`}</p>
+        <p>{`${contact} ${invitationType()} ${moment(
+          timestamp
+        ).fromNow()}.`}</p>
+        <p className="text-xs py-2">{moment(timestamp).format("lll")}</p>
         <div className="flex space-x-4">
           <button
             type="button"

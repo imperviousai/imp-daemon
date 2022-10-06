@@ -575,8 +575,8 @@ const RelayLightningSettings = () => {
               Register with Relay
             </h2>
             <p className="mt-1 text-sm text-blue-gray-500">
-              Register with the relay after you have selected a new relay, or
-              routintely to ensure access to the relay.
+              Register with a new relay or reregister with an existing relay, in
+              the event of service interruption.
             </p>
             <button
               type="button"

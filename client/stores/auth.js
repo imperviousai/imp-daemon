@@ -10,9 +10,7 @@ export const completedSetupAtom = atomWithStorage("completedSetup", false);
 
 export const passwordSetAtom = atomWithStorage("passwordSet", false);
 
-export const recoverySeedAtom = atomWithStorage("recoverySeed", "");
-
-export const voltageApiKeyAtom = atomWithStorage("voltageApiKey", "");
+export const recoverySeedAtom = atom("");
 
 export const voltageNodePasswordAtom = atom("");
 

@@ -76,10 +76,10 @@ const Peer = ({ peer, router }) => {
 
   //   need to listen for background audio during video calls and the user switches pages
   return (
-    <div>
+    <div className="z-10">
       {/* <p>{peer.metadata.contact.name}</p> */}
       {peer.peer._remoteStreams.length > 0 && router.pathname !== "/d/meeting" && (
-        <div>
+        <div className="relative">
           <video
             className="h-36"
             playsInline
@@ -87,6 +87,9 @@ const Peer = ({ peer, router }) => {
             autoPlay
             muted={router.pathname === "/d/meeting"}
           />
+          <div className="bg-gray-900 opacity-75 text-white rounded-md text-sm absolute bottom-0 left-0 px-4 m-2">
+            {peer.metadata.contact.name}
+          </div>
         </div>
       )}
     </div>
