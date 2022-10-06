@@ -29,7 +29,6 @@ import {
   myDidDocumentAtom,
   myDidLongFormDocumentAtom,
   publishedDidAtom,
-  currentRegistryUserAtom,
 } from "../stores/id";
 import { auth0TokenAtom } from "../stores/auth";
 import {
@@ -57,7 +56,6 @@ import { AutocompleteItem } from "./navigation/AutocompleteItem";
 import { createDID } from "../src/graphql/mutations";
 import { GET_DID_BY_TWITTER } from "../utils/contacts";
 import { useLazyQuery, useMutation, gql } from "@apollo/client";
-import { getItem, setItem } from "../utils/kv";
 
 const sidebarNavigation = [
   { name: "Dashboard", href: "/d/dashboard", icon: HomeIcon, current: false },

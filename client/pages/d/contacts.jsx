@@ -143,7 +143,7 @@ export const ContactView = ({
               </dd>
             </CopyToClipboard>
           </div>
-          <div className="sm:col-span-1 w-">
+          <div className="sm:col-span-1">
             <dt className="text-xs font-medium text-gray-500">DID</dt>
             <CopyToClipboard
               text={selectedContact.did}
