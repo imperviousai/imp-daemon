@@ -313,13 +313,15 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
                 </>
               ) : (
                 <>
-                  <button
-                    type="button"
-                    onClick={() => connectAudioandVideo()}
-                    className="flex flex-col items-center px-2 py-2 text-sm leading-4 font-medium rounded-md text-gray-50 bg-opacity-100 hover:bg-opacity-20 hover:bg-gray-100"
-                  >
-                    Connect Audio & Video
-                  </button>
+                  {peers.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => connectAudioandVideo()}
+                      className="flex flex-col items-center px-2 py-2 text-sm leading-4 font-medium rounded-md text-gray-50 bg-opacity-100 hover:bg-opacity-20 hover:bg-gray-100"
+                    >
+                      Connect Audio & Video
+                    </button>
+                  )}
                 </>
               )}
             </>
