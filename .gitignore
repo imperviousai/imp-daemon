@@ -27,3 +27,4 @@ imp.db*
 config/*.config.yml
 .idea/*
 main
+kv.db*

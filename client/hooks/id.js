@@ -77,7 +77,6 @@ export const useUpdateMyAvatar = () => {
   return useMutation(setItem, {
     onSuccess: () => {
       console.log("Successfully updated my avatar!");
-      toast.success("Avatar has been updated.");
       queryClient.invalidateQueries("fetch-my-avatar");
     },
     onError: (error) => {
