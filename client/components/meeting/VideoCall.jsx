@@ -183,10 +183,10 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
     toast(
       ({ closeToast }) => (
         <div>
-          <p className="pb-1">Starting a call?</p>
+          <p className="pb-1">Turn on camera and microphone?</p>
           <p className="text-xs pb-2">
-            Your audio and video is off, do you want to connect them before
-            starting a call?{" "}
+            Do you want to turn on camera and microphone? This is a chat-only
+            invitation.{" "}
           </p>
           <div className="flex space-x-4">
             <button
@@ -198,7 +198,7 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
               }}
               className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Connect A/V
+              Connect Audio/Video
             </button>
             <button
               type="button"
@@ -208,7 +208,7 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
               }}
               className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Continue without A/V
+              Continue
             </button>
           </div>
         </div>
@@ -397,7 +397,7 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
             open={openParticipants}
             setOpen={setOpenParticipants}
             networkId={id}
-            localStream={localStream}
+            localStream={localStream || false}
             title="Invite Users to Meeting"
             subtitle={`Invite people to join this meeting.`}
             type="video-call-invitation"
