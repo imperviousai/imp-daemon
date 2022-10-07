@@ -66,7 +66,7 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
 
   useEffect(() => {
     connectAudioandVideo();
-  }, []);
+  }, [connectAudioandVideo]);
 
   useEffect(() => {
     if (peers.length === 0) {
