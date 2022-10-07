@@ -13,6 +13,7 @@ export function Autocomplete(props) {
     const search = autocomplete({
       container: containerRef.current,
       renderer: { createElement, Fragment, render },
+      detachedMediaQuery: "",
       ...props,
     });
 
