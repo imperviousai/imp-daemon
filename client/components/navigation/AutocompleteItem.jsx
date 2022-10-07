@@ -10,7 +10,6 @@ export function AutocompleteItem({ item, saveContactConfirm }) {
     >
       <button
         type="button"
-        onClick={() => saveContactConfirm(item)}
         className="inline-flex justify-self-end items-center rounded-full border border-transparent bg-blue-400 p-2 text-blue-400 shadow-sm hover:bg-blue-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
       >
         <ArrowCircleDownIcon className="h-8 w-8" aria-hidden="true" />

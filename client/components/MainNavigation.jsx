@@ -588,7 +588,7 @@ export default function MainNavigation({ children, currentPage }) {
                     {currentPage}
                   </h2>
                 </div>
-                <div className="bg-blue-100 w-1/2">
+                <div className="w-1/2">
                   <Autocomplete
                     placeholder="Search for user via Twitter username or contact name"
                     getSources={({ query }) => [
