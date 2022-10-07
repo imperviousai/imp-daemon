@@ -56,6 +56,7 @@ import { AutocompleteItem } from "./navigation/AutocompleteItem";
 import { createDID } from "../src/graphql/mutations";
 import { GET_DID_BY_TWITTER } from "../utils/contacts";
 import { useLazyQuery, useMutation, gql } from "@apollo/client";
+import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
 
 const sidebarNavigation = [
   { name: "Dashboard", href: "/d/dashboard", icon: HomeIcon, current: false },
@@ -115,7 +116,7 @@ const ShareContactButton = ({ myDid }) => {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button className="order-0 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-1 sm:ml-3">
-          Share Contact
+          <PaperAirplaneIcon className="h-4 w-4 mr-1" /> Contact
         </Menu.Button>
       </div>
 
@@ -587,7 +588,7 @@ export default function MainNavigation({ children, currentPage }) {
                     {currentPage}
                   </h2>
                 </div>
-                <div className="bg-blue-100 w-1/2">
+                <div className="w-1/2">
                   <Autocomplete
                     placeholder="Search for user via Twitter username or contact name"
                     getSources={({ query }) => [
@@ -620,19 +621,20 @@ export default function MainNavigation({ children, currentPage }) {
                 </div>
 
                 <div className="ml-2 flex items-center space-x-4 sm:ml-6 sm:space-x-6">
-                  <button
+                  {/* <button
                     type="button"
                     className="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-0 sm:ml-0"
                   >
                     Share Browser
-                  </button>
+                  </button> */}
                   <ShareContactButton myDid={myDid} />
                   <button
                     type="button"
                     onClick={() => setOpenAddContactForm(true)}
                     className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3"
                   >
-                    Add Contact
+                    <PlusIcon className="h-4 w-4 mr-1" />
+                    Contact
                   </button>
                   <TwitterConnect />
                 </div>

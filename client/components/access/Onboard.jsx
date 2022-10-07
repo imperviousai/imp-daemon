@@ -27,6 +27,7 @@ import { useSaveLightningConfig } from "../../hooks/config";
 import { Rings } from "react-loader-spinner";
 import { relayRequest } from "../../utils/messages";
 import { ChevronLeftIcon } from "@heroicons/react/outline";
+import { setItem } from "../../utils/kv";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -352,10 +353,13 @@ function Onboard() {
             {
               onSuccess: ({ data: { apiKey } }) => {
                 localStorage.setItem("apiKey", apiKey);
-                updateMyAvatar({
-                  key: "myAvatar",
-                  value: JSON.stringify(getRandomAvatar()),
-                });
+                getItem("myAvatar")
+                  .then((res) => {
+                    if (res.data.value) {
+                      setMyAvatar(avatar);
+                    }
+                  })
+                  .then(() => setItem("myAvatar", myAvatar));
                 recoverDid(recoveryKit, {
                   onSuccess: () => {
                     toast.success("Recovery successful!");
