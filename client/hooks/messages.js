@@ -15,7 +15,8 @@ const getNotifications = (messages, myDid) => {
     .filter(
       (m) =>
         m.type === "https://didcomm.org/webrtc/1.0/sdp" &&
-        JSON.parse(m.data).body.content.signal?.type !== "answer"
+        JSON.parse(m.data).body.content.signal?.type !== "answer" &&
+        JSON.parse(m.data).from.split("?")[0] !== myDid.id
     )
     .map((m) => {
       return { ...m, data: JSON.parse(m.data) };

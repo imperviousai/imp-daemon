@@ -2,10 +2,14 @@ import { ArrowCircleDownIcon } from "@heroicons/react/outline";
 
 export function AutocompleteItem({ item, saveContactConfirm }) {
   return (
-    <div className="flex space-x-4 items-center w-full px-4">
+    <div
+      className="flex space-x-4 items-center w-full px-4 hover:bg-gray-100"
+      onClick={() => {
+        saveContactConfirm(item);
+      }}
+    >
       <button
         type="button"
-        onClick={() => saveContactConfirm(item)}
         className="inline-flex justify-self-end items-center rounded-full border border-transparent bg-blue-400 p-2 text-blue-400 shadow-sm hover:bg-blue-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
       >
         <ArrowCircleDownIcon className="h-8 w-8" aria-hidden="true" />
