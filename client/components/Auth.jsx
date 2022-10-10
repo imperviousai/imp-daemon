@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Onboard from "./access/Onboard";
 import Unlock from "./access/Unlock";
 import { useGetKeyStatus } from "../hooks/key";
@@ -6,11 +6,11 @@ import SubscribeProvider from "./SubscribeProvider";
 import Peers from "./Peers";
 import { useAtom } from "jotai";
 import {
-  completedSetupAtom,
   recoverySeedSavedAtom,
   passwordSetAtom,
   recoverySeedAtom,
 } from "../stores/auth";
+import { useFetchCompletedSetup, useUpdateCompletedSetup } from "../hooks/auth";
 
 const NetworkError = () => {
   return (
@@ -65,14 +65,27 @@ const Loading = () => {
 };
 
 const Auth = ({ children }) => {
-  const [completedSetup, setCompletedSetup] = useAtom(completedSetupAtom);
   const [, setPasswordSet] = useAtom(passwordSetAtom);
   const [, setRecoverySeed] = useAtom(recoverySeedAtom);
   const [, setRecoverySeedSaved] = useAtom(recoverySeedSavedAtom);
+  const [hasApiKey, setHasApiKey] = useState(false);
+
+  const { mutate: updateCompletedSetup } = useUpdateCompletedSetup();
+  const { data: completedSetup } = useFetchCompletedSetup();
+
+  useEffect(() => {
+    let apiKey = localStorage.getItem("apiKey");
+    if (apiKey) {
+      setHasApiKey(true);
+    } else {
+      setHasApiKey(false);
+    }
+  }, [setHasApiKey]);
+
   const onSuccess = (data) => {
     console.log("Status check successful", data.data);
     if (data?.data.status === "NOT_INITIALIZED") {
-      setCompletedSetup(false);
+      updateCompletedSetup("false");
       setPasswordSet(false);
       setRecoverySeed(false);
       setRecoverySeedSaved(false);
@@ -103,13 +116,19 @@ const Auth = ({ children }) => {
 
   return (
     <>
-      {data?.data.status === "LOCKED" && <Unlock />}
-      {!completedSetup && <Onboard />}
-      {data?.data.status === "READY" && completedSetup && (
+      {hasApiKey ? (
         <>
-          <Peers />
-          <SubscribeProvider>{children}</SubscribeProvider>
+          {data?.data.status === "LOCKED" && <Unlock />}
+          {completedSetup !== "true" && <Onboard />}
+          {data?.data.status === "READY" && completedSetup === "true" && (
+            <>
+              <Peers />
+              <SubscribeProvider>{children}</SubscribeProvider>
+            </>
+          )}
         </>
+      ) : (
+        <p>New Browser Session</p>
       )}
     </>
   );

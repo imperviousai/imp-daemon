@@ -16,7 +16,6 @@ import { useAtom } from "jotai";
 import { getRandomAvatar } from "../../utils/contacts";
 import {
   recoverySeedSavedAtom,
-  completedSetupAtom,
   passwordSetAtom,
   commsSelectedAtom,
   recoverySeedAtom,
@@ -24,6 +23,7 @@ import {
 import { saveAs } from "file-saver";
 // import { providedLightningNodes } from "../../mock/lightning";
 import { useSaveLightningConfig } from "../../hooks/config";
+import { useUpdateCompletedSetup } from "../../hooks/auth";
 import { Rings } from "react-loader-spinner";
 import { relayRequest } from "../../utils/messages";
 import { ChevronLeftIcon } from "@heroicons/react/outline";
@@ -238,12 +238,12 @@ function Onboard() {
   const { mutate: initSeed } = useInitSeed();
   const { mutate: recoverDid } = useRecoverDid();
   const { mutate: updateMyAvatar } = useUpdateMyAvatar();
+  const { mutate: updateCompletedSetup } = useUpdateCompletedSetup();
 
   const [recoverySeedSaved, setRecoverySeedSaved] = useAtom(
     recoverySeedSavedAtom
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [, setCompletedSetup] = useAtom(completedSetupAtom);
   const [passwordSet, setPasswordSet] = useAtom(passwordSetAtom);
 
   const [recoverySeed, setRecoverySeed] = useAtom(recoverySeedAtom);
@@ -395,7 +395,7 @@ function Onboard() {
   };
 
   const goToDashboard = () => {
-    setCompletedSetup(true);
+    updateCompletedSetup("true");
     queryClient.invalidateQueries("fetch-key-status");
   };
 

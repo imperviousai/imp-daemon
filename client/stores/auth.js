@@ -6,8 +6,6 @@ export const recoverySeedSavedAtom = atomWithStorage(
   false
 );
 
-export const completedSetupAtom = atomWithStorage("completedSetup", false);
-
 export const passwordSetAtom = atomWithStorage("passwordSet", false);
 
 export const recoverySeedAtom = atom("");
