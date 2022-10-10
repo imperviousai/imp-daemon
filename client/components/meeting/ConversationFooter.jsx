@@ -5,6 +5,7 @@ import FileUploader from "../FileUploader";
 import SelectedFileInput from "../SelectedFileInput";
 import useAutosizeTextArea from "../../components/useAutosizeTextArea";
 import { v4 as uuidv4 } from "uuid";
+import FileSharingModal from "./FileSharingModal";
 
 //  this needs to be reworked with flex grow
 const ConversationFooter = ({ sendPeerMessage, peers }) => {
@@ -19,6 +20,7 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
   const [fileId, setFileId] = useState("");
   const [fileSize, setFileSize] = useState(0);
   const [chunkCount, setChunkCount] = useState(0);
+  const [openFileSharingModal, setOpenFileSharingModal] = useState(false);
 
   const textAreaRef = useRef(null);
 
@@ -32,6 +34,7 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
 
   const startWebRTCFileTransfer = async () => {
     resetChunkProperties();
+    setOpenFileSharingModal(true);
     setFileId(uuidv4());
     const arrayBuffer = await fileInput.arrayBuffer();
     setFileSize(arrayBuffer.byteLength);
@@ -88,6 +91,7 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
     sendPeerMessage({ name, type, size, id: fileId }, "file-transfer-done");
     setFileInput();
     setSendingFile();
+    setOpenFileSharingModal(false);
     setProgress(0);
   };
 
@@ -149,6 +153,11 @@ const ConversationFooter = ({ sendPeerMessage, peers }) => {
             />
           </button>
         </div>
+        <FileSharingModal
+          open={openFileSharingModal}
+          setOpen={setOpenFileSharingModal}
+          progress={progress}
+        />
       </div>
     </>
   );
