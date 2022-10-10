@@ -94,7 +94,8 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
             toast.error("Unable to turn on audio and video. Please try again.");
             reject(err);
           });
-      })[setLocalStream]
+      }),
+    [setLocalStream]
   );
 
   const disconnectAudioandVideo = () => {

@@ -299,6 +299,8 @@ const TwitterConnect = () => {
     setAuth0Token,
     getDidsbyTwitter,
     publishDid,
+    currentRegistryUser?.nickname,
+    setCurrentRegistryUser,
   ]);
 
   let returnUrl = "";

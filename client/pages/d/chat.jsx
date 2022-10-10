@@ -55,6 +55,7 @@ import FileDownload from "../../components/meeting/FileDownload";
 import useAutosizeTextArea from "../../components/useAutosizeTextArea";
 import ContactAvatar from "../../components/contact/ContactAvatar";
 import { getContactByDid, getContactsByMessage } from "../../utils/contacts";
+import FileSharingModal from "../../components/meeting/FileSharingModal";
 
 const isJSON = (msg) => {
   try {
@@ -531,6 +532,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
   const [fileId, setFileId] = useState("");
   const [fileSize, setFileSize] = useState(0);
   const [chunkCount, setChunkCount] = useState(0);
+  const [openFileSharingModal, setOpenFileSharingModal] = useState(false);
 
   const [lightningEnabled] = useAtom(lightningEnabledAtom);
   const [currentConversationPeer] = useAtom(currentConversationPeerAtom);
@@ -558,6 +560,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
 
   const startWebRTCFileTransfer = async () => {
     resetChunkProperties();
+    setOpenFileSharingModal(true);
     setFileId(uuidv4());
     const arrayBuffer = await fileInput.arrayBuffer();
     setFileSize(arrayBuffer.byteLength);
@@ -663,6 +666,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
     }
     setFileInput();
     setSendingFile();
+    setOpenFileSharingModal(false);
     setProgress(0);
   };
 
@@ -764,6 +768,11 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
             </button>
           </div>
         </div>
+        <FileSharingModal
+          open={openFileSharingModal}
+          setOpen={setOpenFileSharingModal}
+          progress={progress}
+        />
       </div>
     </div>
   );

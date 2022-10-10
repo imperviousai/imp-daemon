@@ -17,7 +17,7 @@
     "@aws-amplify/ui-react": "^3.5.1",
     "@bigheads/core": "^0.3.3",
     "@emoji-mart/data": "^1.0.2",
-    "@headlessui/react": "^1.4.1",
+    "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^1.0.5",
     "@tailwindcss/typography": "^0.4.1",
     "algoliasearch": "^4.14.2",
