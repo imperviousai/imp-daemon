@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { PlusSmIcon } from "@heroicons/react/solid";
-import { v4 as uuidv4 } from "uuid";
 
 function FileUploader({ setFile, disabled }) {
   const hiddenFileInput = useRef(null);
