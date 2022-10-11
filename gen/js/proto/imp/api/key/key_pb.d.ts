@@ -67,6 +67,9 @@ export namespace UnlockSeedRequest {
 }
 
 export class UnlockSeedResponse extends jspb.Message {
+  getApiKey(): string;
+  setApiKey(value: string): UnlockSeedResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UnlockSeedResponse.AsObject;
   static toObject(includeInstance: boolean, msg: UnlockSeedResponse): UnlockSeedResponse.AsObject;
@@ -77,6 +80,7 @@ export class UnlockSeedResponse extends jspb.Message {
 
 export namespace UnlockSeedResponse {
   export type AsObject = {
+    apiKey: string,
   }
 }
 

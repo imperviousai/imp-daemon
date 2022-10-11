@@ -87,7 +87,7 @@ func DefaultConfig() Config {
 		},
 		Sql: Sql{
 			ConnectionString: fmt.Sprintf("file:%s?_auth&_auth_user=admin&_auth_pass=supersecretpassword&_auth_crypt=sha256", sqlPath),
-			Type:             "sqlite",
+			Type:             "sqlite3",
 		},
 		Kv: Kv{
 			Db: kvPath,

@@ -70,6 +70,7 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents a request to save the ion config.",
             "in": "body",
             "required": true,
             "schema": {
@@ -124,6 +125,7 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents a request to save the lightning config.",
             "in": "body",
             "required": true,
             "schema": {

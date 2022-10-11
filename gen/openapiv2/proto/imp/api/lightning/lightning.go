@@ -49,6 +49,7 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents an request to check an invoice.",
             "in": "body",
             "required": true,
             "schema": {
@@ -82,6 +83,7 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents an invoice creation request from your lightning node.",
             "in": "body",
             "required": true,
             "schema": {
@@ -115,6 +117,7 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents an invoice that will be paid by your lightning node.",
             "in": "body",
             "required": true,
             "schema": {

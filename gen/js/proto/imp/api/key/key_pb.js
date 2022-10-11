@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
 
 var google_api_annotations_pb = require('../../../../google/api/annotations_pb.js');
 goog.object.extend(proto, google_api_annotations_pb);
@@ -639,7 +633,7 @@ proto.key.UnlockSeedResponse.prototype.toObject = function(opt_includeInstance) 
  */
 proto.key.UnlockSeedResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    apiKey: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -676,6 +670,10 @@ proto.key.UnlockSeedResponse.deserializeBinaryFromReader = function(msg, reader)
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setApiKey(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -705,6 +703,31 @@ proto.key.UnlockSeedResponse.prototype.serializeBinary = function() {
  */
 proto.key.UnlockSeedResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getApiKey();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string api_key = 1;
+ * @return {string}
+ */
+proto.key.UnlockSeedResponse.prototype.getApiKey = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.key.UnlockSeedResponse} returns this
+ */
+proto.key.UnlockSeedResponse.prototype.setApiKey = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
