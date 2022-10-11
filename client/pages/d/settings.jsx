@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Switch } from "@headlessui/react";
-import { LinkIcon, PhotographIcon } from "@heroicons/react/outline";
+import { LinkIcon, PhotographIcon, ChatIcon } from "@heroicons/react/outline";
 import { ChevronLeftIcon } from "@heroicons/react/solid";
 import MainNavigation from "../../components/MainNavigation";
 import RelayLightningSettings from "../../components/settings/RelayLightningSettings";
-import { useRouter } from "next/router";
 import IdentitySettings from "../../components/settings/IdentitySettings";
+import MessagingSettings from "../../components/settings/MessagingSettings";
+import { useFetchSettings } from "../../hooks/settings";
+import { initSettings } from "../../utils/settings";
 
 const subNavigation = [
   // {
@@ -34,6 +36,13 @@ const subNavigation = [
     description: "Manage your decentralized settings",
     href: "#",
     icon: PhotographIcon,
+    current: false,
+  },
+  {
+    name: "Messaging",
+    description: "Manage your messaging settings",
+    href: "#",
+    icon: ChatIcon,
     current: false,
   },
   // {
@@ -281,7 +290,12 @@ const NotificationSettings = () => {
 
 export default function Settings() {
   const [settingsPage, setSettingsPage] = useState("Relay & Lightning");
-  const router = useRouter();
+  const { data: settings } = useFetchSettings();
+  useEffect(() => {
+    if (!settings) {
+      initSettings();
+    }
+  }, [settings]);
 
   return (
     <>
@@ -356,6 +370,7 @@ export default function Settings() {
                   <RelayLightningSettings />
                 )}
                 {settingsPage === "Identity" && <IdentitySettings />}
+                {settingsPage === "Messaging" && <MessagingSettings />}
                 {/* {settingsPage === "Notifications" && <NotificationSettings />} */}
               </div>
             </div>

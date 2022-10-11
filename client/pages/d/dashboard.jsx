@@ -36,6 +36,7 @@ import { myDidLongFormDocumentAtom } from "../../stores/id";
 import ContactAvatar from "../../components/contact/ContactAvatar";
 import { getShortFormId, resolveDid } from "../../utils/id";
 import { getContactsByMessage, getContactByDid } from "../../utils/contacts";
+import { useFetchSettings } from "../../hooks/settings";
 
 const pageTitle = "Dashboard";
 
@@ -472,9 +473,13 @@ export default function Dashboard() {
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
   const { data: myDid } = useFetchMyDid();
   const { data: blocklist } = useFetchBlocklist();
+  const { data: contactsRes } = useFetchContacts();
+  const { data: settings } = useFetchSettings();
   const { data: messages } = useFetchMessages({
+    contacts: contactsRes?.data.contacts,
     myDid: myDid,
     blocklist,
+    settings,
   });
 
   useEffect(() => {
