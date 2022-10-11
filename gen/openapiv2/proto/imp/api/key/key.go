@@ -49,6 +49,7 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents an init seed request to initialize the master seed.",
             "in": "body",
             "required": true,
             "schema": {
@@ -105,6 +106,7 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents an unlock seed request to unlock the master seed.",
             "in": "body",
             "required": true,
             "schema": {
@@ -163,6 +165,11 @@ var SwaggerJSON = `
     },
     "keyUnlockSeedResponse": {
       "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string"
+        }
+      },
       "description": "*\nRepresents a response back from an unlock seed request."
     },
     "protobufAny": {

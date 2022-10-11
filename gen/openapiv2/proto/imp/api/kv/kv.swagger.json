@@ -46,6 +46,7 @@
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents a request to delete a key and value.",
             "in": "body",
             "required": true,
             "schema": {
@@ -79,6 +80,7 @@
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents a request to get a key and value.",
             "in": "body",
             "required": true,
             "schema": {
@@ -112,6 +114,7 @@
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents a request to get a key and value.",
             "in": "body",
             "required": true,
             "schema": {

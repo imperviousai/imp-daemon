@@ -72,6 +72,7 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents a request to create a contact.",
             "in": "body",
             "required": true,
             "schema": {
@@ -105,6 +106,7 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents a request to create multiple contacts.",
             "in": "body",
             "required": true,
             "schema": {
@@ -138,6 +140,7 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
+            "description": "*\nRepresents a request to update a contact.",
             "in": "body",
             "required": true,
             "schema": {

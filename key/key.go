@@ -198,7 +198,7 @@ func (k *keyManager) UnlockSeed(passphrase string) error {
 
 	unencryptedSeed, err := decrypt(encryptedSeedBytes, passphrase, saltBytes, k.encryptionRounds)
 	if err != nil {
-		return err
+		return errors.New("Passphrase incorrect: Failed to Decrypt Seed")
 	}
 
 	masterKey, err := bip32.NewMasterKey(unencryptedSeed)

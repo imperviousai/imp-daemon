@@ -105,6 +105,7 @@ message UnlockSeedRequest {
  * Represents a response back from an unlock seed request.
  */
 message UnlockSeedResponse {
+	string api_key = 1; // The api key for the user to send authenticated requests
 }
 
 /**

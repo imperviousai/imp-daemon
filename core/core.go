@@ -122,7 +122,7 @@ type Core interface {
 	InitSeed(seedImport string, passphrase string) (string, string, error)
 
 	// UnlockSeed will unlock the key manager with the master seed encryption passphrase
-	UnlockSeed(passphrase string) error
+	UnlockSeed(passphrase string) (string, error)
 
 	// GetSeed will get the mnemonic seed phrase
 	GetSeed() (string, error)
