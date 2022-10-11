@@ -1,4 +1,4 @@
-import { Fragment, useState, useContext } from "react";
+import { Fragment, useState, useContext, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import { toast } from "react-toastify";
@@ -10,9 +10,21 @@ import {
 import { useFetchMyDid } from "../../hooks/id.js";
 import { resolveDid } from "../../utils/id.js";
 
-export default function AddContactSlideOut({ open, setOpen, existingContact }) {
+export default function AddContactSlideOut({
+  open,
+  setOpen,
+  existingContact,
+  defaultName,
+  defaultDid,
+}) {
   const [name, setName] = useState("");
   const [longFormDidInput, setLongFormDidInput] = useState("");
+
+  useEffect(() => {
+    if (defaultDid) {
+      setLongFormDidInput(defaultDid);
+    }
+  }, [defaultDid]);
 
   const onSuccessDelete = () => {
     toast.success("Contact successfully deleted!");
@@ -67,6 +79,10 @@ export default function AddContactSlideOut({ open, setOpen, existingContact }) {
       const longFormDid = parseDid();
       if (!longFormDid) {
         toast.error("Unable to parse DID. Check formatting and try again.");
+        return;
+      }
+      if (!name) {
+        toast.error("Please provide a name or the contact and try again.");
         return;
       }
       resolveDid(longFormDid)
@@ -204,6 +220,7 @@ export default function AddContactSlideOut({ open, setOpen, existingContact }) {
                               <textarea
                                 id="didDocument"
                                 name="didDocument"
+                                value={longFormDidInput}
                                 onChange={(e) =>
                                   setLongFormDidInput(e.target.value)
                                 }

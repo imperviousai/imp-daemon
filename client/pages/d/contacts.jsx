@@ -3,6 +3,7 @@ import { MenuIcon } from "@heroicons/react/outline";
 import {
   ChatAlt2Icon,
   ChevronLeftIcon,
+  ExclamationIcon,
   PencilAltIcon,
   SearchIcon,
   VideoCameraIcon,
@@ -11,8 +12,11 @@ import {
 import { toast } from "react-toastify";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import AddContactSlideOut from "../../components/contact/AddContactSlideOut";
-import { useFetchContacts, useDeleteContactById } from "../../hooks/contacts";
-
+import {
+  useFetchContacts,
+  useDeleteContactById,
+  useFetchBlocklist,
+} from "../../hooks/contacts";
 const tabs = [{ name: "Contact Info", href: "#", current: true }];
 
 const categories = "abcdefghijklmnopqrstuvwxyz1234567890";
@@ -26,6 +30,10 @@ import ContactAvatar from "../../components/contact/ContactAvatar";
 import TwitterLink from "../../components/contact/TwitterLink";
 import TwitterConnected from "../../components/contact/TwitterConnected";
 import AvatarRotator from "../../components/contact/AvatarRotator";
+import BlockButton from "../../components/contact/BlockButton";
+import { useFetchMessages } from "../../hooks/messages";
+import { useFetchMyDid } from "../../hooks/id";
+import { getShortFormId } from "../../utils/id";
 
 const pageTitle = "Contacts";
 
@@ -34,7 +42,17 @@ export const ContactView = ({
   setOpenAddContactForm,
   setSelectedContact,
 }) => {
+  const [openAddForm, setOpenAddForm] = useState(false);
+  const [didToSave, setDidToSave] = useState();
   const { mutate: deleteContactById } = useDeleteContactById();
+  const { data } = useFetchContacts();
+  const { data: myDid } = useFetchMyDid();
+  const { data: blocklist } = useFetchBlocklist();
+  const { data: messages } = useFetchMessages({
+    myDid,
+    contacts: data?.data.contacts,
+    blocklist,
+  });
 
   const onSuccessDelete = () => {
     toast.success("Contact successfully deleted!");
@@ -79,10 +97,66 @@ export const ContactView = ({
     );
   };
 
+  const saveUnknownContact = () => {
+    let c = messages.conversations.find((c) =>
+      c.messages.find(
+        (m) => getShortFormId(m.data.from) === selectedContact.did
+      )
+    );
+    if (c) {
+      let fromDid = c.messages.find(
+        (m) => getShortFormId(m.data.from) === selectedContact.did
+      ).data.from;
+      if (fromDid) {
+        setDidToSave(fromDid);
+        setOpenAddForm(true);
+      }
+    }
+  };
   return (
     <article>
       {/* Profile header */}
+      <AddContactSlideOut
+        open={openAddForm}
+        setOpen={setOpenAddForm}
+        existingContact={null}
+        defaultDid={didToSave}
+      />
       <div>
+        {selectedContact?.name === "Unknown" && (
+          <div className="rounded-md bg-green-50 p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <ExclamationIcon
+                  className="h-5 w-5 text-green-400"
+                  aria-hidden="true"
+                />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-green-800">
+                  Unknown contact
+                </h3>
+                <div className="mt-2 text-sm text-green-700">
+                  <p>
+                    You do not have this contact saved and is unknown. Do you
+                    want to save this contact?
+                  </p>
+                </div>
+                <div className="mt-4">
+                  <div className="-mx-2 -my-1.5 flex">
+                    <button
+                      type="button"
+                      onClick={() => saveUnknownContact()}
+                      className="rounded-md bg-green-50 px-2 py-1.5 text-sm font-medium text-green-800 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-50"
+                    >
+                      Save Contact
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="pb-12 flex flex-col items-center mt-8 ">
           <AvatarRotator contact={selectedContact} />
         </div>
@@ -91,14 +165,14 @@ export const ContactView = ({
             <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1 flex flex-col">
               <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
                 <h1 className="text-2xl font-bold text-gray-900 truncate">
-                  {selectedContact && selectedContact.name}
+                  {selectedContact?.name}
                 </h1>
               </div>
             </div>
           </div>
           <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-gray-900 truncate">
-              {selectedContact.name}
+              {selectedContact?.name}
             </h1>
           </div>
         </div>
@@ -178,28 +252,33 @@ export const ContactView = ({
         </div>
       </div>
       <div className="pt-4 pl-16 flex space-x-4">
-        <button
-          type="button"
-          onClick={() => setOpenAddContactForm(true)}
-          className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-        >
-          <PencilAltIcon
-            className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-            aria-hidden="true"
-          />
-          Edit
-        </button>
-        <button
-          type="button"
-          onClick={() => deleteContactConfirm(selectedContact)}
-          className="inline-flex items-center px-2.5 py-1.5 border border-red-300 shadow-sm text-xs font-medium rounded text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-        >
-          <XCircleIcon
-            className="-ml-1 mr-2 h-5 w-5 text-red-400"
-            aria-hidden="true"
-          />
-          Delete
-        </button>
+        <BlockButton did={selectedContact.did} />
+        {selectedContact?.name !== "Unknown" && (
+          <>
+            <button
+              type="button"
+              onClick={() => setOpenAddContactForm(true)}
+              className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            >
+              <PencilAltIcon
+                className="-ml-1 mr-2 h-5 w-5 text-gray-400"
+                aria-hidden="true"
+              />
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => deleteContactConfirm(selectedContact)}
+              className="inline-flex items-center px-2.5 py-1.5 border border-red-300 shadow-sm text-xs font-medium rounded text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              <XCircleIcon
+                className="-ml-1 mr-2 h-5 w-5 text-red-400"
+                aria-hidden="true"
+              />
+              Delete
+            </button>
+          </>
+        )}
       </div>
     </article>
   );

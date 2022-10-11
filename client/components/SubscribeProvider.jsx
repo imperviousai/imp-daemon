@@ -35,7 +35,7 @@ import {
   currentConversationAtom,
   lightningEnabledAtom,
 } from "../stores/messages";
-import { useFetchContacts } from "../hooks/contacts.js";
+import { useFetchContacts, useFetchBlocklist } from "../hooks/contacts.js";
 import { useFetchMyDid } from "../hooks/id";
 import { useRouter } from "next/router";
 import { defaultRelayShortForm } from "../utils/onboard";
@@ -69,10 +69,12 @@ const SubscribeProvider = ({ children }) => {
   const { mutate: sendBasicMessage } = useSendMessage();
   const { mutate: saveBasicMessage } = useSaveMessage();
   const { data: contactsRes } = useFetchContacts();
+  const { data: blocklist } = useFetchBlocklist();
   const { data: myDid } = useFetchMyDid();
   const { data: messages } = useFetchMessages({
     myDid: myDid,
     contacts: contactsRes?.data.contacts,
+    blocklist,
   });
 
   const router = useRouter();
@@ -498,6 +500,7 @@ const SubscribeProvider = ({ children }) => {
         data: e.data,
         contacts: contactsRes?.data.contacts,
         pathname: router.pathname,
+        blocklist,
       };
       handleDidCommMessage(data);
       queryClient.invalidateQueries("fetch-messages");

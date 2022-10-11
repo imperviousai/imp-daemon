@@ -7,6 +7,7 @@ import {
   fetchContactById,
   deleteContactById,
 } from "../utils/contacts";
+import { getItem, setItem } from "../utils/kv";
 
 // useFetchContacts will return a list of all of the contacts known in the database
 export const useFetchContacts = (onSuccess) => {
@@ -69,6 +70,38 @@ export const useUpdateContact = () => {
     onError: (error) => {
       console.log("Error updating contact: ", error);
       toast.error("Unable to update contact: ", error);
+    },
+  });
+};
+
+// implementing a blocklist feature to stop recieving messages from certain contacts/dids
+const getBlocklist = () => getItem("blocklist");
+
+export const useFetchBlocklist = (onSuccess) => {
+  return useQuery("fetch-blocklist", getBlocklist, {
+    onSuccess,
+    onError: (e) => {
+      console.log("Unable to fetch blocklist: ", e);
+    },
+    select: (res) => {
+      if (res.data.value) {
+        return JSON.parse(res.data.value);
+      } else {
+        return res.data.value;
+      }
+    },
+  });
+};
+
+export const useUpdateBlocklist = () => {
+  const queryClient = useQueryClient();
+  return useMutation(setItem, {
+    onSuccess: () => {
+      console.log("Blocklist successfully updated");
+      queryClient.invalidateQueries("fetch-blocklist");
+    },
+    onError: (error) => {
+      console.error("Error updating the blocklist: ", error);
     },
   });
 };

@@ -10,13 +10,14 @@ import {
 import { defaultRelayShortForm } from "../utils/onboard";
 import _ from "lodash";
 
-const getNotifications = (messages, myDid) => {
+const getNotifications = (messages, myDid, blocklist) => {
   let notifications = _.chain(messages)
     .filter(
       (m) =>
         m.type === "https://didcomm.org/webrtc/1.0/sdp" &&
         JSON.parse(m.data).body.content.signal?.type !== "answer" &&
-        JSON.parse(m.data).from.split("?")[0] !== myDid.id
+        JSON.parse(m.data).from.split("?")[0] !== myDid.id &&
+        !blocklist.includes(JSON.parse(m.data).from.split("?")[0])
     )
     .map((m) => {
       return { ...m, data: JSON.parse(m.data) };
@@ -28,13 +29,14 @@ const getNotifications = (messages, myDid) => {
 
 // convertMessagesIntoConversations sorts messages into conversations where the
 // conversationID is the did of the peer you are communicating with
-const convertMessagesintoConversations = (messages, myDid) => {
+const convertMessagesintoConversations = (messages, blocklist) => {
   let conversations = [];
   const sortedMessages = _.chain(messages)
     .filter(
       (m) =>
         m.type !== "https://impervious.ai/didcomm/relay-registration/1.0" &&
-        JSON.parse(m.data).body.content.signal?.type !== "answer"
+        JSON.parse(m.data).body.content.signal?.type !== "answer" &&
+        !blocklist.includes(JSON.parse(m.data).from.split("?")[0])
     )
     .sortBy((m) => m.data.created_time)
     .map((m) => {
@@ -56,7 +58,7 @@ const convertMessagesintoConversations = (messages, myDid) => {
 // useFetchMessages gets all of the messages, sorts them into conversations assuming a 1:1 pair (for now).
 // It will be the responsibility of the consuming component to sort between messages types as they choose.
 // NOTE: Requires myDid as a parameter to handle the sorting of messages into conversations
-export const useFetchMessages = ({ myDid, onSuccess }) => {
+export const useFetchMessages = ({ blocklist, myDid, onSuccess }) => {
   return useQuery("fetch-messages", fetchMessages, {
     onSuccess,
     onError: (error) => {
@@ -71,9 +73,9 @@ export const useFetchMessages = ({ myDid, onSuccess }) => {
         return {
           conversations: convertMessagesintoConversations(
             data.data.messages,
-            myDid
+            blocklist
           ),
-          notifications: getNotifications(data.data.messages, myDid),
+          notifications: getNotifications(data.data.messages, myDid, blocklist),
         };
       } else {
         return data.data;
