@@ -87,7 +87,6 @@ export default function AddContactSlideOut({
       }
       resolveDid(longFormDid)
         .then((res) => {
-          console.log(res);
           addContact({
             didDocument: JSON.parse(res.data.document),
             name,

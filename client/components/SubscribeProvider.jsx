@@ -45,6 +45,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallback from "../components/ErrorFallback";
 import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
+import { useFetchSettings } from "../hooks/settings";
 
 // subscribe to a certain events for push notifications
 const createMailboxWorker = () =>
@@ -71,10 +72,12 @@ const SubscribeProvider = ({ children }) => {
   const { data: contactsRes } = useFetchContacts();
   const { data: blocklist } = useFetchBlocklist();
   const { data: myDid } = useFetchMyDid();
+  const { data: settings } = useFetchSettings();
   const { data: messages } = useFetchMessages({
     myDid: myDid,
     contacts: contactsRes?.data.contacts,
     blocklist,
+    settings,
   });
 
   const router = useRouter();

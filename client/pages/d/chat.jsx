@@ -57,6 +57,7 @@ import ContactAvatar from "../../components/contact/ContactAvatar";
 import { getContactByDid, getContactsByMessage } from "../../utils/contacts";
 import FileSharingModal from "../../components/meeting/FileSharingModal";
 import BlockButton from "../../components/contact/BlockButton";
+import { useFetchSettings } from "../../hooks/settings";
 
 const isJSON = (msg) => {
   try {
@@ -206,10 +207,12 @@ const ListConversations = () => {
   const { data: contactsRes } = useFetchContacts();
   const { data: myDid } = useFetchMyDid();
   const { data: blocklist } = useFetchBlocklist();
+  const { data: settings } = useFetchSettings();
   const { data: messages } = useFetchMessages({
     myDid: myDid,
     contacts: contactsRes?.data.contacts,
     blocklist,
+    settings,
   });
   const [, setCurrentConversation] = useAtom(currentConversationAtom);
 
@@ -1073,10 +1076,12 @@ export default function Chat() {
   const { data: contactsRes } = useFetchContacts();
   const { data: myDid } = useFetchMyDid();
   const { data: blocklist } = useFetchBlocklist();
+  const { data: settings } = useFetchSettings();
   const { data: messages } = useFetchMessages({
     myDid: myDid,
     contacts: contactsRes?.data.contacts,
     blocklist,
+    settings,
   });
   const { mutate: sendBasicMessage } = useSendMessage();
 

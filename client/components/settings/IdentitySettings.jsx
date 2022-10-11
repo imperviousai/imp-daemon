@@ -14,7 +14,9 @@ const IdentitySettings = () => {
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
-      <h1 className="text-3xl font-extrabold text-blue-gray-900">Identity</h1>
+      <h1 className="text-3xl font-extrabold text-blue-gray-900 pb-5">
+        Identity
+      </h1>
       <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-6 sm:gap-x-6">
         <div className="sm:col-span-6">
           <h2 className="text-xl font-medium text-blue-gray-900">Profile</h2>

@@ -34,6 +34,7 @@ import BlockButton from "../../components/contact/BlockButton";
 import { useFetchMessages } from "../../hooks/messages";
 import { useFetchMyDid } from "../../hooks/id";
 import { getShortFormId } from "../../utils/id";
+import { useFetchSettings } from "../../hooks/settings";
 
 const pageTitle = "Contacts";
 
@@ -48,15 +49,17 @@ export const ContactView = ({
   const { data } = useFetchContacts();
   const { data: myDid } = useFetchMyDid();
   const { data: blocklist } = useFetchBlocklist();
+  const { data: settings } = useFetchSettings();
   const { data: messages } = useFetchMessages({
     myDid,
     contacts: data?.data.contacts,
     blocklist,
+    settings,
   });
 
   const onSuccessDelete = () => {
     toast.success("Contact successfully deleted!");
-    setSelectedContact("");
+    setSelectedContact && setSelectedContact("");
   };
 
   const onErrorDelete = (error) => {

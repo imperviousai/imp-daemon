@@ -9,13 +9,33 @@ import {
 } from "../utils/messages";
 import { defaultRelayShortForm } from "../utils/onboard";
 import _ from "lodash";
+import { getShortFormId } from "../utils/id";
 
-const getNotifications = (messages, myDid, blocklist) => {
+const checkOpenInbox = ({ settings, messages, contacts }) => {
+  // filter content based on openInbox setting,
+  // if closed then we return messages that are only from saved contacts
+  if (!settings.messages.openInbox) {
+    return messages.filter((msg) =>
+      contacts.find((c) => c.did === getShortFormId(msg.data.from))
+        ? true
+        : false
+    );
+  } else {
+    return messages;
+  }
+};
+
+const getNotifications = ({
+  messages,
+  myDid,
+  blocklist,
+  settings,
+  contacts,
+}) => {
   let notifications = _.chain(messages)
     .filter(
       (m) =>
         m.type === "https://didcomm.org/webrtc/1.0/sdp" &&
-        JSON.parse(m.data).body.content.signal?.type !== "answer" &&
         JSON.parse(m.data).from.split("?")[0] !== myDid.id &&
         !blocklist.includes(JSON.parse(m.data).from.split("?")[0])
     )
@@ -24,18 +44,27 @@ const getNotifications = (messages, myDid, blocklist) => {
     })
     .sortBy((m) => m.data.created_time)
     .value();
+  notifications = checkOpenInbox({
+    settings,
+    messages: notifications,
+    contacts,
+  });
   return notifications;
 };
 
 // convertMessagesIntoConversations sorts messages into conversations where the
 // conversationID is the did of the peer you are communicating with
-const convertMessagesintoConversations = (messages, blocklist) => {
+const convertMessagesintoConversations = ({
+  messages,
+  blocklist,
+  settings,
+  contacts,
+}) => {
   let conversations = [];
-  const sortedMessages = _.chain(messages)
+  let sortedMessages = _.chain(messages)
     .filter(
       (m) =>
         m.type !== "https://impervious.ai/didcomm/relay-registration/1.0" &&
-        JSON.parse(m.data).body.content.signal?.type !== "answer" &&
         !blocklist.includes(JSON.parse(m.data).from.split("?")[0])
     )
     .sortBy((m) => m.data.created_time)
@@ -43,6 +72,12 @@ const convertMessagesintoConversations = (messages, blocklist) => {
       return { ...m, data: JSON.parse(m.data) };
     })
     .value();
+
+  sortedMessages = checkOpenInbox({
+    messages: sortedMessages,
+    settings,
+    contacts,
+  });
 
   let conversationIds = _.uniq(sortedMessages.map((m) => m.groupId));
   conversationIds.forEach((groupId) => {
@@ -58,7 +93,13 @@ const convertMessagesintoConversations = (messages, blocklist) => {
 // useFetchMessages gets all of the messages, sorts them into conversations assuming a 1:1 pair (for now).
 // It will be the responsibility of the consuming component to sort between messages types as they choose.
 // NOTE: Requires myDid as a parameter to handle the sorting of messages into conversations
-export const useFetchMessages = ({ blocklist, myDid, onSuccess }) => {
+export const useFetchMessages = ({
+  contacts,
+  settings,
+  blocklist,
+  myDid,
+  onSuccess,
+}) => {
   return useQuery("fetch-messages", fetchMessages, {
     onSuccess,
     onError: (error) => {
@@ -71,11 +112,19 @@ export const useFetchMessages = ({ blocklist, myDid, onSuccess }) => {
       // do data transformation to turn messages into conversations
       if (data.data.messages) {
         return {
-          conversations: convertMessagesintoConversations(
-            data.data.messages,
-            blocklist
-          ),
-          notifications: getNotifications(data.data.messages, myDid, blocklist),
+          conversations: convertMessagesintoConversations({
+            messages: data.data.messages,
+            blocklist,
+            settings,
+            contacts,
+          }),
+          notifications: getNotifications({
+            messages: data.data.messages,
+            myDid,
+            blocklist,
+            settings,
+            contacts,
+          }),
         };
       } else {
         return data.data;
