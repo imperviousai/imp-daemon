@@ -15,7 +15,7 @@ import { RiUserSharedFill } from "react-icons/ri";
 import { useRouter } from "next/router";
 import moment from "moment";
 import PaymentsSlideOut from "../../components/lightning/PaymentsSlideOut";
-import { useFetchContacts } from "../../hooks/contacts";
+import { useFetchBlocklist, useFetchContacts } from "../../hooks/contacts";
 import { useFetchMessages, useDeleteGroupMessages } from "../../hooks/messages";
 import { useFetchMyDid } from "../../hooks/id";
 import { useAtom } from "jotai";
@@ -471,8 +471,10 @@ export default function Dashboard() {
   const [peers] = useAtom(peersAtom);
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
   const { data: myDid } = useFetchMyDid();
+  const { data: blocklist } = useFetchBlocklist();
   const { data: messages } = useFetchMessages({
     myDid: myDid,
+    blocklist,
   });
 
   useEffect(() => {

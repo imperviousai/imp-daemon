@@ -12,7 +12,7 @@ import {
 import { lightningEnabledAtom } from "../../stores/messages";
 import { sendPeerInvitation } from "../../utils/peers";
 import { useFetchMyDid } from "../../hooks/id";
-import { useFetchContacts } from "../../hooks/contacts";
+import { useFetchContacts, useFetchBlocklist } from "../../hooks/contacts";
 import { useSendMessage } from "../../hooks/messages";
 import { toast } from "react-toastify";
 import { trigger } from "../../utils/events";
@@ -29,6 +29,7 @@ export const SelectParticipants = ({
   networkId,
 }) => {
   const { data: contactsRes } = useFetchContacts();
+  const { data: blocklist } = useFetchBlocklist();
   const [, removePeer] = useAtom(removePeerAtom);
 
   const isSelected = (contact) => selected.includes(contact);
@@ -96,33 +97,41 @@ export const SelectParticipants = ({
                     {getStatus(contact)}
                   </p>
                 </div>
-                {!isConnected(contact) && (
-                  <div>
-                    {!isInvited(contact) ? (
-                      <button
-                        onClick={() => toggleSelected(contact)}
-                        className="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50"
-                      >
-                        {/* TODO: need to account for invited but connected */}
-                        {isSelected(contact) ? "Undo" : "Invite"}
-                      </button>
-                    ) : (
+                {blocklist.includes(contact.did) ? (
+                  <span className="ml-2 inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">
+                    Blocked
+                  </span>
+                ) : (
+                  <>
+                    {!isConnected(contact) && (
                       <div>
-                        <button
-                          onClick={() => resendInvitation(contact)}
-                          className="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50"
-                        >
-                          Try Again
-                        </button>
-                        <button
-                          onClick={() => revokeInvitation(contact)}
-                          className="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-red-300 text-sm leading-5 font-medium rounded-full text-red-700 bg-white hover:bg-red-50"
-                        >
-                          Remove
-                        </button>
+                        {!isInvited(contact) ? (
+                          <button
+                            onClick={() => toggleSelected(contact)}
+                            className="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50"
+                          >
+                            {/* TODO: need to account for invited but connected */}
+                            {isSelected(contact) ? "Undo" : "Invite"}
+                          </button>
+                        ) : (
+                          <div>
+                            <button
+                              onClick={() => resendInvitation(contact)}
+                              className="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50"
+                            >
+                              Try Again
+                            </button>
+                            <button
+                              onClick={() => revokeInvitation(contact)}
+                              className="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-red-300 text-sm leading-5 font-medium rounded-full text-red-700 bg-white hover:bg-red-50"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
-                  </div>
+                  </>
                 )}
               </div>
             </li>

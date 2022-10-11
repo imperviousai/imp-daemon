@@ -93,11 +93,21 @@ export const showPaymentNotification = ({ detail: { msg, knownContact } }) => {
 };
 
 // handleDidCommMessage is a handler function for incoming messages
-export const handleDidCommMessage = ({ data, contacts, pathname }) => {
+export const handleDidCommMessage = ({
+  data,
+  contacts,
+  pathname,
+  blocklist,
+}) => {
   const d = JSON.parse(data).result?.data;
   if (d) {
     const msg = JSON.parse(atob(d));
     const fromId = getShortFormId(msg.from);
+
+    // check incoming message against the blocklist
+    if (blocklist.includes(fromId)) {
+      return;
+    }
 
     // check if the incoming message is from a known contact
     let knownContact = getContactByDid({
