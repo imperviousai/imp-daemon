@@ -1,5 +1,5 @@
 import { request } from "./axios-utils";
-
+import { getApiKey } from "./misc";
 // Utility functions for the Key/Value store management in the daemon
 
 // sets a key/value pair in the daemon with a supplied key and value
@@ -9,7 +9,7 @@ export const setItem = async ({ key, value }) => {
     method: "post",
     data: { key, value },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -21,7 +21,7 @@ export const getItem = async (key) => {
     method: "post",
     data: { key },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -33,7 +33,7 @@ export const removeItem = async (key) => {
     method: "post",
     data: { key },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };

@@ -6,11 +6,13 @@ import SubscribeProvider from "./SubscribeProvider";
 import Peers from "./Peers";
 import { useAtom } from "jotai";
 import {
-  completedSetupAtom,
   recoverySeedSavedAtom,
   passwordSetAtom,
   recoverySeedAtom,
+  apiKeyAtom,
+  onboardInProgressAtom,
 } from "../stores/auth";
+import { useFetchCompletedSetup } from "../hooks/auth";
 
 const NetworkError = () => {
   return (
@@ -65,14 +67,16 @@ const Loading = () => {
 };
 
 const Auth = ({ children }) => {
-  const [completedSetup, setCompletedSetup] = useAtom(completedSetupAtom);
   const [, setPasswordSet] = useAtom(passwordSetAtom);
   const [, setRecoverySeed] = useAtom(recoverySeedAtom);
   const [, setRecoverySeedSaved] = useAtom(recoverySeedSavedAtom);
+  const [apiKey] = useAtom(apiKeyAtom);
+  const { data: completedSetup } = useFetchCompletedSetup();
+  const [onboardInProgress] = useAtom(onboardInProgressAtom);
+
   const onSuccess = (data) => {
     console.log("Status check successful", data.data);
     if (data?.data.status === "NOT_INITIALIZED") {
-      setCompletedSetup(false);
       setPasswordSet(false);
       setRecoverySeed(false);
       setRecoverySeedSaved(false);
@@ -99,18 +103,25 @@ const Auth = ({ children }) => {
     return <NetworkError />;
   }
 
-  // semi-global location to subscribe to the websocket and listen for events
-
   return (
     <>
       {data?.data.status === "LOCKED" && <Unlock />}
-      {!completedSetup && <Onboard />}
-      {data?.data.status === "READY" && completedSetup && (
+      {(data?.data.status === "NOT_INITIALIZED" ||
+        (apiKey &&
+          !completedSetup &&
+          onboardInProgress &&
+          data?.data.status === "READY")) && <Onboard />}
+      {data?.data.status === "READY" && apiKey && completedSetup && (
         <>
           <Peers />
           <SubscribeProvider>{children}</SubscribeProvider>
         </>
       )}
+      {data?.data.status === "READY" &&
+        apiKey &&
+        !completedSetup &&
+        !onboardInProgress && <Unlock />}
+      {data?.data.status === "READY" && !apiKey && <Unlock />}
     </>
   );
 };

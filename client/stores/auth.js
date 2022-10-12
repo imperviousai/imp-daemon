@@ -6,8 +6,6 @@ export const recoverySeedSavedAtom = atomWithStorage(
   false
 );
 
-export const completedSetupAtom = atomWithStorage("completedSetup", false);
-
 export const passwordSetAtom = atomWithStorage("passwordSet", false);
 
 export const recoverySeedAtom = atom("");
@@ -19,3 +17,7 @@ export const voltageNodeAtom = atom("");
 export const auth0TokenAtom = atom("");
 
 export const auth0UserAtom = atom();
+
+export const apiKeyAtom = atomWithStorage("apiKey");
+
+export const onboardInProgressAtom = atomWithStorage("onboardInProgress");

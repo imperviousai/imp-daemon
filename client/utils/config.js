@@ -1,4 +1,5 @@
 import { request } from "./axios-utils";
+import { getApiKey } from "./misc";
 
 // Utility functions for handling the daemon's config
 
@@ -8,7 +9,7 @@ export const getLightningConfig = () => {
     url: "/v1/config/lightning",
     method: "get",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -19,7 +20,7 @@ export const saveLightningConfig = ({ config }) => {
     method: "post",
     data: { lightningConfig: { ...config } },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };

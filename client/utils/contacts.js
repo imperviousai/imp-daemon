@@ -1,5 +1,6 @@
 import { request } from "./axios-utils";
 import { gql } from "@apollo/client";
+import { getApiKey } from "./misc";
 
 // Utility functions for the contacts management
 export const ALGOLIA_ID = "2AT1J9F6CY";
@@ -54,7 +55,7 @@ export const fetchContacts = () => {
     url: "/v1/contacts",
     method: "get",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -86,7 +87,7 @@ export const addContact = (data) => {
       },
     },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -119,7 +120,7 @@ export const updateContact = (data) => {
     method: "post",
     data: { contact: updatedContact },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -129,7 +130,7 @@ export const fetchContactById = (id) => {
     url: `/v1/contacts/${id}`,
     method: "get",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -140,7 +141,7 @@ export const deleteContactById = (id) => {
     url: `/v1/contacts/${id}`,
     method: "delete",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };

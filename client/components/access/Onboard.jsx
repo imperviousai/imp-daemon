@@ -16,14 +16,16 @@ import { useAtom } from "jotai";
 import { getRandomAvatar } from "../../utils/contacts";
 import {
   recoverySeedSavedAtom,
-  completedSetupAtom,
   passwordSetAtom,
   commsSelectedAtom,
   recoverySeedAtom,
+  apiKeyAtom,
+  onboardInProgressAtom,
 } from "../../stores/auth";
 import { saveAs } from "file-saver";
 // import { providedLightningNodes } from "../../mock/lightning";
 import { useSaveLightningConfig } from "../../hooks/config";
+import { useUpdateCompletedSetup } from "../../hooks/auth";
 import { Rings } from "react-loader-spinner";
 import { relayRequest } from "../../utils/messages";
 import { ChevronLeftIcon } from "@heroicons/react/outline";
@@ -238,14 +240,15 @@ function Onboard() {
   const { mutate: initSeed } = useInitSeed();
   const { mutate: recoverDid } = useRecoverDid();
   const { mutate: updateMyAvatar } = useUpdateMyAvatar();
+  const { mutate: updateCompletedSetup } = useUpdateCompletedSetup();
 
   const [recoverySeedSaved, setRecoverySeedSaved] = useAtom(
     recoverySeedSavedAtom
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [, setCompletedSetup] = useAtom(completedSetupAtom);
   const [passwordSet, setPasswordSet] = useAtom(passwordSetAtom);
-
+  const [, setApiKey] = useAtom(apiKeyAtom);
+  const [, setOnboardInProgress] = useAtom(onboardInProgressAtom);
   const [recoverySeed, setRecoverySeed] = useAtom(recoverySeedAtom);
 
   const queryClient = useQueryClient();
@@ -288,7 +291,7 @@ function Onboard() {
   const onSuccess = (data) => {
     const { mnenomic, apiKey } = data.data;
     setRecoverySeed(mnenomic);
-    localStorage.setItem("apiKey", apiKey);
+    setApiKey(apiKey);
     // set up an initial avatar
     updateMyAvatar({
       key: "myAvatar",
@@ -334,6 +337,7 @@ function Onboard() {
     }
     setIsLoading(true);
     setIsInvalid(false);
+    setOnboardInProgress(true);
     initSeed({ passphrase }, { onSuccess, onError });
   };
 
@@ -351,7 +355,7 @@ function Onboard() {
             { passphrase, mnemonic: seed },
             {
               onSuccess: ({ data: { apiKey } }) => {
-                localStorage.setItem("apiKey", apiKey);
+                setApiKey(apiKey);
                 updateMyAvatar({
                   key: "myAvatar",
                   value: JSON.stringify(getRandomAvatar()),
@@ -395,7 +399,8 @@ function Onboard() {
   };
 
   const goToDashboard = () => {
-    setCompletedSetup(true);
+    updateCompletedSetup({ key: "completedSetup", value: "true" });
+    setOnboardInProgress(false);
     queryClient.invalidateQueries("fetch-key-status");
   };
 
