@@ -221,6 +221,24 @@ kv: proto/imp/api/kv/kv.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_OPENAPIV2) $(
 	cat ./gen/openapiv2/proto/imp/api/kv/kv.swagger.json >> ./gen/openapiv2/proto/imp/api/kv/kv.go
 	echo "\`" >> ./gen/openapiv2/proto/imp/api/kv/kv.go
 
+core: proto/imp/api/core/core.proto | $(PROTOC_GEN_GO_GRPC) $(PROTOC_GEN_OPENAPIV2) $(PROTOC_GEN_GRPC_GATEWAY) $(PROTOC_GEN_GO) $(PROTOC_GEN_DOC) $(PROTOC)
+	protoc -I. -I./proto \
+		--grpc-gateway_out ./gen/go \
+		--grpc-gateway_opt logtostderr=true \
+    		--grpc-gateway_opt paths=source_relative \
+		--go_out="plugins=grpc,paths=source_relative:./gen/go" \
+		--js_out=import_style=commonjs,binary:./gen/js \
+		--grpc-web_out=import_style=typescript,mode=grpcweb:./gen/js \
+		--rust_out="./gen/rust" \
+		--openapiv2_out ./gen/openapiv2 \
+		--openapiv2_opt logtostderr=true \
+		--doc_out=./gen/docs --doc_opt=./gen/docs/custom_markdown.tmpl,core.md \
+		proto/imp/api/core/core.proto
+	echo "package core\n\nvar SwaggerJSON = \`" > ./gen/openapiv2/proto/imp/api/core/core.go
+	cat ./gen/openapiv2/proto/imp/api/core/core.swagger.json >> ./gen/openapiv2/proto/imp/api/core/core.go
+	echo "\`" >> ./gen/openapiv2/proto/imp/api/core/core.go
+
+
 
 proto: messaging
 proto: websocket

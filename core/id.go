@@ -68,7 +68,7 @@ func (c *core) BackupDID(did string) (*id.DIDUpdateInfo, error) {
 
 func (c *core) RecoverDID(recoveryKit *id.DIDUpdateInfo, seed string, passphrase string) error {
 	// check if seed is already initialized
-	status, err := c.Status()
+	status, err := c.KeyStatus()
 	if err != nil {
 		return err
 	}
