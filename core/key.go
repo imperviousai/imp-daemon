@@ -6,9 +6,9 @@ import (
 	"go.uber.org/zap"
 )
 
-func (c *core) Status() (string, error) {
-	zap.L().Debug("[Core] Status")
-	defer zap.L().Debug("[Core] Status success")
+func (c *core) KeyStatus() (string, error) {
+	zap.L().Debug("[Core] KeyStatus")
+	defer zap.L().Debug("[Core] KeyStatus success")
 
 	// First check DB status
 	if !c.dbManager.IsInitialized() {

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/imperviousai/imp-daemon/lightning"
 	"go.uber.org/zap"
 )
 
@@ -63,4 +64,17 @@ func (c *core) CheckInvoice(invoice string) (bool, error) {
 
 	zap.L().Debug("[Core] CheckInvoice success", zap.Bool("paid", paid))
 	return paid, nil
+}
+
+func (c *core) CheckLightningStatus() ([]lightning.NodeStatus, error) {
+	zap.L().Debug("[Core] CheckStatus")
+
+	status, err := c.lightningManager.Status()
+	if err != nil {
+		zap.L().Error("[Core] CheckStatus failed", zap.String("error", err.Error()))
+		return nil, err
+	}
+
+	zap.L().Debug("[Core] CheckStatus success", zap.Any("status", status))
+	return status, nil
 }

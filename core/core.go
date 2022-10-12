@@ -76,6 +76,9 @@ type Core interface {
 	// CheckInvoice will check a specific pay request invoice and returns true or false.
 	CheckInvoice(string) (bool, error)
 
+	// LightningStatus will check the status of the Lightning nodes configured.
+	CheckLightningStatus() ([]lightning.NodeStatus, error)
+
 	//
 	// ID Commands
 	//
@@ -127,7 +130,7 @@ type Core interface {
 	// GetSeed will get the mnemonic seed phrase
 	GetSeed() (string, error)
 
-	Status() (string, error)
+	KeyStatus() (string, error)
 
 	//
 	// Contacts Commands

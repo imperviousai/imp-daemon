@@ -55,7 +55,7 @@ func (m *keyServer) UnlockSeed(ctx context.Context, req *key_proto.UnlockSeedReq
 func (m *keyServer) Status(ctx context.Context, req *key_proto.StatusRequest) (*key_proto.StatusResponse, error) {
 	zap.L().Info("[Server] Status")
 
-	status, err := m.core.Status()
+	status, err := m.core.KeyStatus()
 	if err != nil {
 		zap.L().Error("[Server] Status failed", zap.String("error", err.Error()))
 		return nil, err

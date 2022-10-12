@@ -50,6 +50,21 @@ func (mr *MockDIDCommMockRecorder) CheckSendMsg(arg0, arg1, arg2, arg3 interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckSendMsg", reflect.TypeOf((*MockDIDComm)(nil).CheckSendMsg), arg0, arg1, arg2, arg3)
 }
 
+// CheckWebsocketConnections mocks base method.
+func (m *MockDIDComm) CheckWebsocketConnections() ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckWebsocketConnections")
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CheckWebsocketConnections indicates an expected call of CheckWebsocketConnections.
+func (mr *MockDIDCommMockRecorder) CheckWebsocketConnections() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckWebsocketConnections", reflect.TypeOf((*MockDIDComm)(nil).CheckWebsocketConnections))
+}
+
 // SendMsg mocks base method.
 func (m *MockDIDComm) SendMsg(arg0 *comm.DIDCommMsg, arg1 int64, arg2 []id.Service, arg3 *comm.MessageSettings) (string, error) {
 	m.ctrl.T.Helper()

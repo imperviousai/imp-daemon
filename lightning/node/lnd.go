@@ -148,6 +148,19 @@ func NewLndNode(cfg *LndConfig) (node LndNode, err error) {
 	}, nil
 }
 
+func (l *lndNode) GetInfo() (*lnrpc.GetInfoResponse, error) {
+	zap.L().Debug("[LND] GetInfo attempting to get info")
+
+	getInfoResponse, err := l.lndClient.GetInfo(context.Background(), &lnrpc.GetInfoRequest{})
+	if err != nil {
+		zap.L().Error("[LND] GetInfo failed", zap.String("error", err.Error()))
+		return nil, err
+	}
+
+	zap.L().Debug("[LND] GetInfo success", zap.Any("info", getInfoResponse))
+	return getInfoResponse, nil
+}
+
 func (l *lndNode) SignMessage(msg []byte) ([]byte, error) {
 	zap.L().Debug("[LND] SignMessage attempting to sign message")
 
