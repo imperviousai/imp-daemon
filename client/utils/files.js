@@ -1,5 +1,6 @@
 import { request } from "./axios-utils";
 import { fileTypeFromBuffer } from "file-type";
+import { getApiKey } from "./misc";
 
 // Utility functions for file management
 export const fetchFiles = () => {
@@ -7,7 +8,7 @@ export const fetchFiles = () => {
     url: "/v1/ipfs/list",
     method: "get",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -28,7 +29,7 @@ export const uploadFile = (file) => {
       method: "post",
       data,
       headers: {
-        "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+        "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
       },
     });
   };
@@ -39,7 +40,7 @@ export const fetchFileById = (id) => {
     url: `/v1/ipfs/${id}`,
     method: "get",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };

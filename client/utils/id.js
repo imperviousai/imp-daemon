@@ -1,4 +1,5 @@
 import { request } from "./axios-utils";
+import { getApiKey } from "./misc";
 
 export const getShortFormId = (did) => did.split("?")[0];
 
@@ -8,7 +9,7 @@ export const fetchDids = () => {
     url: "/v1/id/listDID",
     method: "get",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -19,7 +20,7 @@ export const createDid = (didDocument) => {
     method: "post",
     data: didDocument,
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -30,7 +31,7 @@ export const resolveDid = (didId) => {
     method: "post",
     data: { did: didId },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -44,7 +45,7 @@ export const recoverDid = (recoveryKit) => {
     method: "post",
     data,
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -55,7 +56,7 @@ export const importDid = (document) => {
     method: "post",
     data: { document },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -66,7 +67,7 @@ export const updateDid = (document) => {
     method: "post",
     data: { document, signature: "" },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };

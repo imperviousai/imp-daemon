@@ -1,22 +1,35 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { toast } from "react-toastify";
 import { useUnlockSeed } from "../../hooks/key";
+import { apiKeyAtom } from "../../stores/auth";
+import { useAtom } from "jotai";
 import { Rings } from "react-loader-spinner";
+import { useQueryClient } from "react-query";
 
 function Unlock() {
   const [passphrase, setPassphrase] = useState("");
   const [invalid, setIsInvalid] = useState(false);
   const [isUnlocking, setIsUnlocking] = useState(false);
+  const queryClient = useQueryClient();
+
+  const [, setApiKey] = useAtom(apiKeyAtom);
 
   const { mutate: unlockSeed } = useUnlockSeed(onError);
 
   const unlock = useCallback(
     (password) => {
       setIsUnlocking(true);
-      unlockSeed(password, { onError });
+      unlockSeed(password, { onSuccess, onError });
     },
     [unlockSeed]
   );
+
+  const onSuccess = (data) => {
+    if (data.data.apiKey) {
+      setApiKey(data.data.apiKey);
+      queryClient.invalidateQueries("fetch-completed-setup");
+    }
+  };
 
   const onError = (err) => {
     setIsUnlocking(false);

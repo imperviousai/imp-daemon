@@ -1,5 +1,5 @@
 import { request } from "./axios-utils";
-
+import { getApiKey } from "./misc";
 // Utility functions for lightning services
 
 export const checkInvoice = (invoice) => {
@@ -8,7 +8,7 @@ export const checkInvoice = (invoice) => {
     method: "post",
     data: { invoice },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -19,7 +19,7 @@ export const generateInvoice = (amount, memo) => {
     method: "post",
     data: { amount, memo },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -30,7 +30,7 @@ export const payInvoice = (invoice) => {
     method: "post",
     data: { invoice },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };

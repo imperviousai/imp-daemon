@@ -1,5 +1,5 @@
 import { request } from "./axios-utils";
-
+import { getApiKey } from "./misc";
 // Utility functions for the Key management
 // Initializes the daemon
 export const initSeed = async ({ passphrase, mnemonic }) => {
@@ -13,7 +13,7 @@ export const initSeed = async ({ passphrase, mnemonic }) => {
     method: "post",
     data,
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -25,7 +25,7 @@ export const unlockSeed = async (passphrase) => {
     method: "post",
     data: { passphrase },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -36,7 +36,7 @@ export const getKeyStatus = async () => {
     url: "/v1/key/status",
     method: "get",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
