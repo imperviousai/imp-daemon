@@ -2,7 +2,7 @@ import { request } from "./axios-utils";
 import { getApiKey } from "./misc";
 // Utility functions for lightning services
 
-export const checkInvoice = (invoice) => {
+export const checkInvoice = ({ invoice }) => {
   return request({
     url: "/v1/lightning/checkinvoice",
     method: "post",
@@ -13,7 +13,7 @@ export const checkInvoice = (invoice) => {
   });
 };
 
-export const generateInvoice = (amount, memo) => {
+export const generateInvoice = ({ amount, memo }) => {
   return request({
     url: "/v1/lightning/generateinvoice",
     method: "post",
@@ -24,7 +24,7 @@ export const generateInvoice = (amount, memo) => {
   });
 };
 
-export const payInvoice = (invoice) => {
+export const payInvoice = ({ invoice }) => {
   return request({
     url: "/v1/lightning/payinvoice",
     method: "post",
