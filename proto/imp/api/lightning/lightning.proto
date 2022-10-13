@@ -58,6 +58,15 @@ service Lightning {
 		};
 	}
 
+	/**
+* GetChannels allows you to get local balances of your channels
+*/
+	rpc GetTransactions(GetTransactionsRequest) returns (GetTransactionsResponse) {
+		option (google.api.http) = {
+			post: "/v1/lightning/gettransactions"
+			body: "*"
+		};
+	}
 
 	/**
 	* GenerateInvoice allows you to generate an invoice for a specific payment amount from your lightning node.
@@ -103,6 +112,20 @@ message GetChannelsRequest {
 message GetChannelsResponse {
 	int64 amt = 1; // The channel amount from your lightning node
 }
+
+/**
+ * Represents a GetTransactions request toward your lightning node.
+ */
+message GetTransactionsRequest {
+}
+
+/**
+ * Represents a response back from an GetTransactions generation request.
+ */
+message GetTransactionsResponse {
+	string transactions = 1; // The list of transactions
+}
+
 
 /**
  * Represents an invoice creation request from your lightning node.

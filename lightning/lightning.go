@@ -56,6 +56,9 @@ type LightningManager interface {
 
 	// GetChannels Get the channels from the connected LND node
 	GetChannels() (int64, error)
+
+	// // GetTransactions Get the transactions from the connected LND node
+	GetTransactions() (string, error)
 }
 
 type lightningManager struct {
@@ -473,4 +476,30 @@ func (l *lightningManager) GetChannels() (int64, error) {
 	}
 	zap.L().Error("[LM] Getchannels failed", zap.String("error", lastErr.Error()))
 	return 0, lastErr
+}
+
+// GetTransactions Get the transactions from the connected LND node
+func (l *lightningManager) GetTransactions() (string, error) {
+	zap.L().Debug("[LM] GetTransactions Called")
+	// Try all active ones
+	var lastErr error
+	var resp string
+	for _, nodeCtrl := range l.nodeControllers {
+		if !nodeCtrl.active {
+			continue
+		}
+		result, err := nodeCtrl.node.GetTransactions()
+		if err != nil {
+			zap.L().Error("[LM] GetTransactions failed through node, trying next..", zap.String("error", err.Error()))
+
+			// Try the next node if error
+			lastErr = err
+			continue
+		}
+		resp += result
+		// result acquired, return
+		return resp, nil
+	}
+	zap.L().Error("[LM] GetTransactions failed", zap.String("error", lastErr.Error()))
+	return "", lastErr
 }

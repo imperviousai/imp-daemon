@@ -22,6 +22,9 @@ type LightningClient interface {
 	// GetChannels allows you to get local balances of your channels
 	GetChannels(ctx context.Context, in *GetChannelsRequest, opts ...grpc.CallOption) (*GetChannelsResponse, error)
 	//*
+	// GetChannels allows you to get local balances of your channels
+	GetTransactions(ctx context.Context, in *GetTransactionsRequest, opts ...grpc.CallOption) (*GetTransactionsResponse, error)
+	//*
 	// GenerateInvoice allows you to generate an invoice for a specific payment amount from your lightning node.
 	GenerateInvoice(ctx context.Context, in *GenerateInvoiceRequest, opts ...grpc.CallOption) (*GenerateInvoiceResponse, error)
 	//*
@@ -43,6 +46,15 @@ func NewLightningClient(cc grpc.ClientConnInterface) LightningClient {
 func (c *lightningClient) GetChannels(ctx context.Context, in *GetChannelsRequest, opts ...grpc.CallOption) (*GetChannelsResponse, error) {
 	out := new(GetChannelsResponse)
 	err := c.cc.Invoke(ctx, "/lightning.Lightning/GetChannels", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lightningClient) GetTransactions(ctx context.Context, in *GetTransactionsRequest, opts ...grpc.CallOption) (*GetTransactionsResponse, error) {
+	out := new(GetTransactionsResponse)
+	err := c.cc.Invoke(ctx, "/lightning.Lightning/GetTransactions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +96,9 @@ type LightningServer interface {
 	// GetChannels allows you to get local balances of your channels
 	GetChannels(context.Context, *GetChannelsRequest) (*GetChannelsResponse, error)
 	//*
+	// GetChannels allows you to get local balances of your channels
+	GetTransactions(context.Context, *GetTransactionsRequest) (*GetTransactionsResponse, error)
+	//*
 	// GenerateInvoice allows you to generate an invoice for a specific payment amount from your lightning node.
 	GenerateInvoice(context.Context, *GenerateInvoiceRequest) (*GenerateInvoiceResponse, error)
 	//*
@@ -101,6 +116,9 @@ type UnimplementedLightningServer struct {
 
 func (UnimplementedLightningServer) GetChannels(context.Context, *GetChannelsRequest) (*GetChannelsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetChannels not implemented")
+}
+func (UnimplementedLightningServer) GetTransactions(context.Context, *GetTransactionsRequest) (*GetTransactionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTransactions not implemented")
 }
 func (UnimplementedLightningServer) GenerateInvoice(context.Context, *GenerateInvoiceRequest) (*GenerateInvoiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateInvoice not implemented")
@@ -138,6 +156,24 @@ func _Lightning_GetChannels_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(LightningServer).GetChannels(ctx, req.(*GetChannelsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Lightning_GetTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTransactionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LightningServer).GetTransactions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/lightning.Lightning/GetTransactions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LightningServer).GetTransactions(ctx, req.(*GetTransactionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -206,6 +242,10 @@ var Lightning_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetChannels",
 			Handler:    _Lightning_GetChannels_Handler,
+		},
+		{
+			MethodName: "GetTransactions",
+			Handler:    _Lightning_GetTransactions_Handler,
 		},
 		{
 			MethodName: "GenerateInvoice",

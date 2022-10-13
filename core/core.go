@@ -82,6 +82,9 @@ type Core interface {
 	//GetChannels Get the channels from the connected LND node
 	GetChannels() (int64, error)
 
+	// GetTransactions Get the transactions from the connected LND node
+	GetTransactions() (string, error)
+
 	//
 	// ID Commands
 	//
