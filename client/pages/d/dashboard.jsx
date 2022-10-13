@@ -482,6 +482,7 @@ export default function Dashboard() {
     blocklist,
     settings,
   });
+  const { data: lightningConfig } = useFetchLightningConfig();
 
   useEffect(() => {
     if (peers) {

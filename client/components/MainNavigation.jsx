@@ -57,6 +57,9 @@ import { createDID } from "../src/graphql/mutations";
 import { GET_DID_BY_TWITTER } from "../utils/contacts";
 import { useLazyQuery, useMutation, gql } from "@apollo/client";
 import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
+import { BsWallet } from "react-icons/bs";
+import WalletSlideOut from "./lightning/WalletSlideOut";
+import { useFetchLightningConfig } from "../hooks/config";
 
 const sidebarNavigation = [
   { name: "Dashboard", href: "/d/dashboard", icon: HomeIcon, current: false },
@@ -357,8 +360,10 @@ const TwitterConnect = () => {
 export default function MainNavigation({ children, currentPage }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openAddContactForm, setOpenAddContactForm] = useState(false);
+  const [openWallet, setOpenWallet] = useState(false);
   const { data: myDid } = useFetchMyDid();
   const { mutate: addContact } = useAddContact();
+  const { data: lightningConfig } = useFetchLightningConfig();
 
   const isCurrent = (name) => currentPage === name;
 
@@ -428,6 +433,7 @@ export default function MainNavigation({ children, currentPage }) {
 
   return (
     <>
+      <WalletSlideOut open={openWallet} setOpen={setOpenWallet} />
       <div className="h-screen w-screen flex">
         {/* Narrow sidebar */}
         <div className="hidden w-28 bg-primary overflow-y-auto md:block">
@@ -465,6 +471,34 @@ export default function MainNavigation({ children, currentPage }) {
                   </a>
                 </Link>
               ))}
+              <div
+                className={classNames(
+                  openWallet
+                    ? "bg-violet-800 text-white"
+                    : "text-indigo-100 hover:bg-primary-hover hover:text-white",
+                  "group w-full p-3 rounded-md flex flex-col items-center text-xs font-medium"
+                )}
+                onClick={() => {
+                  if (!lightningConfig?.data.lightningConfig.listening) {
+                    toast.info(
+                      "Connect to a lightning node to use this action."
+                    );
+                    return;
+                  }
+                  setOpenWallet(!openWallet);
+                }}
+              >
+                <BsWallet
+                  className={classNames(
+                    openWallet
+                      ? "text-white"
+                      : "text-indigo-300 group-hover:text-white",
+                    "h-6 w-6"
+                  )}
+                  aria-hidden="true"
+                />
+                <span className="mt-2">Wallet</span>
+              </div>
             </div>
             <div className="self-end items-center flex flex-col w-full">
               <LightningToggle />
