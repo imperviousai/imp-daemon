@@ -11,6 +11,8 @@
     - [GenerateInvoiceResponse](#lightning.GenerateInvoiceResponse)
     - [GetChannelsRequest](#lightning.GetChannelsRequest)
     - [GetChannelsResponse](#lightning.GetChannelsResponse)
+    - [GetTransactionsRequest](#lightning.GetTransactionsRequest)
+    - [GetTransactionsResponse](#lightning.GetTransactionsResponse)
     - [PayInvoiceRequest](#lightning.PayInvoiceRequest)
     - [PayInvoiceResponse](#lightning.PayInvoiceResponse)
   
@@ -38,6 +40,7 @@ Lightning service allows lightning actions on your underlying lightning node fro
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | GetChannels | GetChannelsRequest | GetChannelsResponse | GetChannels allows you to get local balances of your channels |
+| GetTransactions | GetTransactionsRequest | GetTransactionsResponse | GetChannels allows you to get local balances of your channels |
 | GenerateInvoice | GenerateInvoiceRequest | GenerateInvoiceResponse | GenerateInvoice allows you to generate an invoice for a specific payment amount from your lightning node. |
 | PayInvoice | PayInvoiceRequest | PayInvoiceResponse | PayInvoice allows you to pay a specific invoice with your lightning node. |
 | CheckInvoice | CheckInvoiceRequest | CheckInvoiceResponse | CheckInvoice allows you to check a specific invoice to see if it was paid. |
@@ -48,6 +51,7 @@ Lightning service allows lightning actions on your underlying lightning node fro
 | Method Name | Method | Pattern |
 | ----------- | ------ | ------- |
 | `GetChannels` | `POST` | `/v1/lightning/getchannels`
+| `GetTransactions` | `POST` | `/v1/lightning/gettransactions`
 | `GenerateInvoice` | `POST` | `/v1/lightning/generateinvoice`
 | `PayInvoice` | `POST` | `/v1/lightning/payinvoice`
 | `CheckInvoice` | `POST` | `/v1/lightning/checkinvoice` <!-- end services -->
@@ -134,6 +138,31 @@ Represents a response back from an Getchannels generation request.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | amt | int64 |  | The channel amount from your lightning node |
+
+
+
+
+
+
+<a name="lightning.GetTransactionsRequest"></a>
+
+### GetTransactionsRequest
+Represents a GetTransactions request toward your lightning node.
+
+
+
+
+
+
+<a name="lightning.GetTransactionsResponse"></a>
+
+### GetTransactionsResponse
+Represents a response back from an GetTransactions generation request.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| transactions | string |  | The list of transactions |
 
 
 

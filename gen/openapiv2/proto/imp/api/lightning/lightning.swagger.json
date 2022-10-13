@@ -124,6 +124,39 @@
         ]
       }
     },
+    "/v1/lightning/gettransactions": {
+      "post": {
+        "summary": "*\nGetChannels allows you to get local balances of your channels",
+        "operationId": "Lightning_GetTransactions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/lightningGetTransactionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/lightningGetTransactionsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Lightning"
+        ]
+      }
+    },
     "/v1/lightning/payinvoice": {
       "post": {
         "summary": "*\nPayInvoice allows you to pay a specific invoice with your lightning node.",
@@ -212,6 +245,19 @@
         }
       },
       "description": "*\nRepresents a response back from an Getchannels generation request."
+    },
+    "lightningGetTransactionsRequest": {
+      "type": "object",
+      "description": "*\nRepresents a GetTransactions request toward your lightning node."
+    },
+    "lightningGetTransactionsResponse": {
+      "type": "object",
+      "properties": {
+        "transactions": {
+          "type": "string"
+        }
+      },
+      "description": "*\nRepresents a response back from an GetTransactions generation request."
     },
     "lightningPayInvoiceRequest": {
       "type": "object",

@@ -36,6 +36,38 @@ export namespace GetChannelsResponse {
   }
 }
 
+export class GetTransactionsRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetTransactionsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetTransactionsRequest): GetTransactionsRequest.AsObject;
+  static serializeBinaryToWriter(message: GetTransactionsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetTransactionsRequest;
+  static deserializeBinaryFromReader(message: GetTransactionsRequest, reader: jspb.BinaryReader): GetTransactionsRequest;
+}
+
+export namespace GetTransactionsRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetTransactionsResponse extends jspb.Message {
+  getTransactions(): string;
+  setTransactions(value: string): GetTransactionsResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetTransactionsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetTransactionsResponse): GetTransactionsResponse.AsObject;
+  static serializeBinaryToWriter(message: GetTransactionsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetTransactionsResponse;
+  static deserializeBinaryFromReader(message: GetTransactionsResponse, reader: jspb.BinaryReader): GetTransactionsResponse;
+}
+
+export namespace GetTransactionsResponse {
+  export type AsObject = {
+    transactions: string,
+  }
+}
+
 export class GenerateInvoiceRequest extends jspb.Message {
   getAmount(): number;
   setAmount(value: number): GenerateInvoiceRequest;

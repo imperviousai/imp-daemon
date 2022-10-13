@@ -78,6 +78,49 @@ export class LightningClient {
     this.methodInfoGetChannels);
   }
 
+  methodInfoGetTransactions = new grpcWeb.MethodDescriptor(
+    '/lightning.Lightning/GetTransactions',
+    grpcWeb.MethodType.UNARY,
+    proto_imp_api_lightning_lightning_pb.GetTransactionsRequest,
+    proto_imp_api_lightning_lightning_pb.GetTransactionsResponse,
+    (request: proto_imp_api_lightning_lightning_pb.GetTransactionsRequest) => {
+      return request.serializeBinary();
+    },
+    proto_imp_api_lightning_lightning_pb.GetTransactionsResponse.deserializeBinary
+  );
+
+  getTransactions(
+    request: proto_imp_api_lightning_lightning_pb.GetTransactionsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_imp_api_lightning_lightning_pb.GetTransactionsResponse>;
+
+  getTransactions(
+    request: proto_imp_api_lightning_lightning_pb.GetTransactionsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.GetTransactionsResponse) => void): grpcWeb.ClientReadableStream<proto_imp_api_lightning_lightning_pb.GetTransactionsResponse>;
+
+  getTransactions(
+    request: proto_imp_api_lightning_lightning_pb.GetTransactionsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.GetTransactionsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/lightning.Lightning/GetTransactions',
+        request,
+        metadata || {},
+        this.methodInfoGetTransactions,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/lightning.Lightning/GetTransactions',
+    request,
+    metadata || {},
+    this.methodInfoGetTransactions);
+  }
+
   methodInfoGenerateInvoice = new grpcWeb.MethodDescriptor(
     '/lightning.Lightning/GenerateInvoice',
     grpcWeb.MethodType.UNARY,

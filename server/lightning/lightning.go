@@ -89,3 +89,20 @@ func (l *lightningServer) GetChannels(ctx context.Context, req *lightning_proto.
 	}, nil
 
 }
+
+// GetTransactions Get the transactions from the connected LND node
+func (l *lightningServer) GetTransactions(ctx context.Context, req *lightning_proto.GetTransactionsRequest) (*lightning_proto.GetTransactionsResponse, error) {
+	zap.L().Info("[Server] Getchannels")
+
+	resp, err := l.core.GetTransactions()
+	if err != nil {
+		zap.L().Error("[Server] GetTransactions failed", zap.String("error", err.Error()))
+		return nil, err
+	}
+
+	zap.L().Info("[Server] GetTransactions success")
+	return &lightning_proto.GetTransactionsResponse{
+		Transactions: resp,
+	}, nil
+
+}

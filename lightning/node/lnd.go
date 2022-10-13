@@ -826,7 +826,6 @@ func RandomUint64() uint64 {
 	return binary.LittleEndian.Uint64(buf)
 }
 
-
 // GetChannels Get the channels from the connected LND node
 func (l *lndNode) GetChannels() (int64, error) {
 	resp, err := l.lndClient.ListChannels(context.Background(), &lnrpc.ListChannelsRequest{ActiveOnly: true})
@@ -837,4 +836,17 @@ func (l *lndNode) GetChannels() (int64, error) {
 		total += v.LocalBalance
 	}
 	return total, err
+}
+
+// GetTransactions Get the transactions from the connected LND node
+func (l *lndNode) GetTransactions() (string, error) {
+	var out string
+	resp, err := l.lndClient.ListPayments(context.Background(), &lnrpc.ListPaymentsRequest{})
+	fmt.Println("GetTransactions, number of Transactions: ", len(resp.GetPayments()))
+
+	for _, y := range resp.GetPayments() {
+		//fmt.Println("Each chan local balance: ", v.LocalBalance)
+		out += y.String()
+	}
+	return out, err
 }
