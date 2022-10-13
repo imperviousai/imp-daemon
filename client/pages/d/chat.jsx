@@ -298,7 +298,7 @@ const ConversationHeader = ({
   };
 
   const sendConnectInvite = () => {
-    if (blocklist.includes(currentConversationContact?.did)) {
+    if (blocklist?.includes(currentConversationContact?.did)) {
       toast.error("This contact is blocked, you will not be able to connect.");
       return;
     } else {
@@ -345,7 +345,7 @@ const ConversationHeader = ({
                       </h2>
                     </CopyToClipboard> */}
                   </div>
-                  {blocklist.includes(currentConversationContact?.did) && (
+                  {blocklist?.includes(currentConversationContact?.did) && (
                     <span className="ml-2 inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">
                       Blocked
                     </span>

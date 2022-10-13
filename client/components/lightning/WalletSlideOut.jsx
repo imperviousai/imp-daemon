@@ -6,7 +6,11 @@ import { BsLightningChargeFill, BsWallet } from "react-icons/bs";
 import { useFetchLightningConfig } from "../../hooks/config";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { FaFileInvoice } from "react-icons/fa";
-import { useCreateInvoice, usePayInvoice } from "../../hooks/lightning";
+import {
+  useCreateInvoice,
+  usePayInvoice,
+  useFetchChannelsBalance,
+} from "../../hooks/lightning";
 import InvoiceModal from "./InvoiceModal";
 
 function classNames(...classes) {
@@ -16,7 +20,6 @@ function classNames(...classes) {
 export default function WalletSlideOut({ open, setOpen }) {
   const tabs = [{ name: "Info" }, { name: "Actions" }];
 
-  const [balance, setBalance] = useState(123456456);
   const [currentTab, setCurrentTab] = useState("Info");
   const [invoice, setInvoice] = useState("");
   const [amount, setAmount] = useState("");
@@ -28,6 +31,7 @@ export default function WalletSlideOut({ open, setOpen }) {
   const { data: lightningConfig } = useFetchLightningConfig();
   const { mutate: createInvoice } = useCreateInvoice();
   const { mutate: payInvoice } = usePayInvoice();
+  const { data: channelsBalance } = useFetchChannelsBalance();
 
   const createInvoiceConfirm = () => {
     createInvoice(
@@ -341,7 +345,7 @@ export default function WalletSlideOut({ open, setOpen }) {
                           Balance (sats)
                         </p>
                         <p className="text-lg font-bold text-white">
-                          {balance} Sats
+                          {channelsBalance} Sats
                         </p>
                       </div>
                     </div>

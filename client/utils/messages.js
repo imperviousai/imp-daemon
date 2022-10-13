@@ -106,7 +106,7 @@ export const handleDidCommMessage = ({
     const fromId = getShortFormId(msg.from);
 
     // check incoming message against the blocklist
-    if (blocklist.includes(fromId)) {
+    if (blocklist?.includes(fromId)) {
       return;
     }
 
