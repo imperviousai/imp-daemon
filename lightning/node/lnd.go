@@ -846,7 +846,7 @@ func (l *lndNode) GetTransactions() (string, error) {
 
 	for _, y := range resp.GetPayments() {
 		//fmt.Println("Each chan local balance: ", v.LocalBalance)
-		out += y.String()
+		out += "$_$" + y.String()
 	}
 	return out, err
 }
