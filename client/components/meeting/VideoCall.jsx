@@ -21,6 +21,7 @@ import {
 } from "../../stores/peers";
 import { XCircleIcon } from "@heroicons/react/outline";
 import { toast } from "react-toastify";
+import { useFetchLightningConfig } from "../../hooks/config";
 
 const Video = ({ peer }) => {
   const ref = useRef();
@@ -63,6 +64,8 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
   const [peerMessages, setPeerMessages] = useAtom(peerMessagesAtom);
   const [currentVideoCallId] = useAtom(currentVideoCallAtom);
   const [hasUnreadVideoMessages] = useAtom(hasUnreadVideoMessagesAtom);
+
+  const { data: lightningConfig } = useFetchLightningConfig();
 
   useEffect(() => {
     connectAudioandVideo();
@@ -234,6 +237,14 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
     if (count > 5 && count <= 7) return "grid-cols-4 grid-rows-2";
   };
 
+  const togglePayment = () => {
+    if (!lightningConfig?.data.lightningConfig.listening) {
+      toast.info("Connect to a lightning node to use this action.");
+      return;
+    }
+    setOpenPayment(true);
+  };
+
   return (
     <div className="bg-gray-50 w-full h-full flex items-center flex-col">
       <div className="h-5/6 w-full pl-12 pr-12 mt-8">
@@ -370,7 +381,7 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
 
             <button
               type="button"
-              onClick={() => setOpenPayment(true)}
+              onClick={() => togglePayment()}
               className="flex flex-col items-center px-4 py-2 text-sm leading-4 font-medium rounded-md text-gray-50 bg-opacity-100 hover:bg-opacity-20 hover:bg-gray-100"
             >
               <BsFillLightningChargeFill

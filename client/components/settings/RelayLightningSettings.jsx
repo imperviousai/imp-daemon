@@ -105,6 +105,49 @@ const RelayLightningSettings = () => {
     (tlsCert || tlsCertHex) &&
     (adminMacaroon || adminMacaroonHex);
 
+  const removeLightningConfig = () => {
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <p className="pb-4">
+            Are you sure you want to remove this lightning configuration?
+          </p>
+          <div className="flex space-x-4">
+            <button
+              type="button"
+              onClick={() => {
+                saveLightningConfig({
+                  config: {
+                    ip: "",
+                    port: "",
+                    pubkey: "",
+                    tlsCert: "",
+                    tlsCertHex: "",
+                    adminMacaroon: "",
+                    adminMacaroonHex: "",
+                    listening: false,
+                  },
+                });
+                closeToast();
+              }}
+              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Remove
+            </button>
+            <button
+              type="button"
+              onClick={closeToast}
+              className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { autoClose: false }
+    );
+  };
+
   const updateLightningConfig = () => {
     console.log("Updating lightning configuration ...");
     // we'll definitely want to use a proper form for validation here
@@ -210,6 +253,27 @@ const RelayLightningSettings = () => {
         </div>
       ),
       { autoClose: false }
+    );
+  };
+
+  const removeLightningNode = () => {
+    return (
+      <div className="space-y-3 py-4">
+        <h2 className="text-xl font-medium text-blue-gray-900">
+          Remove Lightning Node
+        </h2>
+        <p className="mt-1 mb-2 text-sm text-blue-gray-500">
+          Remove the existing lightning node configuration by pressing the
+          button below. You can always add the lightning node back at any point.
+        </p>
+        <button
+          type="button"
+          onClick={() => removeLightningConfig()}
+          className="mt-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        >
+          Remove Lightning Node
+        </button>
+      </div>
     );
   };
 
@@ -611,7 +675,7 @@ const RelayLightningSettings = () => {
                 <p className="mt-1 text-sm font-semibold text-blue-gray-500">
                   Existing LN Pubkey: {data?.data.lightningConfig.pubkey}
                 </p>
-                {JSON.stringify(myDid.service).includes(
+                {JSON.stringify(myDid?.service).includes(
                   data?.data.lightningConfig.pubkey
                 ) && (
                   <p className="mt-1 text-sm text-blue-gray-500">
@@ -629,6 +693,7 @@ const RelayLightningSettings = () => {
             </button>
             {toggleUpdate && (
               <>
+                {data?.data.lightningConfig.listening && removeLightningNode()}
                 {buildLightningNode()}
                 {importLightningNode()}
               </>
