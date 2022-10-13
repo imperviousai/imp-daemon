@@ -9,7 +9,7 @@ function BlockButton({ did, asMenuItem }) {
 
   useEffect(() => {
     if (blocklist) {
-      setBlocked(blocklist.includes(did));
+      setBlocked(blocklist?.includes(did));
     }
   }, [blocklist, did]);
 

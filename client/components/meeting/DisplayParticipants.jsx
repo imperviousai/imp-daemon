@@ -97,7 +97,7 @@ export const SelectParticipants = ({
                     {getStatus(contact)}
                   </p>
                 </div>
-                {blocklist.includes(contact.did) ? (
+                {blocklist?.includes(contact.did) ? (
                   <span className="ml-2 inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">
                     Blocked
                   </span>

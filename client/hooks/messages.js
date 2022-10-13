@@ -37,7 +37,7 @@ const getNotifications = ({
       (m) =>
         m.type === "https://didcomm.org/webrtc/1.0/sdp" &&
         JSON.parse(m.data).from.split("?")[0] !== myDid.id &&
-        !blocklist.includes(JSON.parse(m.data).from.split("?")[0])
+        !blocklist?.includes(JSON.parse(m.data).from.split("?")[0])
     )
     .map((m) => {
       return { ...m, data: JSON.parse(m.data) };
@@ -65,7 +65,7 @@ const convertMessagesintoConversations = ({
     .filter(
       (m) =>
         m.type !== "https://impervious.ai/didcomm/relay-registration/1.0" &&
-        !blocklist.includes(JSON.parse(m.data).from.split("?")[0])
+        !blocklist?.includes(JSON.parse(m.data).from.split("?")[0])
     )
     .sortBy((m) => m.data.created_time)
     .map((m) => {

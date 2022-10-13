@@ -34,3 +34,14 @@ export const payInvoice = ({ invoice }) => {
     },
   });
 };
+
+export const getChannelsBalance = () => {
+  return request({
+    url: "/v1/lightning/getchannels",
+    method: "post",
+    data: {},
+    headers: {
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
+    },
+  });
+};

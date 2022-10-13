@@ -433,7 +433,9 @@ export default function MainNavigation({ children, currentPage }) {
 
   return (
     <>
-      <WalletSlideOut open={openWallet} setOpen={setOpenWallet} />
+      {lightningConfig?.data.lightningConfig.listening && (
+        <WalletSlideOut open={openWallet} setOpen={setOpenWallet} />
+      )}
       <div className="h-screen w-screen flex">
         {/* Narrow sidebar */}
         <div className="hidden w-28 bg-primary overflow-y-auto md:block">
