@@ -49,6 +49,17 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 */
 service Lightning {
 	/**
+	* GetChannels allows you to get local balances of your channels
+	*/
+	rpc GetChannels(GetChannelsRequest) returns (GetChannelsResponse) {
+		option (google.api.http) = {
+			post: "/v1/lightning/getchannels"
+			body: "*"
+		};
+	}
+
+
+	/**
 	* GenerateInvoice allows you to generate an invoice for a specific payment amount from your lightning node.
 	*/
 	rpc GenerateInvoice(GenerateInvoiceRequest) returns (GenerateInvoiceResponse) {
@@ -77,6 +88,20 @@ service Lightning {
 			body: "*"
 		};
 	}
+}
+
+
+/**
+ * Represents a GetChannels request toward your lightning node.
+ */
+message GetChannelsRequest {
+}
+
+/**
+ * Represents a response back from an Getchannels generation request.
+ */
+message GetChannelsResponse {
+	int64 amt = 1; // The channel amount from your lightning node
 }
 
 /**

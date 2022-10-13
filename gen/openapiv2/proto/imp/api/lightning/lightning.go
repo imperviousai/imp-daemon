@@ -49,7 +49,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents an request to check an invoice.",
             "in": "body",
             "required": true,
             "schema": {
@@ -83,11 +82,43 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents an invoice creation request from your lightning node.",
             "in": "body",
             "required": true,
             "schema": {
               "$ref": "#/definitions/lightningGenerateInvoiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Lightning"
+        ]
+      }
+    },
+    "/v1/lightning/getchannels": {
+      "post": {
+        "summary": "*\nGetChannels allows you to get local balances of your channels",
+        "operationId": "Lightning_GetChannels",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/lightningGetChannelsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/lightningGetChannelsRequest"
             }
           }
         ],
@@ -117,7 +148,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents an invoice that will be paid by your lightning node.",
             "in": "body",
             "required": true,
             "schema": {
@@ -171,6 +201,20 @@ var SwaggerJSON = `
         }
       },
       "description": "*\nRepresents a response back from an invoice generation request."
+    },
+    "lightningGetChannelsRequest": {
+      "type": "object",
+      "description": "*\nRepresents a GetChannels request toward your lightning node."
+    },
+    "lightningGetChannelsResponse": {
+      "type": "object",
+      "properties": {
+        "amt": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "description": "*\nRepresents a response back from an Getchannels generation request."
     },
     "lightningPayInvoiceRequest": {
       "type": "object",

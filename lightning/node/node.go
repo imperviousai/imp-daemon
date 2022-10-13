@@ -45,6 +45,9 @@ type Node interface {
 
 	// ShouldListen indicates if this node should listen to incoming messages
 	ShouldListen() bool
+
+	// GetChannels Get the channels from the connected LND node
+	GetChannels() (int64, error)
 }
 
 const (

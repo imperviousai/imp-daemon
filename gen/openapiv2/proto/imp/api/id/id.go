@@ -49,7 +49,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents a request to create a DID document.",
             "in": "body",
             "required": true,
             "schema": {
@@ -83,7 +82,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents a request to import a user's DID document.",
             "in": "body",
             "required": true,
             "schema": {
@@ -139,7 +137,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents a request to recover a did with the recovery kit.",
             "in": "body",
             "required": true,
             "schema": {
@@ -173,7 +170,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents a request to resolve a DID into a DID document.",
             "in": "body",
             "required": true,
             "schema": {
@@ -207,7 +203,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents a request to update a DID document.",
             "in": "body",
             "required": true,
             "schema": {

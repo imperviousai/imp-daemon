@@ -35,6 +35,49 @@ export class LightningClient {
     this.options_ = options;
   }
 
+  methodInfoGetChannels = new grpcWeb.MethodDescriptor(
+    '/lightning.Lightning/GetChannels',
+    grpcWeb.MethodType.UNARY,
+    proto_imp_api_lightning_lightning_pb.GetChannelsRequest,
+    proto_imp_api_lightning_lightning_pb.GetChannelsResponse,
+    (request: proto_imp_api_lightning_lightning_pb.GetChannelsRequest) => {
+      return request.serializeBinary();
+    },
+    proto_imp_api_lightning_lightning_pb.GetChannelsResponse.deserializeBinary
+  );
+
+  getChannels(
+    request: proto_imp_api_lightning_lightning_pb.GetChannelsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_imp_api_lightning_lightning_pb.GetChannelsResponse>;
+
+  getChannels(
+    request: proto_imp_api_lightning_lightning_pb.GetChannelsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.GetChannelsResponse) => void): grpcWeb.ClientReadableStream<proto_imp_api_lightning_lightning_pb.GetChannelsResponse>;
+
+  getChannels(
+    request: proto_imp_api_lightning_lightning_pb.GetChannelsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.GetChannelsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/lightning.Lightning/GetChannels',
+        request,
+        metadata || {},
+        this.methodInfoGetChannels,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/lightning.Lightning/GetChannels',
+    request,
+    metadata || {},
+    this.methodInfoGetChannels);
+  }
+
   methodInfoGenerateInvoice = new grpcWeb.MethodDescriptor(
     '/lightning.Lightning/GenerateInvoice',
     grpcWeb.MethodType.UNARY,

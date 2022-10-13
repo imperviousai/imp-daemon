@@ -72,3 +72,20 @@ func (l *lightningServer) CheckInvoice(ctx context.Context, req *lightning_proto
 		Paid: paid,
 	}, nil
 }
+
+// GetChannels Get the channels from the connected LND node
+func (l *lightningServer) GetChannels(ctx context.Context, req *lightning_proto.GetChannelsRequest) (*lightning_proto.GetChannelsResponse, error) {
+	zap.L().Info("[Server] Getchannels")
+
+	resp, err := l.core.GetChannels()
+	if err != nil {
+		zap.L().Error("[Server] Getchannels failed", zap.String("error", err.Error()))
+		return nil, err
+	}
+
+	zap.L().Info("[Server] Getchannels success")
+	return &lightning_proto.GetChannelsResponse{
+		Amt: resp,
+	}, nil
+
+}

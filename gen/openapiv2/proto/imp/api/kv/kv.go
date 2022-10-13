@@ -49,7 +49,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents a request to delete a key and value.",
             "in": "body",
             "required": true,
             "schema": {
@@ -83,7 +82,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents a request to get a key and value.",
             "in": "body",
             "required": true,
             "schema": {
@@ -117,7 +115,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents a request to get a key and value.",
             "in": "body",
             "required": true,
             "schema": {
