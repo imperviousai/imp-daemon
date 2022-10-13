@@ -8,7 +8,7 @@ const relayMailbox = (input) => {
     method: "post",
     data: { toDID, amount: 10, privateServiceEndpoints: [] },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${apiKey}`,
+      "Grpc-Metadata-X-API-KEY": `${apiKey.replaceAll('"', "")}`,
     },
   })
     .then((res) => console.log("Mailbox successfully fetched: ", res))

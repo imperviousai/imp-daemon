@@ -58,6 +58,7 @@ import { getContactByDid, getContactsByMessage } from "../../utils/contacts";
 import FileSharingModal from "../../components/meeting/FileSharingModal";
 import BlockButton from "../../components/contact/BlockButton";
 import { useFetchSettings } from "../../hooks/settings";
+import { useFetchLightningConfig } from "../../hooks/config";
 
 const isJSON = (msg) => {
   try {
@@ -272,6 +273,7 @@ const ConversationHeader = ({
   );
   const { mutate: deleteGroupMessage } = useDeleteGroupMessages();
   const { data: blocklist } = useFetchBlocklist();
+  const { data: lightningConfig } = useFetchLightningConfig();
   const disconnectPeer = () => {
     currentConversationPeer.peer.destroy();
   };
@@ -302,6 +304,14 @@ const ConversationHeader = ({
     } else {
       sendInvite();
     }
+  };
+
+  const togglePayment = () => {
+    if (!lightningConfig?.data.lightningConfig.listening) {
+      toast.info("Connect to a lightning node to use this action.");
+      return;
+    }
+    setOpenPayment(true);
   };
 
   return (
@@ -399,7 +409,7 @@ const ConversationHeader = ({
             <div className="flex items-center">
               <button
                 type="button"
-                onClick={() => setOpenPayment(true)}
+                onClick={() => togglePayment()}
                 className="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <BsFillLightningChargeFill
