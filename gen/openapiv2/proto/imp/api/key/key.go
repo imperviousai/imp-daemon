@@ -49,7 +49,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents an init seed request to initialize the master seed.",
             "in": "body",
             "required": true,
             "schema": {
@@ -106,7 +105,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents an unlock seed request to unlock the master seed.",
             "in": "body",
             "required": true,
             "schema": {

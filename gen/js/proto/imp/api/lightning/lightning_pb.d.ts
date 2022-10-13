@@ -4,6 +4,38 @@ import * as google_api_annotations_pb from '../../../../google/api/annotations_p
 import * as protoc$gen$openapiv2_options_annotations_pb from '../../../../protoc-gen-openapiv2/options/annotations_pb';
 
 
+export class GetChannelsRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetChannelsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetChannelsRequest): GetChannelsRequest.AsObject;
+  static serializeBinaryToWriter(message: GetChannelsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetChannelsRequest;
+  static deserializeBinaryFromReader(message: GetChannelsRequest, reader: jspb.BinaryReader): GetChannelsRequest;
+}
+
+export namespace GetChannelsRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetChannelsResponse extends jspb.Message {
+  getAmt(): number;
+  setAmt(value: number): GetChannelsResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetChannelsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetChannelsResponse): GetChannelsResponse.AsObject;
+  static serializeBinaryToWriter(message: GetChannelsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetChannelsResponse;
+  static deserializeBinaryFromReader(message: GetChannelsResponse, reader: jspb.BinaryReader): GetChannelsResponse;
+}
+
+export namespace GetChannelsResponse {
+  export type AsObject = {
+    amt: number,
+  }
+}
+
 export class GenerateInvoiceRequest extends jspb.Message {
   getAmount(): number;
   setAmount(value: number): GenerateInvoiceRequest;

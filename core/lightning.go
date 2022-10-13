@@ -78,3 +78,17 @@ func (c *core) CheckLightningStatus() ([]lightning.NodeStatus, error) {
 	zap.L().Debug("[Core] CheckStatus success", zap.Any("status", status))
 	return status, nil
 }
+
+//GetChannels Get the channels from the connected LND node
+func (c *core) GetChannels() (int64, error) {
+	zap.L().Debug("[Core] Getchannels")
+
+	resp, err := c.lightningManager.GetChannels()
+	if err != nil {
+		zap.L().Error("[Core] GetChannels failed", zap.String("error", err.Error()))
+		return resp, err
+	}
+	zap.L().Debug("[Core] GetChannels success")
+	return resp, nil
+
+}

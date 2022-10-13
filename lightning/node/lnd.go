@@ -825,3 +825,16 @@ func RandomUint64() uint64 {
 	_, _ = rand.Read(buf) // Always succeeds, no need to check error
 	return binary.LittleEndian.Uint64(buf)
 }
+
+
+// GetChannels Get the channels from the connected LND node
+func (l *lndNode) GetChannels() (int64, error) {
+	resp, err := l.lndClient.ListChannels(context.Background(), &lnrpc.ListChannelsRequest{ActiveOnly: true})
+	fmt.Println("GETCHANNELS, number of channels: ", len(resp.Channels))
+	var total int64 = 0
+	for _, v := range resp.Channels {
+		fmt.Println("Each chan local balance: ", v.LocalBalance)
+		total += v.LocalBalance
+	}
+	return total, err
+}

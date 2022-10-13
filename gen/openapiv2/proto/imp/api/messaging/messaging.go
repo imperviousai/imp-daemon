@@ -181,7 +181,6 @@ var SwaggerJSON = `
         "parameters": [
           {
             "name": "body",
-            "description": "*\nRepresents a message to save locally. Useful if it was sent out of band.",
             "in": "body",
             "required": true,
             "schema": {

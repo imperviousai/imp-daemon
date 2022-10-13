@@ -79,6 +79,9 @@ type Core interface {
 	// LightningStatus will check the status of the Lightning nodes configured.
 	CheckLightningStatus() ([]lightning.NodeStatus, error)
 
+	//GetChannels Get the channels from the connected LND node
+	GetChannels() (int64, error)
+
 	//
 	// ID Commands
 	//
