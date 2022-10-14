@@ -14,13 +14,14 @@ import {
   useFetchPayments,
 } from "../../hooks/lightning";
 import InvoiceModal from "./InvoiceModal";
+import moment from "moment";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function WalletSlideOut({ open, setOpen }) {
-  const tabs = [{ name: "Info" }, { name: "Actions" }];
+  const tabs = [{ name: "Info" }, { name: "Actions" }, { name: "History" }];
 
   const [parsedPayments, setParsedPayments] = useState([]);
   const [parsedInvoices, setParsedInvoices] = useState([]);
@@ -29,9 +30,11 @@ export default function WalletSlideOut({ open, setOpen }) {
   const [invoice, setInvoice] = useState("");
   const [amount, setAmount] = useState("");
   const [memo, setMemo] = useState("");
-  const [showPayInvoice, setShowPayInvoice] = useState(false);
+  const [showPayInvoice, setShowPayInvoice] = useState(true);
   const [showCreateInvoice, setShowCreateInvoice] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [showInvoiceHistory, setShowInvoiceHistory] = useState(false);
+  const [showPaymentHistory, setShowPaymentHistory] = useState(true);
 
   const { data: lightningConfig } = useFetchLightningConfig();
   const { mutate: createInvoice } = useCreateInvoice();
@@ -42,14 +45,56 @@ export default function WalletSlideOut({ open, setOpen }) {
 
   useEffect(() => {
     if (payments) {
-      let list = payments
+      // really funky parsing logic because the API returns malformed data
+      // TODO: make sure the daemon returns valid JSON going forward. parse this
+      // data in the DB itself
+      let transactions = payments
         .split("$_$")
         .filter((t) => t.length)
         .map((t) => {
-          let x = t.split("  ");
-          return x;
+          let x = t.split(" ");
+          let transaction = {
+            creation_date: x
+              .find((s) => s.includes("creation_date"))
+              .split(":")[1],
+            value_sat: x.find((s) => s.includes("value_sat")).split(":")[1],
+            payment_hash: x
+              .find((s) => s.includes("payment_hash"))
+              .split(":")[1],
+            fee_sat: x.find((s) => s.includes("fee_sat")).split(":")[1],
+          };
+          return transaction;
         });
-      console.log(list);
+      if (transactions.length) {
+        setParsedPayments(transactions);
+      }
+    }
+  }, [payments]);
+
+  useEffect(() => {
+    if (invoices) {
+      // really funky parsing logic because the API returns malformed data
+      // TODO: make sure the daemon returns valid JSON going forward. parse this
+      // data in the DB itself
+      let transactions = invoices
+        .split("$_$")
+        .filter((t) => t.length)
+        .map((t) => {
+          let x = t.split(" ");
+          let transaction = {
+            amt_paid_sat: x
+              .find((s) => s.includes("amt_paid_sat"))
+              .split(":")[1],
+            creation_date: x
+              .find((s) => s.includes("creation_date"))
+              .split(":")[1],
+            settled: x.find((s) => s.includes("settled")).split(":")[1],
+          };
+          return transaction;
+        });
+      if (transactions.length) {
+        setParsedInvoices(transactions);
+      }
     }
   }, [payments]);
 
@@ -285,7 +330,7 @@ export default function WalletSlideOut({ open, setOpen }) {
         <div className="py-8 px-16 w-full flex flex-col space-y-3">
           <>
             <p className="font-semibold text-sm">Payments</p>
-            <span className="isolate inline-flex rounded-md shadow-sm w-full">
+            <span className="isolate inline-flex rounded-md w-full">
               <button
                 type="button"
                 onClick={() => {
@@ -313,6 +358,108 @@ export default function WalletSlideOut({ open, setOpen }) {
           <>
             {showCreateInvoice && createInvoiceForm()}
             {showPayInvoice && payInvoiceForm()}
+          </>
+        </div>
+      </>
+    );
+  };
+
+  const invoiceHistory = () => {
+    return (
+      <>
+        {" "}
+        <ul role="list" className="divide-y divide-gray-200">
+          {parsedInvoices.map((invoice, i) => (
+            <li
+              key={i}
+              className="flex py-2 items-center border-b border-gray-20 justify-between"
+            >
+              <div className="flex items-center">
+                <FaFileInvoice className="text-primary h-5 w-5 mr-2" />
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-gray-900">
+                    {moment.unix(invoice.creation_date).fromNow()}
+                  </p>
+                  <p className="text-sm text-gray-500">Invoice</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm font-bold text-green-600">
+                  {invoice.amt_paid_sat} sats
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </>
+    );
+  };
+
+  const paymentHistory = () => {
+    return (
+      <>
+        {" "}
+        <ul role="list" className="divide-y divide-gray-200">
+          {parsedPayments.map((payment, i) => (
+            <li
+              key={i}
+              className="flex py-2 items-center border-b border-gray-20 justify-between"
+            >
+              <div className="flex items-center">
+                <BsLightningChargeFill className="text-primary h-4 w-4 mr-2" />
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-gray-900">
+                    {moment.unix(payment.creation_date).fromNow()}
+                  </p>
+                  <p className="text-sm text-gray-500">Payments</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm font-bold text-gray-600">
+                  {payment.value_sat} sats
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </>
+    );
+  };
+
+  const showWalletHistory = () => {
+    return (
+      <>
+        <div className="py-8 px-16 w-full flex flex-col space-y-3">
+          <>
+            <p className="font-semibold text-sm">History</p>
+            <span className="isolate inline-flex rounded-md w-full">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPaymentHistory(true);
+                  setShowInvoiceHistory(false);
+                }}
+                className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              >
+                <BsLightningChargeFill className="text-gray-700 h-4 w-4 mr-2" />
+                Payment
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPaymentHistory(false);
+                  setShowInvoiceHistory(true);
+                }}
+                className="relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              >
+                <FaFileInvoice className="text-gray-700 h-4 w-4 mr-2" />
+                Invoices
+              </button>
+            </span>
+          </>
+          <>
+            {showInvoiceHistory && invoiceHistory()}
+            {showPaymentHistory && paymentHistory()}
           </>
         </div>
       </>
@@ -377,6 +524,7 @@ export default function WalletSlideOut({ open, setOpen }) {
                       {showTabs()}
                       {currentTab === "Info" && showWalletInfo()}
                       {currentTab === "Actions" && showWalletActions()}
+                      {currentTab === "History" && showWalletHistory()}
                     </>
                   </div>
                 </div>

@@ -55,7 +55,7 @@ export const useFetchInvoices = (onSuccess, onError) => {
     },
     select: (res) => {
       if (res.data) {
-        return res.data.transactions;
+        return res.data.invoices;
       }
     },
   });
@@ -70,7 +70,7 @@ export const useFetchPayments = (onSuccess, onError) => {
     },
     select: (res) => {
       if (res.data) {
-        return res.data.transactions;
+        return res.data.payments;
       }
     },
   });
