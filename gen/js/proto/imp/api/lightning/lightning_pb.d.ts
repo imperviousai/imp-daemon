@@ -36,35 +36,67 @@ export namespace GetChannelsResponse {
   }
 }
 
-export class GetTransactionsRequest extends jspb.Message {
+export class ListPaymentsRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetTransactionsRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: GetTransactionsRequest): GetTransactionsRequest.AsObject;
-  static serializeBinaryToWriter(message: GetTransactionsRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetTransactionsRequest;
-  static deserializeBinaryFromReader(message: GetTransactionsRequest, reader: jspb.BinaryReader): GetTransactionsRequest;
+  toObject(includeInstance?: boolean): ListPaymentsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ListPaymentsRequest): ListPaymentsRequest.AsObject;
+  static serializeBinaryToWriter(message: ListPaymentsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListPaymentsRequest;
+  static deserializeBinaryFromReader(message: ListPaymentsRequest, reader: jspb.BinaryReader): ListPaymentsRequest;
 }
 
-export namespace GetTransactionsRequest {
+export namespace ListPaymentsRequest {
   export type AsObject = {
   }
 }
 
-export class GetTransactionsResponse extends jspb.Message {
-  getTransactions(): string;
-  setTransactions(value: string): GetTransactionsResponse;
+export class ListPaymentsResponse extends jspb.Message {
+  getPayments(): string;
+  setPayments(value: string): ListPaymentsResponse;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetTransactionsResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: GetTransactionsResponse): GetTransactionsResponse.AsObject;
-  static serializeBinaryToWriter(message: GetTransactionsResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetTransactionsResponse;
-  static deserializeBinaryFromReader(message: GetTransactionsResponse, reader: jspb.BinaryReader): GetTransactionsResponse;
+  toObject(includeInstance?: boolean): ListPaymentsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ListPaymentsResponse): ListPaymentsResponse.AsObject;
+  static serializeBinaryToWriter(message: ListPaymentsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListPaymentsResponse;
+  static deserializeBinaryFromReader(message: ListPaymentsResponse, reader: jspb.BinaryReader): ListPaymentsResponse;
 }
 
-export namespace GetTransactionsResponse {
+export namespace ListPaymentsResponse {
   export type AsObject = {
-    transactions: string,
+    payments: string,
+  }
+}
+
+export class ListInvoicesRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListInvoicesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ListInvoicesRequest): ListInvoicesRequest.AsObject;
+  static serializeBinaryToWriter(message: ListInvoicesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListInvoicesRequest;
+  static deserializeBinaryFromReader(message: ListInvoicesRequest, reader: jspb.BinaryReader): ListInvoicesRequest;
+}
+
+export namespace ListInvoicesRequest {
+  export type AsObject = {
+  }
+}
+
+export class ListInvoicesResponse extends jspb.Message {
+  getInvoices(): string;
+  setInvoices(value: string): ListInvoicesResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListInvoicesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ListInvoicesResponse): ListInvoicesResponse.AsObject;
+  static serializeBinaryToWriter(message: ListInvoicesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListInvoicesResponse;
+  static deserializeBinaryFromReader(message: ListInvoicesResponse, reader: jspb.BinaryReader): ListInvoicesResponse;
+}
+
+export namespace ListInvoicesResponse {
+  export type AsObject = {
+    invoices: string,
   }
 }
 
