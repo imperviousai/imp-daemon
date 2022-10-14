@@ -96,7 +96,7 @@ export default function WalletSlideOut({ open, setOpen }) {
         setParsedInvoices(transactions);
       }
     }
-  }, [payments]);
+  }, [invoices]);
 
   const createInvoiceConfirm = () => {
     createInvoice(
