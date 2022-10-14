@@ -56,12 +56,12 @@ export default function WalletSlideOut({ open, setOpen }) {
           let transaction = {
             creation_date: x
               .find((s) => s.includes("creation_date"))
-              .split(":")[1],
-            value_sat: x.find((s) => s.includes("value_sat")).split(":")[1],
+              ?.split(":")[1],
+            value_sat: x.find((s) => s.includes("value_sat"))?.split(":")[1],
             payment_hash: x
               .find((s) => s.includes("payment_hash"))
-              .split(":")[1],
-            fee_sat: x.find((s) => s.includes("fee_sat")).split(":")[1],
+              ?.split(":")[1],
+            fee_sat: x.find((s) => s.includes("fee_sat"))?.split(":")[1],
           };
           return transaction;
         });
@@ -84,11 +84,11 @@ export default function WalletSlideOut({ open, setOpen }) {
           let transaction = {
             amt_paid_sat: x
               .find((s) => s.includes("amt_paid_sat"))
-              .split(":")[1],
+              ?.split(":")[1],
             creation_date: x
               .find((s) => s.includes("creation_date"))
-              .split(":")[1],
-            settled: x.find((s) => s.includes("settled")).split(":")[1],
+              ?.split(":")[1],
+            settled: x.find((s) => s.includes("settled"))?.split(":")[1],
           };
           return transaction;
         });
