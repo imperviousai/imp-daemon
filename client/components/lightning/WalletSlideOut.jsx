@@ -10,7 +10,8 @@ import {
   useCreateInvoice,
   usePayInvoice,
   useFetchChannelsBalance,
-  useFetchTransactions,
+  useFetchInvoices,
+  useFetchPayments,
 } from "../../hooks/lightning";
 import InvoiceModal from "./InvoiceModal";
 
@@ -21,7 +22,8 @@ function classNames(...classes) {
 export default function WalletSlideOut({ open, setOpen }) {
   const tabs = [{ name: "Info" }, { name: "Actions" }];
 
-  const [parsedTransactions, setParsedTransactions] = useState([]);
+  const [parsedPayments, setParsedPayments] = useState([]);
+  const [parsedInvoices, setParsedInvoices] = useState([]);
 
   const [currentTab, setCurrentTab] = useState("Info");
   const [invoice, setInvoice] = useState("");
@@ -35,11 +37,12 @@ export default function WalletSlideOut({ open, setOpen }) {
   const { mutate: createInvoice } = useCreateInvoice();
   const { mutate: payInvoice } = usePayInvoice();
   const { data: channelsBalance } = useFetchChannelsBalance();
-  const { data: transactions } = useFetchTransactions();
+  const { data: invoices } = useFetchInvoices();
+  const { data: payments } = useFetchPayments();
 
   useEffect(() => {
-    if (transactions) {
-      let list = transactions
+    if (payments) {
+      let list = payments
         .split("$_$")
         .filter((t) => t.length)
         .map((t) => {
@@ -48,7 +51,7 @@ export default function WalletSlideOut({ open, setOpen }) {
         });
       console.log(list);
     }
-  }, [transactions]);
+  }, [payments]);
 
   const createInvoiceConfirm = () => {
     createInvoice(
