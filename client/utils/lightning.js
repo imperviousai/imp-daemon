@@ -45,3 +45,25 @@ export const getChannelsBalance = () => {
     },
   });
 };
+
+export const listInvoices = () => {
+  return request({
+    url: "/v1/lightning/listinvoices",
+    method: "post",
+    data: {},
+    headers: {
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
+    },
+  });
+};
+
+export const listPayments = () => {
+  return request({
+    url: "/v1/lightning/listpayments",
+    method: "post",
+    data: {},
+    headers: {
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
+    },
+  });
+};
