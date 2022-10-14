@@ -838,14 +838,35 @@ func (l *lndNode) GetChannels() (int64, error) {
 	return total, err
 }
 
-// GetTransactions Get the transactions from the connected LND node
-func (l *lndNode) GetTransactions() (string, error) {
+// ListPayments Get the payments from the connected LND node
+func (l *lndNode) ListPayments() (string, error) {
 	var out string
 	resp, err := l.lndClient.ListPayments(context.Background(), &lnrpc.ListPaymentsRequest{})
 	fmt.Println("GetTransactions, number of Transactions: ", len(resp.GetPayments()))
-
+	//t, err := l.lndClient.GetTransactions(context.Background(), &lnrpc.GetTransactionsRequest{}) //layer 1
+	//fmt.Println("GET TRANSACTIONS DUMP:", t)
+	t, err := l.lndClient.ListInvoices(context.Background(), &lnrpc.ListInvoiceRequest{}) //
+	fmt.Println(".....")
+	fmt.Println("GET ListInvoices DUMP:", t)
+	fmt.Println(".....")
+	fmt.Println(".....")
 	for _, y := range resp.GetPayments() {
 		//fmt.Println("Each chan local balance: ", v.LocalBalance)
+		//out += "$_$" + y.String()
+		out += "$_$" + y.String()
+	}
+	return out, err
+}
+
+// ListInvoices Get the invoices from the connected LND node
+func (l *lndNode) ListInvoices() (string, error) {
+	var out string
+	resp, err := l.lndClient.ListInvoices(context.Background(), &lnrpc.ListInvoiceRequest{})
+	fmt.Println("GetTransactions, number of Transactions: ", len(resp.Invoices))
+
+	for _, y := range resp.Invoices {
+		//fmt.Println("Each chan local balance: ", v.LocalBalance)
+		//out += "$_$" + y.String()
 		out += "$_$" + y.String()
 	}
 	return out, err

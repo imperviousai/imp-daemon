@@ -59,11 +59,21 @@ service Lightning {
 	}
 
 	/**
-* GetChannels allows you to get local balances of your channels
-*/
-	rpc GetTransactions(GetTransactionsRequest) returns (GetTransactionsResponse) {
+  * ListPayments lists payments from your node
+  */
+	rpc ListPayments(ListPaymentsRequest) returns (ListPaymentsResponse) {
 		option (google.api.http) = {
-			post: "/v1/lightning/gettransactions"
+			post: "/v1/lightning/listpayments"
+			body: "*"
+		};
+	}
+
+	/**
+  * ListInvoices lists invoices from your node
+  */
+	rpc ListInvoices(ListInvoicesRequest) returns (ListInvoicesResponse) {
+		option (google.api.http) = {
+			post: "/v1/lightning/listinvoices"
 			body: "*"
 		};
 	}
@@ -114,17 +124,31 @@ message GetChannelsResponse {
 }
 
 /**
- * Represents a GetTransactions request toward your lightning node.
+ * Represents a ListPayments request toward your lightning node.
  */
-message GetTransactionsRequest {
+message ListPaymentsRequest {
 }
 
 /**
- * Represents a response back from an GetTransactions generation request.
+ * Represents a response back from an ListPayments generation request.
  */
-message GetTransactionsResponse {
-	string transactions = 1; // The list of transactions
+message ListPaymentsResponse {
+	string payments = 1; // The list of payments
 }
+
+/**
+ * Represents a ListInvoices request toward your lightning node.
+ */
+message ListInvoicesRequest {
+}
+
+/**
+ * Represents a response back from an ListInvoices generation request.
+ */
+message ListInvoicesResponse {
+	string invoices = 1; // The list of invoices
+}
+
 
 
 /**

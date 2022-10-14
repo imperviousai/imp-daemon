@@ -78,47 +78,90 @@ export class LightningClient {
     this.methodInfoGetChannels);
   }
 
-  methodInfoGetTransactions = new grpcWeb.MethodDescriptor(
-    '/lightning.Lightning/GetTransactions',
+  methodInfoListPayments = new grpcWeb.MethodDescriptor(
+    '/lightning.Lightning/ListPayments',
     grpcWeb.MethodType.UNARY,
-    proto_imp_api_lightning_lightning_pb.GetTransactionsRequest,
-    proto_imp_api_lightning_lightning_pb.GetTransactionsResponse,
-    (request: proto_imp_api_lightning_lightning_pb.GetTransactionsRequest) => {
+    proto_imp_api_lightning_lightning_pb.ListPaymentsRequest,
+    proto_imp_api_lightning_lightning_pb.ListPaymentsResponse,
+    (request: proto_imp_api_lightning_lightning_pb.ListPaymentsRequest) => {
       return request.serializeBinary();
     },
-    proto_imp_api_lightning_lightning_pb.GetTransactionsResponse.deserializeBinary
+    proto_imp_api_lightning_lightning_pb.ListPaymentsResponse.deserializeBinary
   );
 
-  getTransactions(
-    request: proto_imp_api_lightning_lightning_pb.GetTransactionsRequest,
-    metadata: grpcWeb.Metadata | null): Promise<proto_imp_api_lightning_lightning_pb.GetTransactionsResponse>;
+  listPayments(
+    request: proto_imp_api_lightning_lightning_pb.ListPaymentsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_imp_api_lightning_lightning_pb.ListPaymentsResponse>;
 
-  getTransactions(
-    request: proto_imp_api_lightning_lightning_pb.GetTransactionsRequest,
+  listPayments(
+    request: proto_imp_api_lightning_lightning_pb.ListPaymentsRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: proto_imp_api_lightning_lightning_pb.GetTransactionsResponse) => void): grpcWeb.ClientReadableStream<proto_imp_api_lightning_lightning_pb.GetTransactionsResponse>;
+               response: proto_imp_api_lightning_lightning_pb.ListPaymentsResponse) => void): grpcWeb.ClientReadableStream<proto_imp_api_lightning_lightning_pb.ListPaymentsResponse>;
 
-  getTransactions(
-    request: proto_imp_api_lightning_lightning_pb.GetTransactionsRequest,
+  listPayments(
+    request: proto_imp_api_lightning_lightning_pb.ListPaymentsRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: proto_imp_api_lightning_lightning_pb.GetTransactionsResponse) => void) {
+               response: proto_imp_api_lightning_lightning_pb.ListPaymentsResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/lightning.Lightning/GetTransactions',
+          '/lightning.Lightning/ListPayments',
         request,
         metadata || {},
-        this.methodInfoGetTransactions,
+        this.methodInfoListPayments,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/lightning.Lightning/GetTransactions',
+      '/lightning.Lightning/ListPayments',
     request,
     metadata || {},
-    this.methodInfoGetTransactions);
+    this.methodInfoListPayments);
+  }
+
+  methodInfoListInvoices = new grpcWeb.MethodDescriptor(
+    '/lightning.Lightning/ListInvoices',
+    grpcWeb.MethodType.UNARY,
+    proto_imp_api_lightning_lightning_pb.ListInvoicesRequest,
+    proto_imp_api_lightning_lightning_pb.ListInvoicesResponse,
+    (request: proto_imp_api_lightning_lightning_pb.ListInvoicesRequest) => {
+      return request.serializeBinary();
+    },
+    proto_imp_api_lightning_lightning_pb.ListInvoicesResponse.deserializeBinary
+  );
+
+  listInvoices(
+    request: proto_imp_api_lightning_lightning_pb.ListInvoicesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_imp_api_lightning_lightning_pb.ListInvoicesResponse>;
+
+  listInvoices(
+    request: proto_imp_api_lightning_lightning_pb.ListInvoicesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.ListInvoicesResponse) => void): grpcWeb.ClientReadableStream<proto_imp_api_lightning_lightning_pb.ListInvoicesResponse>;
+
+  listInvoices(
+    request: proto_imp_api_lightning_lightning_pb.ListInvoicesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.ListInvoicesResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/lightning.Lightning/ListInvoices',
+        request,
+        metadata || {},
+        this.methodInfoListInvoices,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/lightning.Lightning/ListInvoices',
+    request,
+    metadata || {},
+    this.methodInfoListInvoices);
   }
 
   methodInfoGenerateInvoice = new grpcWeb.MethodDescriptor(

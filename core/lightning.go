@@ -93,16 +93,30 @@ func (c *core) GetChannels() (int64, error) {
 
 }
 
-// GetTransactions Get the transactions from the connected LND node
-func (c *core) GetTransactions() (string, error) {
-	zap.L().Debug("[Core] Getchannels")
+// ListPayments Get the payments from the connected LND node
+func (c *core) ListPayments() (string, error) {
+	zap.L().Debug("[Core] ListPayments")
 
-	resp, err := c.lightningManager.GetTransactions()
+	resp, err := c.lightningManager.ListPayments()
 	if err != nil {
-		zap.L().Error("[Core] GetTransactions failed", zap.String("error", err.Error()))
+		zap.L().Error("[Core] ListPayments failed", zap.String("error", err.Error()))
 		return resp, err
 	}
-	zap.L().Debug("[Core] GetTransactions success")
+	zap.L().Debug("[Core] ListPayments success")
+	return resp, nil
+
+}
+
+// ListInvoices Get the invoices from the connected LND node
+func (c *core) ListInvoices() (string, error) {
+	zap.L().Debug("[Core] ListInvoices")
+
+	resp, err := c.lightningManager.ListInvoices()
+	if err != nil {
+		zap.L().Error("[Core] ListInvoices failed", zap.String("error", err.Error()))
+		return resp, err
+	}
+	zap.L().Debug("[Core] ListInvoices success")
 	return resp, nil
 
 }
