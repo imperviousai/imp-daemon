@@ -7,19 +7,10 @@ builds:
   #   goarch:
   #     - 386
   #     - amd64
-  - id: impervious-linux
-    main: ./cmd/impd
-    binary: impervious
-    goos:
-      - linux
-    goarch:
-      # - 386
-      - amd64
-      # - arm
-      # - arm64
-      # - s390x
   - id: impervious-macos-amd64
     main: ./cmd/impd
+    env:
+      - CGO_ENABLED=1
     binary: impervious
     goos:
       - darwin
@@ -30,6 +21,8 @@ builds:
         - gon gon-macos-amd64.json
   - id: impervious-macos-arm64
     main: ./cmd/impd
+    env:
+      - CGO_ENABLED=1
     binary: impervious
     goos:
       - darwin
@@ -43,5 +36,6 @@ archives:
     format: zip
     name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 checksum:
-  name_template: "{{ .ProjectName }}_checksums.txt"
+  name_template: "{{ .ProjectName }}_macosx_checksums.txt"
   algorithm: sha256
+

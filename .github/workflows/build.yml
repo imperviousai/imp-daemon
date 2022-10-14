@@ -3,14 +3,13 @@ on:
   push:
     branches:
       - "master"
-      - httpclient # for testing
 
 
 permissions:
   contents: write
 
 jobs:
-  goreleaser:
+  goreleaser_mac:
     runs-on: macos-latest
     steps:
       -
@@ -52,7 +51,7 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist
+          args: release --rm-dist --config .goreleaser_macosx.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
@@ -68,15 +67,54 @@ jobs:
         with:
           name: Impervious-macosx_amd64
           path: dist/impervious-macos-amd64*/impervious.zip
+
+
+  goreleaser_linux:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        name: Fetch all tags
+        run: git fetch --force --tags
+      -
+        name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+      - 
+        name: Set Up Node
+        uses: actions/setup-node@v3
+      - 
+        name: Yarn install
+        working-directory: client
+        run: yarn
+      - 
+        name: Export the UI
+        working-directory: client
+        run: yarn export
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist --config .goreleaser_linux.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
       - 
         name: Upload assets (linux-multi)
         uses: actions/upload-artifact@v3
         with:
           name: Impervious-linux-multi
           path: dist/impervious-linux*/*
-      - 
-        name: Upload assets (windows)
-        uses: actions/upload-artifact@v3
-        with:
-          name: Impervious-windows
-          path: dist/impervious-windows*/*
+      # - 
+      #   name: Upload assets (windows)
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: Impervious-windows
+      #     path: dist/impervious-windows*/*
