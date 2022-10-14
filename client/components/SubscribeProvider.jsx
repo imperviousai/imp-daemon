@@ -508,7 +508,7 @@ const SubscribeProvider = ({ children }) => {
       handleDidCommMessage(data);
       queryClient.invalidateQueries("fetch-messages");
     };
-  }, [queryClient, contactsRes?.data.contacts, router.pathname]);
+  }, [queryClient, contactsRes?.data.contacts, router.pathname, blocklist]);
 
   useEffect(() => {
     on("received-peer-message", handleReceivedPeerMessage);

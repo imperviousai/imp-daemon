@@ -21,15 +21,18 @@ function Unlock() {
       setIsUnlocking(true);
       unlockSeed(password, { onSuccess, onError });
     },
-    [unlockSeed]
+    [unlockSeed, onSuccess]
   );
 
-  const onSuccess = (data) => {
-    if (data.data.apiKey) {
-      setApiKey(data.data.apiKey);
-      queryClient.invalidateQueries("fetch-completed-setup");
-    }
-  };
+  const onSuccess = useCallback(
+    (data) => {
+      if (data.data.apiKey) {
+        setApiKey(data.data.apiKey);
+        queryClient.invalidateQueries("fetch-completed-setup");
+      }
+    },
+    [queryClient, setApiKey]
+  );
 
   const onError = (err) => {
     setIsUnlocking(false);
