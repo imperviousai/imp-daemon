@@ -19,8 +19,11 @@
         "impextensionalgolia": {
           "secretsPathAmplifyAppId": "d5snpxhl2a2ip",
           "deploymentBucketName": "amplify-impextension-prod-93245-deployment",
-          "s3Key": "amplify-builds/impextensionalgolia-557579364c336f7a6765-build.zip"
+          "s3Key": "amplify-builds/impextensionalgolia-6b4545574b59526e3278-build.zip"
         }
+      },
+      "api": {
+        "impextension": {}
       }
     }
   }

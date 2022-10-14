@@ -639,7 +639,7 @@ proto.key.UnlockSeedResponse.prototype.toObject = function(opt_includeInstance) 
  */
 proto.key.UnlockSeedResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    apiKey: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -676,6 +676,10 @@ proto.key.UnlockSeedResponse.deserializeBinaryFromReader = function(msg, reader)
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setApiKey(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -705,6 +709,31 @@ proto.key.UnlockSeedResponse.prototype.serializeBinary = function() {
  */
 proto.key.UnlockSeedResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getApiKey();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string api_key = 1;
+ * @return {string}
+ */
+proto.key.UnlockSeedResponse.prototype.getApiKey = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.key.UnlockSeedResponse} returns this
+ */
+proto.key.UnlockSeedResponse.prototype.setApiKey = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 

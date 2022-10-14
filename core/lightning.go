@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/imperviousai/imp-daemon/lightning"
 	"go.uber.org/zap"
 )
 
@@ -63,4 +64,59 @@ func (c *core) CheckInvoice(invoice string) (bool, error) {
 
 	zap.L().Debug("[Core] CheckInvoice success", zap.Bool("paid", paid))
 	return paid, nil
+}
+
+func (c *core) CheckLightningStatus() ([]lightning.NodeStatus, error) {
+	zap.L().Debug("[Core] CheckStatus")
+
+	status, err := c.lightningManager.Status()
+	if err != nil {
+		zap.L().Error("[Core] CheckStatus failed", zap.String("error", err.Error()))
+		return nil, err
+	}
+
+	zap.L().Debug("[Core] CheckStatus success", zap.Any("status", status))
+	return status, nil
+}
+
+// GetChannels Get the channels from the connected LND node
+func (c *core) GetChannels() (int64, error) {
+	zap.L().Debug("[Core] Getchannels")
+
+	resp, err := c.lightningManager.GetChannels()
+	if err != nil {
+		zap.L().Error("[Core] GetChannels failed", zap.String("error", err.Error()))
+		return resp, err
+	}
+	zap.L().Debug("[Core] GetChannels success")
+	return resp, nil
+
+}
+
+// ListPayments Get the payments from the connected LND node
+func (c *core) ListPayments() (string, error) {
+	zap.L().Debug("[Core] ListPayments")
+
+	resp, err := c.lightningManager.ListPayments()
+	if err != nil {
+		zap.L().Error("[Core] ListPayments failed", zap.String("error", err.Error()))
+		return resp, err
+	}
+	zap.L().Debug("[Core] ListPayments success")
+	return resp, nil
+
+}
+
+// ListInvoices Get the invoices from the connected LND node
+func (c *core) ListInvoices() (string, error) {
+	zap.L().Debug("[Core] ListInvoices")
+
+	resp, err := c.lightningManager.ListInvoices()
+	if err != nil {
+		zap.L().Error("[Core] ListInvoices failed", zap.String("error", err.Error()))
+		return resp, err
+	}
+	zap.L().Debug("[Core] ListInvoices success")
+	return resp, nil
+
 }

@@ -56,7 +56,10 @@ import { AutocompleteItem } from "./navigation/AutocompleteItem";
 import { createDID } from "../src/graphql/mutations";
 import { GET_DID_BY_TWITTER } from "../utils/contacts";
 import { useLazyQuery, useMutation, gql } from "@apollo/client";
-import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
+import { PaperAirplaneIcon, UserAddIcon } from "@heroicons/react/solid";
+import { BsWallet } from "react-icons/bs";
+import WalletSlideOut from "./lightning/WalletSlideOut";
+import { useFetchLightningConfig } from "../hooks/config";
 
 const sidebarNavigation = [
   { name: "Dashboard", href: "/d/dashboard", icon: HomeIcon, current: false },
@@ -116,7 +119,7 @@ const ShareContactButton = ({ myDid }) => {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button className="order-0 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-1 sm:ml-3">
-          <PaperAirplaneIcon className="h-4 w-4 mr-1" /> Contact
+          <PaperAirplaneIcon className="h-4 w-4 mr-1" /> Share
         </Menu.Button>
       </div>
 
@@ -279,7 +282,7 @@ const TwitterConnect = () => {
           value: JSON.stringify(user),
         });
         getDidsbyTwitter({
-          variables: { twitterUsername: user?.nickname },
+          variables: { username: user?.nickname },
         });
         if (user?.nickname !== currentRegistryUser?.nickname) {
           publishDid()
@@ -313,10 +316,11 @@ const TwitterConnect = () => {
       input: {
         longFormDid: myDidLongFormDocument,
         shortFormDid: myDid?.id,
-        twitterUsername: user?.nickname,
+        username: user?.nickname,
         avatarUrl: user?.picture,
         name: user?.nickname,
         lastUpdated: new Date().getTime(),
+        profileType: "twitter",
       },
     },
     refetchQueries: [{ query: GET_DID_BY_TWITTER }, "getDIDByTwitter"],
@@ -357,21 +361,23 @@ const TwitterConnect = () => {
 export default function MainNavigation({ children, currentPage }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openAddContactForm, setOpenAddContactForm] = useState(false);
+  const [openWallet, setOpenWallet] = useState(false);
   const { data: myDid } = useFetchMyDid();
   const { mutate: addContact } = useAddContact();
+  const { data: lightningConfig } = useFetchLightningConfig();
 
   const isCurrent = (name) => currentPage === name;
 
   const searchClient = algoliasearch(ALGOLIA_ID, ALGOLIA_API_KEY);
 
   const importContact = (item) => {
-    const { twitterUsername, name, avatarUrl, longFormDid } = item;
+    const { username, name, avatarUrl, longFormDid } = item;
     resolveDid(longFormDid)
       .then((res) => {
         console.log(res);
         addContact({
           didDocument: JSON.parse(res.data.document),
-          twitterUsername,
+          username,
           name,
           avatarUrl,
           myDid,
@@ -392,12 +398,12 @@ export default function MainNavigation({ children, currentPage }) {
           <p className="pb-4">
             Import contact{" "}
             <a
-              href={`https://twitter.com/${item.twitterUsername}`}
+              href={`https://twitter.com/${item.username}`}
               target="_blank"
               rel="noreferrer"
               className="text-md text-blue-400"
             >
-              @{item.twitterUsername}
+              @{item.username}
             </a>
             ?
           </p>
@@ -428,6 +434,9 @@ export default function MainNavigation({ children, currentPage }) {
 
   return (
     <>
+      {lightningConfig?.data.lightningConfig.listening && (
+        <WalletSlideOut open={openWallet} setOpen={setOpenWallet} />
+      )}
       <div className="h-screen w-screen flex">
         {/* Narrow sidebar */}
         <div className="hidden w-28 bg-primary overflow-y-auto md:block">
@@ -465,6 +474,34 @@ export default function MainNavigation({ children, currentPage }) {
                   </a>
                 </Link>
               ))}
+              <div
+                className={classNames(
+                  openWallet
+                    ? "bg-violet-800 text-white"
+                    : "text-indigo-100 hover:bg-primary-hover hover:text-white",
+                  "group w-full p-3 rounded-md flex flex-col items-center text-xs font-medium"
+                )}
+                onClick={() => {
+                  if (!lightningConfig?.data.lightningConfig.listening) {
+                    toast.info(
+                      "Connect to a lightning node to use this action."
+                    );
+                    return;
+                  }
+                  setOpenWallet(!openWallet);
+                }}
+              >
+                <BsWallet
+                  className={classNames(
+                    openWallet
+                      ? "text-white"
+                      : "text-indigo-300 group-hover:text-white",
+                    "h-6 w-6"
+                  )}
+                  aria-hidden="true"
+                />
+                <span className="mt-2">Wallet</span>
+              </div>
             </div>
             <div className="self-end items-center flex flex-col w-full">
               <LightningToggle />
@@ -635,7 +672,7 @@ export default function MainNavigation({ children, currentPage }) {
                     onClick={() => setOpenAddContactForm(true)}
                     className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3"
                   >
-                    <PlusIcon className="h-4 w-4 mr-1" /> Contact
+                    <UserAddIcon className="h-4 w-4 mr-1" /> Add Contact
                   </button>
                   <TwitterConnect />
                 </div>

@@ -9,6 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	comm "github.com/imperviousai/imp-daemon/comm"
+	lightning "github.com/imperviousai/imp-daemon/lightning"
 	node "github.com/imperviousai/imp-daemon/lightning/node"
 )
 
@@ -149,6 +150,21 @@ func (m *MockLightningManager) SignMessage(arg0 []byte) ([]byte, error) {
 func (mr *MockLightningManagerMockRecorder) SignMessage(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignMessage", reflect.TypeOf((*MockLightningManager)(nil).SignMessage), arg0)
+}
+
+// Status mocks base method.
+func (m *MockLightningManager) Status() ([]lightning.NodeStatus, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Status")
+	ret0, _ := ret[0].([]lightning.NodeStatus)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Status indicates an expected call of Status.
+func (mr *MockLightningManagerMockRecorder) Status() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Status", reflect.TypeOf((*MockLightningManager)(nil).Status))
 }
 
 // Stop mocks base method.

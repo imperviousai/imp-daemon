@@ -24,7 +24,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// *
+//*
 // Represents a request to subscribe to the event websocket
 type SubscribeRequest struct {
 	state         protoimpl.MessageState
@@ -64,7 +64,7 @@ func (*SubscribeRequest) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_websocket_websocket_proto_rawDescGZIP(), []int{0}
 }
 
-// *
+//*
 // Represents a response back from the websocket containing event information
 type SubscribeResponse struct {
 	state         protoimpl.MessageState

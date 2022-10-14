@@ -54,6 +54,7 @@ type DIDCommTransport interface {
 type DIDComm interface {
 	SendMsg(*DIDCommMsg, int64, []id.Service, *MessageSettings) (string, error)
 	CheckSendMsg(*DIDCommMsg, int64, []id.Service, *MessageSettings) (bool, error)
+	CheckWebsocketConnections() ([]string, error)
 	Stop() error
 }
 
@@ -517,6 +518,16 @@ func (d *didCommController) Stop() error {
 	}
 
 	return nil
+}
+
+func (d *didCommController) CheckWebsocketConnections() ([]string, error) {
+	if v := d.didCommTransports[DIDCommTransportWebsocket]; v != nil {
+		websocketComunication, ok := v.(*websocketComm)
+		if ok {
+			return websocketComunication.ConnectedClients(), nil
+		}
+	}
+	return nil, nil
 }
 
 func ParseDIDEndpoints(endpoints []did.Service) ([]didCommEndpoint, error) {

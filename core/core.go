@@ -76,6 +76,18 @@ type Core interface {
 	// CheckInvoice will check a specific pay request invoice and returns true or false.
 	CheckInvoice(string) (bool, error)
 
+	// LightningStatus will check the status of the Lightning nodes configured.
+	CheckLightningStatus() ([]lightning.NodeStatus, error)
+
+	//GetChannels Get the channels from the connected LND node
+	GetChannels() (int64, error)
+
+	// ListPayments Get the payments from the connected LND node
+	ListPayments() (string, error)
+
+	// ListInvoices Get the invoices from the connected LND node
+	ListInvoices() (string, error)
+
 	//
 	// ID Commands
 	//
@@ -105,6 +117,12 @@ type Core interface {
 	UpdateDID(document string) (*id.DIDUpdateInfo, error)
 
 	//
+	// Communication Commands
+	//
+	// GetWebsocketConnections will get all the DIDs that the daemon is connected to via websockets
+	GetWebsocketConnections() ([]string, error)
+
+	//
 	// Relay Commands
 	//
 
@@ -122,12 +140,12 @@ type Core interface {
 	InitSeed(seedImport string, passphrase string) (string, string, error)
 
 	// UnlockSeed will unlock the key manager with the master seed encryption passphrase
-	UnlockSeed(passphrase string) error
+	UnlockSeed(passphrase string) (string, error)
 
 	// GetSeed will get the mnemonic seed phrase
 	GetSeed() (string, error)
 
-	Status() (string, error)
+	KeyStatus() (string, error)
 
 	//
 	// Contacts Commands

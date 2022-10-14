@@ -16,6 +16,9 @@ import (
 // managing multiple lightning nodes. Data transfer happens via channels
 // in order to abstract base functionality.
 type LightningManager interface {
+	// Status will report the status of the Lightning Nodes connected
+	Status() ([]NodeStatus, error)
+
 	// Subscribe will subscribe to keysend events on all nodes on configured chan.
 	Subscribe() error
 
@@ -50,6 +53,15 @@ type LightningManager interface {
 	// Stop will stop the lightning manager and
 	// all lightning nodes connected to it.
 	Stop()
+
+	// GetChannels Get the channels from the connected LND node
+	GetChannels() (int64, error)
+
+	// ListPayments Get the payments from the connected LND node
+	ListPayments() (string, error)
+
+	// ListInvoices Get the invoices from the connected LND node
+	ListInvoices() (string, error)
 }
 
 type lightningManager struct {
@@ -404,4 +416,119 @@ func (l *lightningManager) Stop() {
 	nodeWg.Wait()
 
 	zap.L().Debug("[LM] Stop successful")
+}
+
+type NodeStatus struct {
+	Pubkey string
+	Active bool
+}
+
+func (l *lightningManager) Status() ([]NodeStatus, error) {
+	zap.L().Debug("[LM] Status")
+
+	l.nodesLock.Lock()
+	defer l.nodesLock.Unlock()
+
+	nodeStatuses := make([]NodeStatus, 0, len(l.nodeControllers))
+
+	// Go through each node
+	for _, nodeCtrl := range l.nodeControllers {
+		active := nodeCtrl.active
+		// Double check if active nodes are indeed connected
+		if active {
+			_, err := nodeCtrl.node.GetInfo()
+			if err != nil {
+				zap.L().Error("[LM] Node status check failed",
+					zap.String("pubkey", nodeCtrl.node.GetPubkey()),
+					zap.String("error", err.Error()),
+				)
+				active = false
+			}
+		}
+
+		nodeStatuses = append(nodeStatuses, NodeStatus{
+			Pubkey: nodeCtrl.node.GetPubkey(),
+			Active: active,
+		})
+	}
+
+	return nodeStatuses, nil
+}
+
+// GetChannels Get the channels from the connected LND node
+func (l *lightningManager) GetChannels() (int64, error) {
+	zap.L().Debug("[LM] GetChannels Called")
+	// Try all active ones
+	var lastErr error
+	var total int64 = 0
+	for _, nodeCtrl := range l.nodeControllers {
+		if !nodeCtrl.active {
+			continue
+		}
+		result, err := nodeCtrl.node.GetChannels()
+		if err != nil {
+			zap.L().Error("[LM] Getchannels failed through node, trying next..", zap.String("error", err.Error()))
+
+			// Try the next node if error
+			lastErr = err
+			continue
+		}
+		total += result
+		// result acquired, return
+		return total, nil
+	}
+	zap.L().Error("[LM] Getchannels failed", zap.String("error", lastErr.Error()))
+	return 0, lastErr
+}
+
+// ListPayments Get the transactions from the connected LND node
+func (l *lightningManager) ListPayments() (string, error) {
+	zap.L().Debug("[LM] ListPayments Called")
+	// Try all active ones
+	var lastErr error
+	var resp string
+	for _, nodeCtrl := range l.nodeControllers {
+		if !nodeCtrl.active {
+			continue
+		}
+		result, err := nodeCtrl.node.ListPayments()
+		if err != nil {
+			zap.L().Error("[LM] ListPayments failed through node, trying next..", zap.String("error", err.Error()))
+
+			// Try the next node if error
+			lastErr = err
+			continue
+		}
+		resp += result
+		// result acquired, return
+		return resp, nil
+	}
+	zap.L().Error("[LM] ListPayments failed", zap.String("error", lastErr.Error()))
+	return "", lastErr
+}
+
+// ListInvoices Get the invoices from the connected LND node
+func (l *lightningManager) ListInvoices() (string, error) {
+	zap.L().Debug("[LM] ListInvoices Called")
+	// Try all active ones
+	var lastErr error
+	var resp string
+	for _, nodeCtrl := range l.nodeControllers {
+		if !nodeCtrl.active {
+			continue
+		}
+		result, err := nodeCtrl.node.ListInvoices()
+		if err != nil {
+			zap.L().Error("[LM] ListInvoices failed through node, trying next..", zap.String("error", err.Error()))
+
+			// Try the next node if error
+			lastErr = err
+			continue
+		}
+		resp += result
+		// result acquired, return
+		return resp, nil
+	}
+	zap.L().Error("[LM] ListInvoices failed", zap.String("error", lastErr.Error()))
+	return "", lastErr
 }

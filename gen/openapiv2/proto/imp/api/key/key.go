@@ -163,6 +163,11 @@ var SwaggerJSON = `
     },
     "keyUnlockSeedResponse": {
       "type": "object",
+      "properties": {
+        "apiKey": {
+          "type": "string"
+        }
+      },
       "description": "*\nRepresents a response back from an unlock seed request."
     },
     "protobufAny": {

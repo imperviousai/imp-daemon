@@ -35,6 +35,135 @@ export class LightningClient {
     this.options_ = options;
   }
 
+  methodInfoGetChannels = new grpcWeb.MethodDescriptor(
+    '/lightning.Lightning/GetChannels',
+    grpcWeb.MethodType.UNARY,
+    proto_imp_api_lightning_lightning_pb.GetChannelsRequest,
+    proto_imp_api_lightning_lightning_pb.GetChannelsResponse,
+    (request: proto_imp_api_lightning_lightning_pb.GetChannelsRequest) => {
+      return request.serializeBinary();
+    },
+    proto_imp_api_lightning_lightning_pb.GetChannelsResponse.deserializeBinary
+  );
+
+  getChannels(
+    request: proto_imp_api_lightning_lightning_pb.GetChannelsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_imp_api_lightning_lightning_pb.GetChannelsResponse>;
+
+  getChannels(
+    request: proto_imp_api_lightning_lightning_pb.GetChannelsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.GetChannelsResponse) => void): grpcWeb.ClientReadableStream<proto_imp_api_lightning_lightning_pb.GetChannelsResponse>;
+
+  getChannels(
+    request: proto_imp_api_lightning_lightning_pb.GetChannelsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.GetChannelsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/lightning.Lightning/GetChannels',
+        request,
+        metadata || {},
+        this.methodInfoGetChannels,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/lightning.Lightning/GetChannels',
+    request,
+    metadata || {},
+    this.methodInfoGetChannels);
+  }
+
+  methodInfoListPayments = new grpcWeb.MethodDescriptor(
+    '/lightning.Lightning/ListPayments',
+    grpcWeb.MethodType.UNARY,
+    proto_imp_api_lightning_lightning_pb.ListPaymentsRequest,
+    proto_imp_api_lightning_lightning_pb.ListPaymentsResponse,
+    (request: proto_imp_api_lightning_lightning_pb.ListPaymentsRequest) => {
+      return request.serializeBinary();
+    },
+    proto_imp_api_lightning_lightning_pb.ListPaymentsResponse.deserializeBinary
+  );
+
+  listPayments(
+    request: proto_imp_api_lightning_lightning_pb.ListPaymentsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_imp_api_lightning_lightning_pb.ListPaymentsResponse>;
+
+  listPayments(
+    request: proto_imp_api_lightning_lightning_pb.ListPaymentsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.ListPaymentsResponse) => void): grpcWeb.ClientReadableStream<proto_imp_api_lightning_lightning_pb.ListPaymentsResponse>;
+
+  listPayments(
+    request: proto_imp_api_lightning_lightning_pb.ListPaymentsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.ListPaymentsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/lightning.Lightning/ListPayments',
+        request,
+        metadata || {},
+        this.methodInfoListPayments,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/lightning.Lightning/ListPayments',
+    request,
+    metadata || {},
+    this.methodInfoListPayments);
+  }
+
+  methodInfoListInvoices = new grpcWeb.MethodDescriptor(
+    '/lightning.Lightning/ListInvoices',
+    grpcWeb.MethodType.UNARY,
+    proto_imp_api_lightning_lightning_pb.ListInvoicesRequest,
+    proto_imp_api_lightning_lightning_pb.ListInvoicesResponse,
+    (request: proto_imp_api_lightning_lightning_pb.ListInvoicesRequest) => {
+      return request.serializeBinary();
+    },
+    proto_imp_api_lightning_lightning_pb.ListInvoicesResponse.deserializeBinary
+  );
+
+  listInvoices(
+    request: proto_imp_api_lightning_lightning_pb.ListInvoicesRequest,
+    metadata: grpcWeb.Metadata | null): Promise<proto_imp_api_lightning_lightning_pb.ListInvoicesResponse>;
+
+  listInvoices(
+    request: proto_imp_api_lightning_lightning_pb.ListInvoicesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.ListInvoicesResponse) => void): grpcWeb.ClientReadableStream<proto_imp_api_lightning_lightning_pb.ListInvoicesResponse>;
+
+  listInvoices(
+    request: proto_imp_api_lightning_lightning_pb.ListInvoicesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: proto_imp_api_lightning_lightning_pb.ListInvoicesResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/lightning.Lightning/ListInvoices',
+        request,
+        metadata || {},
+        this.methodInfoListInvoices,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/lightning.Lightning/ListInvoices',
+    request,
+    metadata || {},
+    this.methodInfoListInvoices);
+  }
+
   methodInfoGenerateInvoice = new grpcWeb.MethodDescriptor(
     '/lightning.Lightning/GenerateInvoice',
     grpcWeb.MethodType.UNARY,

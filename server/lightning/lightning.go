@@ -72,3 +72,54 @@ func (l *lightningServer) CheckInvoice(ctx context.Context, req *lightning_proto
 		Paid: paid,
 	}, nil
 }
+
+// GetChannels Get the channels from the connected LND node
+func (l *lightningServer) GetChannels(ctx context.Context, req *lightning_proto.GetChannelsRequest) (*lightning_proto.GetChannelsResponse, error) {
+	zap.L().Info("[Server] Getchannels")
+
+	resp, err := l.core.GetChannels()
+	if err != nil {
+		zap.L().Error("[Server] Getchannels failed", zap.String("error", err.Error()))
+		return nil, err
+	}
+
+	zap.L().Info("[Server] Getchannels success")
+	return &lightning_proto.GetChannelsResponse{
+		Amt: resp,
+	}, nil
+
+}
+
+// ListPayments Get the transactions from the connected LND node
+func (l *lightningServer) ListPayments(ctx context.Context, req *lightning_proto.ListPaymentsRequest) (*lightning_proto.ListPaymentsResponse, error) {
+	zap.L().Info("[Server] ListPayments")
+	var resp string
+	resp, err := l.core.ListPayments()
+	if err != nil {
+		zap.L().Error("[Server] GetTransactions failed", zap.String("error", err.Error()))
+		return nil, err
+	}
+
+	zap.L().Info("[Server] ListPayments success")
+	return &lightning_proto.ListPaymentsResponse{
+		Payments: resp,
+	}, nil
+
+}
+
+// ListInvoices Get the invoices from the connected LND node
+func (l *lightningServer) ListInvoices(ctx context.Context, req *lightning_proto.ListInvoicesRequest) (*lightning_proto.ListInvoicesResponse, error) {
+	zap.L().Info("[Server] ListInvoices")
+	var resp string
+	resp, err := l.core.ListInvoices()
+	if err != nil {
+		zap.L().Error("[Server] ListInvoices failed", zap.String("error", err.Error()))
+		return nil, err
+	}
+
+	zap.L().Info("[Server] ListInvoices success")
+	return &lightning_proto.ListInvoicesResponse{
+		Invoices: resp,
+	}, nil
+
+}

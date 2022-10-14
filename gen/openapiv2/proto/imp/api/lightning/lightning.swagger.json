@@ -91,6 +91,105 @@
         ]
       }
     },
+    "/v1/lightning/getchannels": {
+      "post": {
+        "summary": "*\nGetChannels allows you to get local balances of your channels",
+        "operationId": "Lightning_GetChannels",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/lightningGetChannelsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/lightningGetChannelsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Lightning"
+        ]
+      }
+    },
+    "/v1/lightning/listinvoices": {
+      "post": {
+        "summary": "*\nListInvoices lists invoices from your node",
+        "operationId": "Lightning_ListInvoices",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/lightningListInvoicesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/lightningListInvoicesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Lightning"
+        ]
+      }
+    },
+    "/v1/lightning/listpayments": {
+      "post": {
+        "summary": "*\nListPayments lists payments from your node",
+        "operationId": "Lightning_ListPayments",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/lightningListPaymentsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/lightningListPaymentsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Lightning"
+        ]
+      }
+    },
     "/v1/lightning/payinvoice": {
       "post": {
         "summary": "*\nPayInvoice allows you to pay a specific invoice with your lightning node.",
@@ -165,6 +264,46 @@
         }
       },
       "description": "*\nRepresents a response back from an invoice generation request."
+    },
+    "lightningGetChannelsRequest": {
+      "type": "object",
+      "description": "*\nRepresents a GetChannels request toward your lightning node."
+    },
+    "lightningGetChannelsResponse": {
+      "type": "object",
+      "properties": {
+        "amt": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "description": "*\nRepresents a response back from an Getchannels generation request."
+    },
+    "lightningListInvoicesRequest": {
+      "type": "object",
+      "description": "*\nRepresents a ListInvoices request toward your lightning node."
+    },
+    "lightningListInvoicesResponse": {
+      "type": "object",
+      "properties": {
+        "invoices": {
+          "type": "string"
+        }
+      },
+      "description": "*\nRepresents a response back from an ListInvoices generation request."
+    },
+    "lightningListPaymentsRequest": {
+      "type": "object",
+      "description": "*\nRepresents a ListPayments request toward your lightning node."
+    },
+    "lightningListPaymentsResponse": {
+      "type": "object",
+      "properties": {
+        "payments": {
+          "type": "string"
+        }
+      },
+      "description": "*\nRepresents a response back from an ListPayments generation request."
     },
     "lightningPayInvoiceRequest": {
       "type": "object",

@@ -4,13 +4,14 @@
 export const onCreateDID = /* GraphQL */ `
   subscription OnCreateDID {
     onCreateDID {
-      id
-      twitterUsername
-      longFormDid
       shortFormDid
+      username
+      longFormDid
       avatarUrl
       lastUpdated
       name
+      email
+      profileType
       createdAt
       updatedAt
     }
@@ -19,13 +20,14 @@ export const onCreateDID = /* GraphQL */ `
 export const onUpdateDID = /* GraphQL */ `
   subscription OnUpdateDID {
     onUpdateDID {
-      id
-      twitterUsername
-      longFormDid
       shortFormDid
+      username
+      longFormDid
       avatarUrl
       lastUpdated
       name
+      email
+      profileType
       createdAt
       updatedAt
     }
@@ -34,13 +36,14 @@ export const onUpdateDID = /* GraphQL */ `
 export const onDeleteDID = /* GraphQL */ `
   subscription OnDeleteDID {
     onDeleteDID {
-      id
-      twitterUsername
-      longFormDid
       shortFormDid
+      username
+      longFormDid
       avatarUrl
       lastUpdated
       name
+      email
+      profileType
       createdAt
       updatedAt
     }

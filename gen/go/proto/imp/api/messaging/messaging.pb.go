@@ -25,7 +25,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// *
+//*
 // Represents a message send to another DID
 type SendMessageRequest struct {
 	state         protoimpl.MessageState
@@ -98,7 +98,7 @@ func (x *SendMessageRequest) GetReplyToId() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response back from a sent message
 type SendMessageResponse struct {
 	state         protoimpl.MessageState
@@ -147,7 +147,7 @@ func (x *SendMessageResponse) GetId() string {
 	return ""
 }
 
-// *
+//*
 // Represents the preferences for sending messages
 type MessageSettings struct {
 	state         protoimpl.MessageState
@@ -196,7 +196,7 @@ func (x *MessageSettings) GetProtocolPreferences() []string {
 	return nil
 }
 
-// *
+//*
 // Represents a message send to another DID
 type SendMessageV2Request struct {
 	state         protoimpl.MessageState
@@ -301,7 +301,7 @@ func (x *SendMessageV2Request) GetGroupId() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response back from a sent message
 type SendMessageV2Response struct {
 	state         protoimpl.MessageState
@@ -350,7 +350,7 @@ func (x *SendMessageV2Response) GetId() string {
 	return ""
 }
 
-// *
+//*
 // Represents a message to save locally. Useful if it was sent out of band.
 type SaveMessageV2Request struct {
 	state         protoimpl.MessageState
@@ -447,7 +447,7 @@ func (x *SaveMessageV2Request) GetGroupId() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response back from a saved message
 type SaveMessageV2Response struct {
 	state         protoimpl.MessageState
@@ -670,7 +670,7 @@ func (x *MessageEvent) GetEventTime() *timestamppb.Timestamp {
 	return nil
 }
 
-// *
+//*
 // Represents a message get a message list
 type GetMessageListRequest struct {
 	state         protoimpl.MessageState
@@ -727,7 +727,7 @@ func (x *GetMessageListRequest) GetType() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response back containing a message list
 type GetMessageListResponse struct {
 	state         protoimpl.MessageState
@@ -776,7 +776,7 @@ func (x *GetMessageListResponse) GetMessages() []*Message {
 	return nil
 }
 
-// *
+//*
 // Represents a request to delete a message.
 type DeleteMessageRequest struct {
 	state         protoimpl.MessageState
@@ -825,7 +825,7 @@ func (x *DeleteMessageRequest) GetId() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response containing the message deletion event.
 type DeleteMessageResponse struct {
 	state         protoimpl.MessageState
@@ -865,7 +865,7 @@ func (*DeleteMessageResponse) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_messaging_messaging_proto_rawDescGZIP(), []int{12}
 }
 
-// *
+//*
 // Represents a request to delete a group message.
 type DeleteGroupMessageRequest struct {
 	state         protoimpl.MessageState
@@ -914,7 +914,7 @@ func (x *DeleteGroupMessageRequest) GetGroupId() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response containing the message deletion event.
 type DeleteGroupMessageResponse struct {
 	state         protoimpl.MessageState

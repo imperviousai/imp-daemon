@@ -1,10 +1,10 @@
 import React from "react";
 
 function TwitterConnected({ contact, className }) {
-  const { twitterUsername } = JSON.parse(contact.metadata);
+  const { username } = JSON.parse(contact.metadata);
   return (
     <>
-      {twitterUsername && (
+      {username && (
         <svg
           className={className}
           aria-hidden="true"

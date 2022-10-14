@@ -4,6 +4,102 @@ import * as google_api_annotations_pb from '../../../../google/api/annotations_p
 import * as protoc$gen$openapiv2_options_annotations_pb from '../../../../protoc-gen-openapiv2/options/annotations_pb';
 
 
+export class GetChannelsRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetChannelsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetChannelsRequest): GetChannelsRequest.AsObject;
+  static serializeBinaryToWriter(message: GetChannelsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetChannelsRequest;
+  static deserializeBinaryFromReader(message: GetChannelsRequest, reader: jspb.BinaryReader): GetChannelsRequest;
+}
+
+export namespace GetChannelsRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetChannelsResponse extends jspb.Message {
+  getAmt(): number;
+  setAmt(value: number): GetChannelsResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetChannelsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetChannelsResponse): GetChannelsResponse.AsObject;
+  static serializeBinaryToWriter(message: GetChannelsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetChannelsResponse;
+  static deserializeBinaryFromReader(message: GetChannelsResponse, reader: jspb.BinaryReader): GetChannelsResponse;
+}
+
+export namespace GetChannelsResponse {
+  export type AsObject = {
+    amt: number,
+  }
+}
+
+export class ListPaymentsRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListPaymentsRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ListPaymentsRequest): ListPaymentsRequest.AsObject;
+  static serializeBinaryToWriter(message: ListPaymentsRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListPaymentsRequest;
+  static deserializeBinaryFromReader(message: ListPaymentsRequest, reader: jspb.BinaryReader): ListPaymentsRequest;
+}
+
+export namespace ListPaymentsRequest {
+  export type AsObject = {
+  }
+}
+
+export class ListPaymentsResponse extends jspb.Message {
+  getPayments(): string;
+  setPayments(value: string): ListPaymentsResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListPaymentsResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ListPaymentsResponse): ListPaymentsResponse.AsObject;
+  static serializeBinaryToWriter(message: ListPaymentsResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListPaymentsResponse;
+  static deserializeBinaryFromReader(message: ListPaymentsResponse, reader: jspb.BinaryReader): ListPaymentsResponse;
+}
+
+export namespace ListPaymentsResponse {
+  export type AsObject = {
+    payments: string,
+  }
+}
+
+export class ListInvoicesRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListInvoicesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ListInvoicesRequest): ListInvoicesRequest.AsObject;
+  static serializeBinaryToWriter(message: ListInvoicesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListInvoicesRequest;
+  static deserializeBinaryFromReader(message: ListInvoicesRequest, reader: jspb.BinaryReader): ListInvoicesRequest;
+}
+
+export namespace ListInvoicesRequest {
+  export type AsObject = {
+  }
+}
+
+export class ListInvoicesResponse extends jspb.Message {
+  getInvoices(): string;
+  setInvoices(value: string): ListInvoicesResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ListInvoicesResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ListInvoicesResponse): ListInvoicesResponse.AsObject;
+  static serializeBinaryToWriter(message: ListInvoicesResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ListInvoicesResponse;
+  static deserializeBinaryFromReader(message: ListInvoicesResponse, reader: jspb.BinaryReader): ListInvoicesResponse;
+}
+
+export namespace ListInvoicesResponse {
+  export type AsObject = {
+    invoices: string,
+  }
+}
+
 export class GenerateInvoiceRequest extends jspb.Message {
   getAmount(): number;
   setAmount(value: number): GenerateInvoiceRequest;

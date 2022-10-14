@@ -87,7 +87,7 @@ func (x *ServiceEndpoint) GetServiceEndpoint() string {
 	return ""
 }
 
-// *
+//*
 // Represents a request to a relay node to delegate them as a relay
 type RequestRelayRequest struct {
 	state         protoimpl.MessageState
@@ -152,7 +152,7 @@ func (x *RequestRelayRequest) GetPrivateServiceEndpoints() []*ServiceEndpoint {
 	return nil
 }
 
-// *
+//*
 // Represents a response back from a relay request
 type RequestRelayResponse struct {
 	state         protoimpl.MessageState
@@ -201,7 +201,7 @@ func (x *RequestRelayResponse) GetId() string {
 	return ""
 }
 
-// *
+//*
 // Represents a request to a relay node to send over mailbox messages
 type RequestMailboxRequest struct {
 	state         protoimpl.MessageState
@@ -266,7 +266,7 @@ func (x *RequestMailboxRequest) GetPrivateServiceEndpoints() []*ServiceEndpoint 
 	return nil
 }
 
-// *
+//*
 // Represents a response back from a relay request
 type RequestMailboxResponse struct {
 	state         protoimpl.MessageState

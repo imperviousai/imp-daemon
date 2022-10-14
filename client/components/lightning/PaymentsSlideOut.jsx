@@ -18,7 +18,22 @@ function classNames(...classes) {
 }
 
 export const SelectContact = ({ selected, setSelected }) => {
+  const [lightningContacts, setLightningContacts] = useState([]);
   const { data: contactsRes } = useFetchContacts();
+
+  useEffect(() => {
+    if (contactsRes) {
+      let lnContacts = contactsRes?.data.contacts.filter((contact) => {
+        let index = JSON.parse(contact.didDocument).service.findIndex(
+          (service) => service.serviceEndpoint.includes("lightning:")
+        );
+        return index !== -1 ? true : false;
+      });
+      if (lnContacts.length) {
+        setLightningContacts(lnContacts);
+      }
+    }
+  }, [contactsRes]);
 
   const isSelected = (contact) => selected === contact;
 
@@ -49,7 +64,7 @@ export const SelectContact = ({ selected, setSelected }) => {
               leaveTo="opacity-0"
             >
               <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                {contactsRes?.data.contacts.map((contact, i) => (
+                {lightningContacts.map((contact, i) => (
                   <Listbox.Option
                     key={i}
                     className={({ active }) =>

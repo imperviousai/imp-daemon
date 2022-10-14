@@ -15,7 +15,7 @@ import { RiUserSharedFill } from "react-icons/ri";
 import { useRouter } from "next/router";
 import moment from "moment";
 import PaymentsSlideOut from "../../components/lightning/PaymentsSlideOut";
-import { useFetchContacts } from "../../hooks/contacts";
+import { useFetchBlocklist, useFetchContacts } from "../../hooks/contacts";
 import { useFetchMessages, useDeleteGroupMessages } from "../../hooks/messages";
 import { useFetchMyDid } from "../../hooks/id";
 import { useAtom } from "jotai";
@@ -36,6 +36,8 @@ import { myDidLongFormDocumentAtom } from "../../stores/id";
 import ContactAvatar from "../../components/contact/ContactAvatar";
 import { getShortFormId, resolveDid } from "../../utils/id";
 import { getContactsByMessage, getContactByDid } from "../../utils/contacts";
+import { useFetchSettings } from "../../hooks/settings";
+import { useFetchLightningConfig } from "../../hooks/config";
 
 const pageTitle = "Dashboard";
 
@@ -74,7 +76,7 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
       }
     } else {
       return `${lastMessage?.data.body.content?.slice(0, 50)} ${
-        lastMessage?.data.body.content.length > 50 ? "..." : ""
+        lastMessage?.data.body.content?.length > 50 ? "..." : ""
       }`;
     }
   };
@@ -471,9 +473,16 @@ export default function Dashboard() {
   const [peers] = useAtom(peersAtom);
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
   const { data: myDid } = useFetchMyDid();
+  const { data: blocklist } = useFetchBlocklist();
+  const { data: contactsRes } = useFetchContacts();
+  const { data: settings } = useFetchSettings();
   const { data: messages } = useFetchMessages({
+    contacts: contactsRes?.data.contacts,
     myDid: myDid,
+    blocklist,
+    settings,
   });
+  const { data: lightningConfig } = useFetchLightningConfig();
 
   useEffect(() => {
     if (peers) {
@@ -506,6 +515,14 @@ export default function Dashboard() {
     setUnreadMessages(unreadMessageCount);
     setUnreadRequests(unreadRequestCount);
   }, [readMessages, messages]);
+
+  const togglePayment = () => {
+    if (!lightningConfig?.data.lightningConfig.listening) {
+      toast.info("Connect to a lightning node to use this action.");
+      return;
+    }
+    setOpenPayment(true);
+  };
 
   return (
     <MainNavigation currentPage={pageTitle}>
@@ -558,7 +575,7 @@ export default function Dashboard() {
                     <div className="flex flex-col items-center">
                       <button
                         type="button"
-                        onClick={() => setOpenPayment(true)}
+                        onClick={() => togglePayment()}
                         className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
                         <BsFillLightningChargeFill

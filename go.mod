@@ -7,7 +7,7 @@ require (
 	github.com/aokoli/goutils v1.1.1 // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
 	github.com/decred/dcrd/lru v1.1.1 // indirect
-	github.com/envoyproxy/protoc-gen-validate v0.6.11 // indirect
+	github.com/envoyproxy/protoc-gen-validate v0.6.13 // indirect
 	github.com/ethereum/go-ethereum v1.10.13
 	github.com/evanphx/json-patch v0.5.2 // indirect
 	github.com/evanphx/json-patch/v5 v5.6.0
@@ -57,8 +57,8 @@ require (
 	go.uber.org/goleak v1.1.11 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.19.1
-	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
-	google.golang.org/genproto v0.0.0-20220930163606-c98284e70a91
+	golang.org/x/crypto v0.0.0-20221010152910-d6f0a8c073c2
+	google.golang.org/genproto v0.0.0-20221010155953-15ba04fc1c0e
 	google.golang.org/grpc v1.49.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0 // indirect
 	google.golang.org/protobuf v1.28.1

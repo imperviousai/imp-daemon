@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import moment from "moment";
 import { getShortFormId } from "./id";
 import { getContactByDid } from "./contacts";
+import { getApiKey } from "./misc";
 
 // Utility functions for message handling
 
@@ -12,7 +13,7 @@ export const fetchMessages = () => {
     url: "/v1/message",
     method: "get",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -42,7 +43,7 @@ export const sendMessage = (data) => {
       reply_to_id,
     },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -62,7 +63,7 @@ export const saveMessage = (data) => {
       reply_to_id: "",
     },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -93,11 +94,21 @@ export const showPaymentNotification = ({ detail: { msg, knownContact } }) => {
 };
 
 // handleDidCommMessage is a handler function for incoming messages
-export const handleDidCommMessage = ({ data, contacts, pathname }) => {
+export const handleDidCommMessage = ({
+  data,
+  contacts,
+  pathname,
+  blocklist,
+}) => {
   const d = JSON.parse(data).result?.data;
   if (d) {
     const msg = JSON.parse(atob(d));
     const fromId = getShortFormId(msg.from);
+
+    // check incoming message against the blocklist
+    if (blocklist?.includes(fromId)) {
+      return;
+    }
 
     // check if the incoming message is from a known contact
     let knownContact = getContactByDid({
@@ -224,7 +235,7 @@ export const relayRequest = (toDID) => {
     method: "post",
     data: { toDID, amount: 10 },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -236,7 +247,7 @@ export const relayMailbox = (toDID) => {
     method: "post",
     data: { toDID, amount: 10, privateServiceEndpoints: [] },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   }).catch((err) => console.log(err));
 };
@@ -255,7 +266,7 @@ export const deleteGroupMessages = ({ groupId }) => {
     url: `/v1/message_group/${groupId}`,
     method: "delete",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };

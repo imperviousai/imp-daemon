@@ -1,5 +1,6 @@
 import { request } from "./axios-utils";
 import { gql } from "@apollo/client";
+import { getApiKey } from "./misc";
 
 // Utility functions for the contacts management
 export const ALGOLIA_ID = "2AT1J9F6CY";
@@ -54,7 +55,7 @@ export const fetchContacts = () => {
     url: "/v1/contacts",
     method: "get",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -65,12 +66,12 @@ export const addContact = (data) => {
   //     didDocument - didDocument of the contact
   //     name - supply a name/nickname for the contact
   // }
-  const { didDocument, name, myDid, twitterUsername, avatarUrl } = data;
+  const { didDocument, name, myDid, username, avatarUrl } = data;
   // each new contact gets a generated, random bighead avatar.
   const randomAvatar = getRandomAvatar();
   const metadata = JSON.stringify({
     avatar: randomAvatar,
-    twitterUsername: twitterUsername || "",
+    username: username || "",
     avatarUrl: avatarUrl || "",
   });
   return request({
@@ -86,22 +87,16 @@ export const addContact = (data) => {
       },
     },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
 
 export const updateContact = (data) => {
-  const {
-    longFormDid,
-    name,
-    existingContact,
-    avatar,
-    twitterUsername,
-    avatarUrl,
-  } = data;
+  const { longFormDid, name, existingContact, avatar, username, avatarUrl } =
+    data;
   const updatedContact = existingContact;
-  if (twitterUsername) updatedContact = { ...updatedContact, twitterUsername };
+  if (username) updatedContact = { ...updatedContact, username };
   if (avatarUrl) updatedContact = { ...updatedContact, avatarUrl };
   if (name) updatedContact = { ...updatedContact, name };
   if (longFormDid) updatedContact = { ...updatedContact, did: longFormDid };
@@ -119,7 +114,7 @@ export const updateContact = (data) => {
     method: "post",
     data: { contact: updatedContact },
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -129,7 +124,7 @@ export const fetchContactById = (id) => {
     url: `/v1/contacts/${id}`,
     method: "get",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -140,7 +135,7 @@ export const deleteContactById = (id) => {
     url: `/v1/contacts/${id}`,
     method: "delete",
     headers: {
-      "Grpc-Metadata-X-API-KEY": `${localStorage.getItem("apiKey")}`,
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
     },
   });
 };
@@ -155,16 +150,15 @@ export const getRandomAvatar = () => {
 };
 
 export const GET_DID_BY_TWITTER = gql`
-  query getDIDByTwitter($twitterUsername: String!) {
-    listDIDS(filter: { twitterUsername: { eq: $twitterUsername } }) {
+  query getDIDByTwitter($username: String!) {
+    listDIDS(filter: { username: { eq: $username } }) {
       items {
         avatarUrl
-        id
         lastUpdated
         longFormDid
         shortFormDid
         name
-        twitterUsername
+        username
       }
     }
   }

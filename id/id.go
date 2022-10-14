@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"runtime"
 	"strings"
 
 	"github.com/hyperledger/aries-framework-go/component/storageutil/mem"
@@ -295,6 +296,7 @@ func (i *identity) universalResolver(id string) (*ResolveDIDResponse, error) {
 			continue
 		}
 		req.Header.Add("Accept", "application/ld+json;profile=\"https://w3id.org/did-resolution\"")
+		req.Header.Add("User-Agent", "ImperviousDaemon - "+runtime.GOOS+" - "+runtime.GOARCH)
 		resp, err := i.httpClient.Do(req)
 		if err != nil {
 			continue

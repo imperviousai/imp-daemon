@@ -24,7 +24,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// *
+//*
 // Represents a request to get a key and value.
 type GetKeyRequest struct {
 	state         protoimpl.MessageState
@@ -73,7 +73,7 @@ func (x *GetKeyRequest) GetKey() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response containing the value
 type GetKeyResponse struct {
 	state         protoimpl.MessageState
@@ -122,7 +122,7 @@ func (x *GetKeyResponse) GetValue() string {
 	return ""
 }
 
-// *
+//*
 // Represents a request to get a key and value.
 type SetKeyRequest struct {
 	state         protoimpl.MessageState
@@ -179,7 +179,7 @@ func (x *SetKeyRequest) GetValue() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response for HTTP 200=Set
 type SetKeyResponse struct {
 	state         protoimpl.MessageState
@@ -219,7 +219,7 @@ func (*SetKeyResponse) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_kv_kv_proto_rawDescGZIP(), []int{3}
 }
 
-// *
+//*
 // Represents a request to delete a key and value.
 type DelKeyRequest struct {
 	state         protoimpl.MessageState
@@ -268,7 +268,7 @@ func (x *DelKeyRequest) GetKey() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response for deletion HTTP 200=Deleted
 type DelKeyResponse struct {
 	state         protoimpl.MessageState

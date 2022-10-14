@@ -24,7 +24,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// *
+//*
 // Represents a DID recovery kit to back up and restore from later.
 type RecoveryKit struct {
 	state         protoimpl.MessageState
@@ -105,7 +105,7 @@ func (x *RecoveryKit) GetSeed() string {
 	return ""
 }
 
-// *
+//*
 // Represents a request to resolve a DID into a DID document.
 type ResolveDIDRequest struct {
 	state         protoimpl.MessageState
@@ -154,7 +154,7 @@ func (x *ResolveDIDRequest) GetDid() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response containing the resolved DID document of the passed in DID URI.
 type ResolveDIDResponse struct {
 	state         protoimpl.MessageState
@@ -211,7 +211,7 @@ func (x *ResolveDIDResponse) GetLongFormDid() string {
 	return ""
 }
 
-// *
+//*
 // Represents a request to store a DID document.
 type StoreDIDRequest struct {
 	state         protoimpl.MessageState
@@ -260,7 +260,7 @@ func (x *StoreDIDRequest) GetDocument() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response containing the resolved ID of the passed in DID document.
 type StoreDIDResponse struct {
 	state         protoimpl.MessageState
@@ -309,7 +309,7 @@ func (x *StoreDIDResponse) GetId() string {
 	return ""
 }
 
-// *
+//*
 // Represents a request to list DIDs stored locally.
 type ListDIDRequest struct {
 	state         protoimpl.MessageState
@@ -349,7 +349,7 @@ func (*ListDIDRequest) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_id_id_proto_rawDescGZIP(), []int{5}
 }
 
-// *
+//*
 // Represents a response containing a list of the stored DIDs.
 type ListDIDResponse struct {
 	state         protoimpl.MessageState
@@ -461,7 +461,7 @@ func (x *ServiceEndpoint) GetServiceEndpoint() string {
 	return ""
 }
 
-// *
+//*
 // Represents a request to create a DID document.
 type CreateDIDRequest struct {
 	state         protoimpl.MessageState
@@ -518,7 +518,7 @@ func (x *CreateDIDRequest) GetServiceEndpoints() []*ServiceEndpoint {
 	return nil
 }
 
-// *
+//*
 // Represents a response the document for the created DID.
 type CreateDIDResponse struct {
 	state         protoimpl.MessageState
@@ -583,7 +583,7 @@ func (x *CreateDIDResponse) GetRecoveryKit() *RecoveryKit {
 	return nil
 }
 
-// *
+//*
 // Represents a request to import a user's DID document.
 type ImportDIDRequest struct {
 	state         protoimpl.MessageState
@@ -640,7 +640,7 @@ func (x *ImportDIDRequest) GetLongFormDid() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response after importing a user's DID document.
 type ImportDIDResponse struct {
 	state         protoimpl.MessageState
@@ -680,7 +680,7 @@ func (*ImportDIDResponse) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_id_id_proto_rawDescGZIP(), []int{11}
 }
 
-// *
+//*
 // Represents a request to update a DID document.
 type UpdateDIDRequest struct {
 	state         protoimpl.MessageState
@@ -729,7 +729,7 @@ func (x *UpdateDIDRequest) GetDocument() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response after updating a DID document.
 type UpdateDIDResponse struct {
 	state         protoimpl.MessageState
@@ -794,7 +794,7 @@ func (x *UpdateDIDResponse) GetRecoveryKit() *RecoveryKit {
 	return nil
 }
 
-// *
+//*
 // Represents a request to delete a did.
 type DeleteDIDRequest struct {
 	state         protoimpl.MessageState
@@ -843,7 +843,7 @@ func (x *DeleteDIDRequest) GetId() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response containing the did deletion event.
 type DeleteDIDResponse struct {
 	state         protoimpl.MessageState
@@ -883,7 +883,7 @@ func (*DeleteDIDResponse) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_id_id_proto_rawDescGZIP(), []int{15}
 }
 
-// *
+//*
 // Represents a request to backup a did.
 type BackupDIDRequest struct {
 	state         protoimpl.MessageState
@@ -932,7 +932,7 @@ func (x *BackupDIDRequest) GetId() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response containing the did backup recovery kit.
 type BackupDIDResponse struct {
 	state         protoimpl.MessageState
@@ -981,7 +981,7 @@ func (x *BackupDIDResponse) GetRecoveryKit() *RecoveryKit {
 	return nil
 }
 
-// *
+//*
 // Represents a request to recover a did with the recovery kit.
 type RecoverDIDRequest struct {
 	state         protoimpl.MessageState
@@ -1038,7 +1038,7 @@ func (x *RecoverDIDRequest) GetPassphrase() string {
 	return ""
 }
 
-// *
+//*
 // Represents a response containing the did recovery result.
 type RecoverDIDResponse struct {
 	state         protoimpl.MessageState

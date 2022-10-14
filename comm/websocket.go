@@ -24,6 +24,7 @@ type WebsocketComm interface {
 	CheckMsg(endpoint string, msgData *DIDCommMsg) bool
 	Stop() error
 	ServeHTTP(res http.ResponseWriter, req *http.Request)
+	ConnectedClients() []string
 }
 
 type websocketComm struct {
@@ -99,6 +100,29 @@ func (w *websocketComm) CheckMsg(endpoint string, msg *DIDCommMsg) bool {
 		return false
 	}
 	return socketId != ""
+}
+
+func (w *websocketComm) ConnectedClients() []string {
+	activeConnections := make([]string, 0)
+	w.socketConnectionsLock.RLock()
+	for existingSocketId, existingSocket := range w.socketConnections {
+		if existingSocket.did != "" {
+			zap.L().Debug("Found websocket connection to DID",
+				zap.String("socket_id", existingSocketId),
+				zap.String("endpoint", existingSocket.endpoint),
+				zap.String("did", existingSocket.did),
+			)
+			activeConnections = append(activeConnections, existingSocket.did)
+		} else {
+			zap.L().Debug("Found websocket but does not know which DID it is associated with",
+				zap.String("socket_id", existingSocketId),
+				zap.String("endpoint", existingSocket.endpoint),
+				zap.String("did", existingSocket.did),
+			)
+		}
+	}
+	w.socketConnectionsLock.RUnlock()
+	return activeConnections
 }
 
 func (w *websocketComm) SendData(endpoint string, msg *DIDCommMsg) (err error) {
@@ -191,7 +215,7 @@ func (w *websocketComm) connectToSocket(endpoint, did string) (string, error) {
 	// on the server side. Should't matter if it is different because its
 	// only dealing with local socket management
 	socketId := resp.Header.Get("sec-websocket-accept")
-	w.maintainSocket(c, endpoint, socketId, "")
+	w.maintainSocket(c, endpoint, socketId, did) // TODO use did here?
 	return socketId, nil
 }
 

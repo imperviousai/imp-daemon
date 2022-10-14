@@ -127,7 +127,7 @@ func (x *LightningConfig) GetAdminMacaroonHex() string {
 	return ""
 }
 
-// *
+//*
 // Represents a request to get the lightning config.
 type GetLightningConfigRequest struct {
 	state         protoimpl.MessageState
@@ -167,7 +167,7 @@ func (*GetLightningConfigRequest) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_config_config_proto_rawDescGZIP(), []int{1}
 }
 
-// *
+//*
 // Represents a response containing the lightning config.
 type GetLightningConfigResponse struct {
 	state         protoimpl.MessageState
@@ -216,7 +216,7 @@ func (x *GetLightningConfigResponse) GetLightningConfig() *LightningConfig {
 	return nil
 }
 
-// *
+//*
 // Represents a request to save the lightning config.
 type SaveLightningConfigRequest struct {
 	state         protoimpl.MessageState
@@ -265,7 +265,7 @@ func (x *SaveLightningConfigRequest) GetLightningConfig() *LightningConfig {
 	return nil
 }
 
-// *
+//*
 // Represents a response containing the lightning save config results.
 type SaveLightningConfigResponse struct {
 	state         protoimpl.MessageState
@@ -360,7 +360,7 @@ func (x *IONConfig) GetActive() bool {
 	return false
 }
 
-// *
+//*
 // Represents a request to get the ion config.
 type GetIONConfigRequest struct {
 	state         protoimpl.MessageState
@@ -400,7 +400,7 @@ func (*GetIONConfigRequest) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_config_config_proto_rawDescGZIP(), []int{6}
 }
 
-// *
+//*
 // Represents a response containing the ion config.
 type GetIONConfigResponse struct {
 	state         protoimpl.MessageState
@@ -449,7 +449,7 @@ func (x *GetIONConfigResponse) GetIonConfig() *IONConfig {
 	return nil
 }
 
-// *
+//*
 // Represents a request to save the ion config.
 type SaveIONConfigRequest struct {
 	state         protoimpl.MessageState
@@ -498,7 +498,7 @@ func (x *SaveIONConfigRequest) GetIonConfig() *IONConfig {
 	return nil
 }
 
-// *
+//*
 // Represents a response containing the ion save config results.
 type SaveIONConfigResponse struct {
 	state         protoimpl.MessageState

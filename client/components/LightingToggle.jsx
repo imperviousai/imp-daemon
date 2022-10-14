@@ -1,9 +1,10 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { useState } from "react";
 import { Switch } from "@headlessui/react";
 import { useAtom } from "jotai";
 import { lightningEnabledAtom } from "../stores/messages";
 import { LightningBoltIcon } from "@heroicons/react/solid";
+import { useFetchLightningConfig } from "../hooks/config";
+import { toast } from "react-toastify";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -11,12 +12,26 @@ function classNames(...classes) {
 
 export default function LightningToggle() {
   const [lightningEnabled, setLightningEnabled] = useAtom(lightningEnabledAtom);
+  const { data: lightningConfig } = useFetchLightningConfig();
+
+  const toggleLightning = (value) => {
+    if (!lightningConfig?.data.lightningConfig.listening) {
+      toast.info("Connect to a lightning node to use this action.");
+      return;
+    }
+    setLightningEnabled(value);
+    if (value) {
+      toast.info(
+        "Lightning payments are now enabled and lightning messages will now be prioritized over didcomm messages."
+      );
+    }
+  };
 
   return (
     <>
       <Switch
         checked={lightningEnabled}
-        onChange={setLightningEnabled}
+        onChange={toggleLightning}
         className={classNames(
           lightningEnabled ? "bg-indigo-600" : "bg-gray-200",
           "relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

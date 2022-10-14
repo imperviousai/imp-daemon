@@ -9,6 +9,12 @@
     - [CheckInvoiceResponse](#lightning.CheckInvoiceResponse)
     - [GenerateInvoiceRequest](#lightning.GenerateInvoiceRequest)
     - [GenerateInvoiceResponse](#lightning.GenerateInvoiceResponse)
+    - [GetChannelsRequest](#lightning.GetChannelsRequest)
+    - [GetChannelsResponse](#lightning.GetChannelsResponse)
+    - [ListInvoicesRequest](#lightning.ListInvoicesRequest)
+    - [ListInvoicesResponse](#lightning.ListInvoicesResponse)
+    - [ListPaymentsRequest](#lightning.ListPaymentsRequest)
+    - [ListPaymentsResponse](#lightning.ListPaymentsResponse)
     - [PayInvoiceRequest](#lightning.PayInvoiceRequest)
     - [PayInvoiceResponse](#lightning.PayInvoiceResponse)
   
@@ -35,6 +41,9 @@ Lightning service allows lightning actions on your underlying lightning node fro
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
+| GetChannels | GetChannelsRequest | GetChannelsResponse | GetChannels allows you to get local balances of your channels |
+| ListPayments | ListPaymentsRequest | ListPaymentsResponse | ListPayments lists payments from your node |
+| ListInvoices | ListInvoicesRequest | ListInvoicesResponse | ListInvoices lists invoices from your node |
 | GenerateInvoice | GenerateInvoiceRequest | GenerateInvoiceResponse | GenerateInvoice allows you to generate an invoice for a specific payment amount from your lightning node. |
 | PayInvoice | PayInvoiceRequest | PayInvoiceResponse | PayInvoice allows you to pay a specific invoice with your lightning node. |
 | CheckInvoice | CheckInvoiceRequest | CheckInvoiceResponse | CheckInvoice allows you to check a specific invoice to see if it was paid. |
@@ -44,6 +53,9 @@ Lightning service allows lightning actions on your underlying lightning node fro
 
 | Method Name | Method | Pattern |
 | ----------- | ------ | ------- |
+| `GetChannels` | `POST` | `/v1/lightning/getchannels`
+| `ListPayments` | `POST` | `/v1/lightning/listpayments`
+| `ListInvoices` | `POST` | `/v1/lightning/listinvoices`
 | `GenerateInvoice` | `POST` | `/v1/lightning/generateinvoice`
 | `PayInvoice` | `POST` | `/v1/lightning/payinvoice`
 | `CheckInvoice` | `POST` | `/v1/lightning/checkinvoice` <!-- end services -->
@@ -105,6 +117,81 @@ Represents a response back from an invoice generation request.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | invoice | string |  | The invoice from your lightning node |
+
+
+
+
+
+
+<a name="lightning.GetChannelsRequest"></a>
+
+### GetChannelsRequest
+Represents a GetChannels request toward your lightning node.
+
+
+
+
+
+
+<a name="lightning.GetChannelsResponse"></a>
+
+### GetChannelsResponse
+Represents a response back from an Getchannels generation request.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| amt | int64 |  | The channel amount from your lightning node |
+
+
+
+
+
+
+<a name="lightning.ListInvoicesRequest"></a>
+
+### ListInvoicesRequest
+Represents a ListInvoices request toward your lightning node.
+
+
+
+
+
+
+<a name="lightning.ListInvoicesResponse"></a>
+
+### ListInvoicesResponse
+Represents a response back from an ListInvoices generation request.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| invoices | string |  | The list of invoices |
+
+
+
+
+
+
+<a name="lightning.ListPaymentsRequest"></a>
+
+### ListPaymentsRequest
+Represents a ListPayments request toward your lightning node.
+
+
+
+
+
+
+<a name="lightning.ListPaymentsResponse"></a>
+
+### ListPaymentsResponse
+Represents a response back from an ListPayments generation request.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| payments | string |  | The list of payments |
 
 
 

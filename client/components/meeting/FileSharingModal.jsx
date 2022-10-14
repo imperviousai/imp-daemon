@@ -49,7 +49,7 @@ const FileSharingModal = ({ open, setOpen, progress, error }) => {
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
                         Peer to peer file transfer in progress. It make take
-                        some time for the recipient to retrieve the file (est. 1
+                        some time for the recipient to receive the file (est. 1
                         min).
                       </p>
                       {progress > 0 && (

@@ -218,7 +218,7 @@ func (d *dbManager) Unlock(passphrase string) error {
 
 	if d.isReady {
 		// do nothing if already ready
-		return errors.New("Already unlocked")
+		return nil // errors.New("Already unlocked")
 	}
 
 	// The unlock
@@ -226,6 +226,8 @@ func (d *dbManager) Unlock(passphrase string) error {
 	pragmaConn := d.connection + fmt.Sprintf("&_pragma_key=%s&_pragma_cipher_page_size=4096", key)
 	db, err := sql.Open(d.dbType, pragmaConn)
 	if err != nil {
+		d.db = nil
+		d.isReady = false
 		return err
 	}
 
@@ -235,7 +237,7 @@ func (d *dbManager) Unlock(passphrase string) error {
 		d.db = nil
 		d.isReady = false
 		zap.L().Error(err.Error())
-		return errors.New("Passphrase incorrect")
+		return errors.New("Passphrase incorrect: Failed to Unlock Database")
 	}
 	if err = res.Close(); err != nil {
 		zap.L().Error(err.Error())

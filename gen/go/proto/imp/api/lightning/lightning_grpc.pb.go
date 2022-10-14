@@ -19,6 +19,15 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LightningClient interface {
 	//*
+	// GetChannels allows you to get local balances of your channels
+	GetChannels(ctx context.Context, in *GetChannelsRequest, opts ...grpc.CallOption) (*GetChannelsResponse, error)
+	//*
+	// ListPayments lists payments from your node
+	ListPayments(ctx context.Context, in *ListPaymentsRequest, opts ...grpc.CallOption) (*ListPaymentsResponse, error)
+	//*
+	// ListInvoices lists invoices from your node
+	ListInvoices(ctx context.Context, in *ListInvoicesRequest, opts ...grpc.CallOption) (*ListInvoicesResponse, error)
+	//*
 	// GenerateInvoice allows you to generate an invoice for a specific payment amount from your lightning node.
 	GenerateInvoice(ctx context.Context, in *GenerateInvoiceRequest, opts ...grpc.CallOption) (*GenerateInvoiceResponse, error)
 	//*
@@ -35,6 +44,33 @@ type lightningClient struct {
 
 func NewLightningClient(cc grpc.ClientConnInterface) LightningClient {
 	return &lightningClient{cc}
+}
+
+func (c *lightningClient) GetChannels(ctx context.Context, in *GetChannelsRequest, opts ...grpc.CallOption) (*GetChannelsResponse, error) {
+	out := new(GetChannelsResponse)
+	err := c.cc.Invoke(ctx, "/lightning.Lightning/GetChannels", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lightningClient) ListPayments(ctx context.Context, in *ListPaymentsRequest, opts ...grpc.CallOption) (*ListPaymentsResponse, error) {
+	out := new(ListPaymentsResponse)
+	err := c.cc.Invoke(ctx, "/lightning.Lightning/ListPayments", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lightningClient) ListInvoices(ctx context.Context, in *ListInvoicesRequest, opts ...grpc.CallOption) (*ListInvoicesResponse, error) {
+	out := new(ListInvoicesResponse)
+	err := c.cc.Invoke(ctx, "/lightning.Lightning/ListInvoices", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *lightningClient) GenerateInvoice(ctx context.Context, in *GenerateInvoiceRequest, opts ...grpc.CallOption) (*GenerateInvoiceResponse, error) {
@@ -69,6 +105,15 @@ func (c *lightningClient) CheckInvoice(ctx context.Context, in *CheckInvoiceRequ
 // for forward compatibility
 type LightningServer interface {
 	//*
+	// GetChannels allows you to get local balances of your channels
+	GetChannels(context.Context, *GetChannelsRequest) (*GetChannelsResponse, error)
+	//*
+	// ListPayments lists payments from your node
+	ListPayments(context.Context, *ListPaymentsRequest) (*ListPaymentsResponse, error)
+	//*
+	// ListInvoices lists invoices from your node
+	ListInvoices(context.Context, *ListInvoicesRequest) (*ListInvoicesResponse, error)
+	//*
 	// GenerateInvoice allows you to generate an invoice for a specific payment amount from your lightning node.
 	GenerateInvoice(context.Context, *GenerateInvoiceRequest) (*GenerateInvoiceResponse, error)
 	//*
@@ -84,6 +129,15 @@ type LightningServer interface {
 type UnimplementedLightningServer struct {
 }
 
+func (UnimplementedLightningServer) GetChannels(context.Context, *GetChannelsRequest) (*GetChannelsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetChannels not implemented")
+}
+func (UnimplementedLightningServer) ListPayments(context.Context, *ListPaymentsRequest) (*ListPaymentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListPayments not implemented")
+}
+func (UnimplementedLightningServer) ListInvoices(context.Context, *ListInvoicesRequest) (*ListInvoicesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListInvoices not implemented")
+}
 func (UnimplementedLightningServer) GenerateInvoice(context.Context, *GenerateInvoiceRequest) (*GenerateInvoiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateInvoice not implemented")
 }
@@ -104,6 +158,60 @@ type UnsafeLightningServer interface {
 
 func RegisterLightningServer(s grpc.ServiceRegistrar, srv LightningServer) {
 	s.RegisterService(&Lightning_ServiceDesc, srv)
+}
+
+func _Lightning_GetChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetChannelsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LightningServer).GetChannels(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/lightning.Lightning/GetChannels",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LightningServer).GetChannels(ctx, req.(*GetChannelsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Lightning_ListPayments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPaymentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LightningServer).ListPayments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/lightning.Lightning/ListPayments",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LightningServer).ListPayments(ctx, req.(*ListPaymentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Lightning_ListInvoices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListInvoicesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LightningServer).ListInvoices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/lightning.Lightning/ListInvoices",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LightningServer).ListInvoices(ctx, req.(*ListInvoicesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Lightning_GenerateInvoice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -167,6 +275,18 @@ var Lightning_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "lightning.Lightning",
 	HandlerType: (*LightningServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetChannels",
+			Handler:    _Lightning_GetChannels_Handler,
+		},
+		{
+			MethodName: "ListPayments",
+			Handler:    _Lightning_ListPayments_Handler,
+		},
+		{
+			MethodName: "ListInvoices",
+			Handler:    _Lightning_ListInvoices_Handler,
+		},
 		{
 			MethodName: "GenerateInvoice",
 			Handler:    _Lightning_GenerateInvoice_Handler,

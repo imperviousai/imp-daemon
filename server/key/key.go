@@ -40,20 +40,22 @@ func (m *keyServer) InitSeed(ctx context.Context, req *key_proto.InitSeedRequest
 func (m *keyServer) UnlockSeed(ctx context.Context, req *key_proto.UnlockSeedRequest) (*key_proto.UnlockSeedResponse, error) {
 	zap.L().Info("[Server] UnlockSeed")
 
-	err := m.core.UnlockSeed(req.GetPassphrase())
+	apiKey, err := m.core.UnlockSeed(req.GetPassphrase())
 	if err != nil {
 		zap.L().Error("[Server] UnlockSeed failed", zap.String("error", err.Error()))
 		return nil, err
 	}
 
 	zap.L().Info("[Server] UnlockSeed success")
-	return &key_proto.UnlockSeedResponse{}, nil
+	return &key_proto.UnlockSeedResponse{
+		ApiKey: apiKey,
+	}, nil
 }
 
 func (m *keyServer) Status(ctx context.Context, req *key_proto.StatusRequest) (*key_proto.StatusResponse, error) {
 	zap.L().Info("[Server] Status")
 
-	status, err := m.core.Status()
+	status, err := m.core.KeyStatus()
 	if err != nil {
 		zap.L().Error("[Server] Status failed", zap.String("error", err.Error()))
 		return nil, err

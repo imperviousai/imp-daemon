@@ -18,7 +18,7 @@ import { ContactView } from "./contacts";
 import { TailSpin } from "react-loader-spinner";
 import moment from "moment";
 import PaymentsSlideOut from "../../components/lightning/PaymentsSlideOut";
-import { useFetchContacts } from "../../hooks/contacts";
+import { useFetchContacts, useFetchBlocklist } from "../../hooks/contacts";
 import { useFetchMyDid } from "../../hooks/id";
 import {
   useSendMessage,
@@ -56,6 +56,9 @@ import useAutosizeTextArea from "../../components/useAutosizeTextArea";
 import ContactAvatar from "../../components/contact/ContactAvatar";
 import { getContactByDid, getContactsByMessage } from "../../utils/contacts";
 import FileSharingModal from "../../components/meeting/FileSharingModal";
+import BlockButton from "../../components/contact/BlockButton";
+import { useFetchSettings } from "../../hooks/settings";
+import { useFetchLightningConfig } from "../../hooks/config";
 
 const isJSON = (msg) => {
   try {
@@ -204,9 +207,13 @@ const ListConversations = () => {
   const [unreadMessages, setUnreadMessages] = useState({});
   const { data: contactsRes } = useFetchContacts();
   const { data: myDid } = useFetchMyDid();
+  const { data: blocklist } = useFetchBlocklist();
+  const { data: settings } = useFetchSettings();
   const { data: messages } = useFetchMessages({
     myDid: myDid,
     contacts: contactsRes?.data.contacts,
+    blocklist,
+    settings,
   });
   const [, setCurrentConversation] = useAtom(currentConversationAtom);
 
@@ -265,6 +272,8 @@ const ConversationHeader = ({
     currentConversationContactAtom
   );
   const { mutate: deleteGroupMessage } = useDeleteGroupMessages();
+  const { data: blocklist } = useFetchBlocklist();
+  const { data: lightningConfig } = useFetchLightningConfig();
   const disconnectPeer = () => {
     currentConversationPeer.peer.destroy();
   };
@@ -288,6 +297,23 @@ const ConversationHeader = ({
       });
   };
 
+  const sendConnectInvite = () => {
+    if (blocklist?.includes(currentConversationContact?.did)) {
+      toast.error("This contact is blocked, you will not be able to connect.");
+      return;
+    } else {
+      sendInvite();
+    }
+  };
+
+  const togglePayment = () => {
+    if (!lightningConfig?.data.lightningConfig.listening) {
+      toast.info("Connect to a lightning node to use this action.");
+      return;
+    }
+    setOpenPayment(true);
+  };
+
   return (
     <div className="bg-white shadow">
       <div className="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
@@ -295,7 +321,7 @@ const ConversationHeader = ({
           <div className="flex-1 min-w-0">
             {/* Profile */}
             <div className="flex items-center">
-              <div>
+              <div className="hover:bg-gray-100 pl-1 pr-5 rounded-md">
                 <div
                   className="flex items-center"
                   onClick={() => setOpenContactPreview(true)}
@@ -308,6 +334,7 @@ const ConversationHeader = ({
                     <h1 className="text-lg font-semibold leading-7 text-gray-900 sm:leading-9 sm:truncate">
                       {currentConversationContact?.name}{" "}
                     </h1>
+
                     {/* <CopyToClipboard
                       text={currentConversation.did}
                       onCopy={() => toast.info("Copied!")}
@@ -318,6 +345,11 @@ const ConversationHeader = ({
                       </h2>
                     </CopyToClipboard> */}
                   </div>
+                  {blocklist?.includes(currentConversationContact?.did) && (
+                    <span className="ml-2 inline-flex items-center rounded-md bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-800">
+                      Blocked
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -363,7 +395,7 @@ const ConversationHeader = ({
             ) : (
               <button
                 type="button"
-                onClick={() => sendInvite()}
+                onClick={() => sendConnectInvite()}
                 className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 <UsersIcon
@@ -377,7 +409,7 @@ const ConversationHeader = ({
             <div className="flex items-center">
               <button
                 type="button"
-                onClick={() => setOpenPayment(true)}
+                onClick={() => togglePayment()}
                 className="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <BsFillLightningChargeFill
@@ -407,6 +439,23 @@ const ConversationHeader = ({
                   leaveTo="transform opacity-0 scale-95"
                 >
                   <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                    <div className="py-1">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <div
+                            className={classNames(
+                              active && "bg-gray-100",
+                              "block py-2 text-sm"
+                            )}
+                          >
+                            <BlockButton
+                              did={currentConversationContact.did}
+                              asMenuItem={true}
+                            />
+                          </div>
+                        )}
+                      </Menu.Item>
+                    </div>
                     <div className="py-1">
                       <Menu.Item>
                         {({ active }) => (
@@ -1036,9 +1085,13 @@ export default function Chat() {
 
   const { data: contactsRes } = useFetchContacts();
   const { data: myDid } = useFetchMyDid();
+  const { data: blocklist } = useFetchBlocklist();
+  const { data: settings } = useFetchSettings();
   const { data: messages } = useFetchMessages({
     myDid: myDid,
     contacts: contactsRes?.data.contacts,
+    blocklist,
+    settings,
   });
   const { mutate: sendBasicMessage } = useSendMessage();
 
