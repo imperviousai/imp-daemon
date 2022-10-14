@@ -430,7 +430,7 @@ const RelayLightningSettings = () => {
         <p className="mt-1 mb-2 text-sm text-blue-gray-500">
           If you already have a running lightning node, or just created one
           above, enter the configuration information below and Impervious will
-          configure itself to use the given lightning node. Note: This restart
+          configure itself to use the given lightning node. Note: This restarts
           the Impervious daemon services and the application will experience a
           reboot.
         </p>

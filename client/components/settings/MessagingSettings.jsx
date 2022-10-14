@@ -53,8 +53,8 @@ const MessagingSettings = () => {
                   </Switch.Label>
                   <Switch.Description className="text-md text-gray-500 pt-2">
                     With open messaging enabled, you will recieve messages from
-                    any contact. Toggle open messaging to &quot;Closed&quot; to recieve
-                    messages from only saved contacts.
+                    any contact. Toggle open messaging to &quot;Closed&quot; to
+                    only receive messages from saved contacts.
                   </Switch.Description>
                 </div>
                 <Switch
