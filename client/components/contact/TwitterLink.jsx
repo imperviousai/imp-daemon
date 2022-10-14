@@ -1,17 +1,17 @@
 import React from "react";
 
 function TwitterLink({ contact, className }) {
-  const { twitterUsername } = JSON.parse(contact.metadata);
+  const { username } = JSON.parse(contact.metadata);
   return (
     <>
-      {twitterUsername && (
+      {username && (
         <a
           className={className}
           target="_blank"
           rel="noreferrer"
-          href={`https://twitter.com/${twitterUsername}`}
+          href={`https://twitter.com/${username}`}
         >
-          @{twitterUsername}
+          @{username}
         </a>
       )}{" "}
     </>

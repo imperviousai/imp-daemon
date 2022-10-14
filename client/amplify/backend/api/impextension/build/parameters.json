@@ -1,0 +1,7 @@
+{
+    "AppSyncApiName": "impextension",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false,
+    "S3DeploymentBucket": "amplify-impextension-prod-93245-deployment",
+    "S3DeploymentRootKey": "amplify-appsync-files/feae8a076d7fb14e6c987b650a172413b2ed9242"
+}

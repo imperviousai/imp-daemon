@@ -7,13 +7,14 @@ export const createDID = /* GraphQL */ `
     $condition: ModelDIDConditionInput
   ) {
     createDID(input: $input, condition: $condition) {
-      id
-      twitterUsername
-      longFormDid
       shortFormDid
+      username
+      longFormDid
       avatarUrl
       lastUpdated
       name
+      email
+      profileType
       createdAt
       updatedAt
     }
@@ -25,13 +26,14 @@ export const updateDID = /* GraphQL */ `
     $condition: ModelDIDConditionInput
   ) {
     updateDID(input: $input, condition: $condition) {
-      id
-      twitterUsername
-      longFormDid
       shortFormDid
+      username
+      longFormDid
       avatarUrl
       lastUpdated
       name
+      email
+      profileType
       createdAt
       updatedAt
     }
@@ -43,13 +45,14 @@ export const deleteDID = /* GraphQL */ `
     $condition: ModelDIDConditionInput
   ) {
     deleteDID(input: $input, condition: $condition) {
-      id
-      twitterUsername
-      longFormDid
       shortFormDid
+      username
+      longFormDid
       avatarUrl
       lastUpdated
       name
+      email
+      profileType
       createdAt
       updatedAt
     }

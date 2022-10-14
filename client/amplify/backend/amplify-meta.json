@@ -1,0 +1,125 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-impextension-prod-93245-authRole",
+      "UnauthRoleArn": "arn:aws:iam::888315068417:role/amplify-impextension-prod-93245-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::888315068417:role/amplify-impextension-prod-93245-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-impextension-prod-93245-deployment",
+      "UnauthRoleName": "amplify-impextension-prod-93245-unauthRole",
+      "StackName": "amplify-impextension-prod-93245",
+      "StackId": "arn:aws:cloudformation:us-east-2:888315068417:stack/amplify-impextension-prod-93245/1a0e3680-343a-11ed-8fdb-027fbb71959e",
+      "AmplifyAppId": "d5snpxhl2a2ip"
+    }
+  },
+  "api": {
+    "impextension": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "defaultAuthentication": {
+            "authenticationType": "OPENID_CONNECT",
+            "openIDConnectConfig": {
+              "name": "Auth0",
+              "issuerUrl": "https://dev-m-xk8f0l.us.auth0.com/",
+              "clientId": "",
+              "authTTL": "0",
+              "iatTTL": "0"
+            }
+          },
+          "additionalAuthenticationProviders": []
+        },
+        "GraphQLAPIIdOutput": "g3ly5qijzrb4pno6evun7wyspe",
+        "GraphQLAPIEndpointOutput": "https://inotaoe3inelrcdfzp447mlpnq.appsync-api.us-east-2.amazonaws.com/graphql"
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-impextension-prod-93245-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apiimpextension"
+      },
+      "lastPushTimeStamp": "2022-10-13T21:37:44.334Z",
+      "lastPushDirHash": "IXlD4wz6oubys8Hbsm4n3tuFjRs="
+    }
+  },
+  "auth": {
+    "impextension757a51c5": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-impextension-prod-93245-deployment/amplify-cfn-templates/auth/impextension757a51c5-cloudformation-template.json",
+        "logicalId": "authimpextension757a51c5"
+      },
+      "lastPushTimeStamp": "2022-10-13T21:37:44.339Z",
+      "output": {
+        "UserPoolId": "us-east-2_l5bWb7QCv",
+        "AppClientIDWeb": "31b9so0tv5fc4vhugmljkj0gih",
+        "AppClientID": "57oglurv8obsn7ddmr1ppacfqh",
+        "IdentityPoolId": "us-east-2:9bcf01e4-f4bc-4758-9e6f-2ad4af578778",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-2:888315068417:userpool/us-east-2_l5bWb7QCv",
+        "IdentityPoolName": "impextension757a51c5_identitypool_757a51c5__prod",
+        "UserPoolName": "impextension757a51c5_userpool_757a51c5"
+      },
+      "lastPushDirHash": "Aw3g4rOUMvmZQ6BLZ2XNkflNouM="
+    }
+  },
+  "function": {
+    "impextensionalgolia": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "impextension",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ]
+        }
+      ],
+      "lastBuildTimeStamp": "2022-10-13T21:36:02.831Z",
+      "lastBuildType": "PROD",
+      "lastPackageTimeStamp": "2022-10-13T21:36:03.022Z",
+      "distZipFilename": "impextensionalgolia-6b4545574b59526e3278-build.zip",
+      "s3Bucket": {
+        "deploymentBucketName": "amplify-impextension-prod-93245-deployment",
+        "s3Key": "amplify-builds/impextensionalgolia-6b4545574b59526e3278-build.zip"
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-impextension-prod-93245-deployment/amplify-cfn-templates/function/impextensionalgolia-cloudformation-template.json",
+        "logicalId": "functionimpextensionalgolia"
+      },
+      "lastPushTimeStamp": "2022-10-13T21:37:45.038Z",
+      "output": {
+        "Region": "us-east-2",
+        "Arn": "arn:aws:lambda:us-east-2:888315068417:function:impextensionalgolia-prod",
+        "Name": "impextensionalgolia-prod",
+        "LambdaExecutionRole": "impextensionLambdaRole1943957c-prod"
+      },
+      "lastPushDirHash": "d2gxnZcu5aixN/5K9zvuj4ho/rU="
+    }
+  }
+}

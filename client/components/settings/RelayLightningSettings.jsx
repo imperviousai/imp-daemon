@@ -477,7 +477,7 @@ const RelayLightningSettings = () => {
             htmlFor="pubkey"
             className="block text-sm font-medium text-gray-700"
           >
-            Supply Lightning Pubkey (leave blank if it is a Voltage node)
+            Supply Lightning Pubkey
           </label>
           <div className="mt-1">
             <input
@@ -675,7 +675,7 @@ const RelayLightningSettings = () => {
                 <p className="mt-1 text-sm font-semibold text-blue-gray-500">
                   Existing LN Pubkey: {data?.data.lightningConfig.pubkey}
                 </p>
-                {JSON.stringify(myDid?.service).includes(
+                {JSON.stringify(myDid?.service)?.includes(
                   data?.data.lightningConfig.pubkey
                 ) && (
                   <p className="mt-1 text-sm text-blue-gray-500">
