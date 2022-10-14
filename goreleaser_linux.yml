@@ -1,0 +1,19 @@
+builds:
+  - id: impervious-linux
+    main: ./cmd/impd
+    binary: impervious
+    goos:
+      - linux
+    goarch:
+      # - 386
+      - amd64
+      # - arm
+      # - arm64
+      # - s390x
+archives:
+  - 
+    format: zip
+    name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+checksum:
+  name_template: "{{ .ProjectName }}_linux_checksums.txt"
+  algorithm: sha256
