@@ -3,6 +3,7 @@ import {
   generateInvoice,
   payInvoice,
   getChannelsBalance,
+  getTransactions,
 } from "../utils/lightning";
 
 // useCreateinvoice creates a lightning invoice
@@ -20,6 +21,7 @@ export const usePayInvoice = () => {
     onSuccess: () => {
       console.log("Invoice successfully paid.");
       queryClient.invalidateQueries("fetch-channels-balance");
+      queryClient.invalidateQueries("fetch-transactions");
     },
     onError: (error) => console.log("Error paying invoice: " + error),
   });
@@ -35,6 +37,21 @@ export const useFetchChannelsBalance = (onSuccess, onError) => {
     select: (res) => {
       if (res.data) {
         return res.data.amt;
+      }
+    },
+  });
+};
+
+//useFetchTransactions grabs the node's transaction history
+export const useFetchTransactions = (onSuccess, onError) => {
+  return useQuery("fetch-transactions", getTransactions, {
+    onSuccess,
+    onError: (err) => {
+      console.log("Unable to fetch transactions: ", err);
+    },
+    select: (res) => {
+      if (res.data) {
+        return res.data.transactions;
       }
     },
   });

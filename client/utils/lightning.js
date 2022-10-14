@@ -45,3 +45,14 @@ export const getChannelsBalance = () => {
     },
   });
 };
+
+export const getTransactions = () => {
+  return request({
+    url: "/v1/lightning/gettransactions",
+    method: "post",
+    data: {},
+    headers: {
+      "Grpc-Metadata-X-API-KEY": `${getApiKey()}`,
+    },
+  });
+};

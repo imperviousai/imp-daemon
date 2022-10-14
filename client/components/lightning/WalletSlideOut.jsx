@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ClipboardCopyIcon, XIcon } from "@heroicons/react/outline";
 import { toast } from "react-toastify";
@@ -10,6 +10,7 @@ import {
   useCreateInvoice,
   usePayInvoice,
   useFetchChannelsBalance,
+  useFetchTransactions,
 } from "../../hooks/lightning";
 import InvoiceModal from "./InvoiceModal";
 
@@ -19,6 +20,8 @@ function classNames(...classes) {
 
 export default function WalletSlideOut({ open, setOpen }) {
   const tabs = [{ name: "Info" }, { name: "Actions" }];
+
+  const [parsedTransactions, setParsedTransactions] = useState([]);
 
   const [currentTab, setCurrentTab] = useState("Info");
   const [invoice, setInvoice] = useState("");
@@ -32,6 +35,20 @@ export default function WalletSlideOut({ open, setOpen }) {
   const { mutate: createInvoice } = useCreateInvoice();
   const { mutate: payInvoice } = usePayInvoice();
   const { data: channelsBalance } = useFetchChannelsBalance();
+  const { data: transactions } = useFetchTransactions();
+
+  useEffect(() => {
+    if (transactions) {
+      let list = transactions
+        .split("$_$")
+        .filter((t) => t.length)
+        .map((t) => {
+          let x = t.split("  ");
+          return x;
+        });
+      console.log(list);
+    }
+  }, [transactions]);
 
   const createInvoiceConfirm = () => {
     createInvoice(
