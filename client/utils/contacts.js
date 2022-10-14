@@ -66,12 +66,12 @@ export const addContact = (data) => {
   //     didDocument - didDocument of the contact
   //     name - supply a name/nickname for the contact
   // }
-  const { didDocument, name, myDid, twitterUsername, avatarUrl } = data;
+  const { didDocument, name, myDid, username, avatarUrl } = data;
   // each new contact gets a generated, random bighead avatar.
   const randomAvatar = getRandomAvatar();
   const metadata = JSON.stringify({
     avatar: randomAvatar,
-    twitterUsername: twitterUsername || "",
+    username: username || "",
     avatarUrl: avatarUrl || "",
   });
   return request({
@@ -93,16 +93,10 @@ export const addContact = (data) => {
 };
 
 export const updateContact = (data) => {
-  const {
-    longFormDid,
-    name,
-    existingContact,
-    avatar,
-    twitterUsername,
-    avatarUrl,
-  } = data;
+  const { longFormDid, name, existingContact, avatar, username, avatarUrl } =
+    data;
   const updatedContact = existingContact;
-  if (twitterUsername) updatedContact = { ...updatedContact, twitterUsername };
+  if (username) updatedContact = { ...updatedContact, username };
   if (avatarUrl) updatedContact = { ...updatedContact, avatarUrl };
   if (name) updatedContact = { ...updatedContact, name };
   if (longFormDid) updatedContact = { ...updatedContact, did: longFormDid };
@@ -156,16 +150,15 @@ export const getRandomAvatar = () => {
 };
 
 export const GET_DID_BY_TWITTER = gql`
-  query getDIDByTwitter($twitterUsername: String!) {
-    listDIDS(filter: { twitterUsername: { eq: $twitterUsername } }) {
+  query getDIDByTwitter($username: String!) {
+    listDIDS(filter: { username: { eq: $username } }) {
       items {
         avatarUrl
-        id
         lastUpdated
         longFormDid
         shortFormDid
         name
-        twitterUsername
+        username
       }
     }
   }

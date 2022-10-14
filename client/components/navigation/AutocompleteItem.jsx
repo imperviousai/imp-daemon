@@ -25,10 +25,10 @@ export function AutocompleteItem({ item, saveContactConfirm }) {
           <a
             target="_blank"
             rel="noreferrer"
-            href={`https://twitter.com/${item.twitterUsername}`}
+            href={`https://twitter.com/${item.username}`}
             className="text-sm text-blue-400"
           >
-            @{item.twitterUsername}
+            @{item.username}
           </a>
           <p className="text-sm text-gray-500">{item.shortFormDid}</p>
         </div>

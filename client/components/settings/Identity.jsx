@@ -17,7 +17,7 @@ function Identity({ longFormDid }) {
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
 
   const { data, loading, error } = useQuery(GET_DID_BY_TWITTER, {
-    variables: { twitterUsername: user?.nickname },
+    variables: { username: user?.nickname },
   });
 
   useEffect(() => {
@@ -33,10 +33,11 @@ function Identity({ longFormDid }) {
       input: {
         longFormDid: myDidLongFormDocument,
         shortFormDid: myDid?.id,
-        twitterUsername: user?.nickname,
+        username: user?.nickname,
         avatarUrl: user?.picture,
         name: user?.nickname,
         lastUpdated: new Date().getTime(),
+        profileType: "twitter",
       },
     },
     refetchQueries: [{ query: GET_DID_BY_TWITTER }, "getDIDByTwitter"],
@@ -45,13 +46,13 @@ function Identity({ longFormDid }) {
   const [updateDid] = useMutation(gql(updateDID), {
     variables: {
       input: {
-        id: publishedDid?.id,
         longFormDid: myDidLongFormDocument,
         shortFormDid: myDid?.id,
-        twitterUsername: user?.nickname,
+        username: user?.nickname,
         avatarUrl: user?.picture,
         name: user?.nickname,
         lastUpdated: new Date().getTime(),
+        profileType: "twitter",
       },
     },
     refetchQueries: [{ query: GET_DID_BY_TWITTER }, "getDIDByTwitter"],
@@ -59,7 +60,10 @@ function Identity({ longFormDid }) {
 
   const [deleteDid] = useMutation(gql(deleteDID), {
     variables: {
-      input: { id: publishedDid.id },
+      input: {
+        shortFormDid: publishedDid.shortFormDid,
+        username: publishedDid.username,
+      },
     },
     refetchQueries: [{ query: GET_DID_BY_TWITTER }, "getDIDByTwitter"],
   });

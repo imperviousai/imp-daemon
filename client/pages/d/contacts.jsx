@@ -231,7 +231,7 @@ export const ContactView = ({
               </dd>
             </CopyToClipboard>
           </div>
-          {JSON.parse(selectedContact.metadata).twitterUsername && (
+          {JSON.parse(selectedContact.metadata).username && (
             <div className="sm:col-span-1">
               <dt className="text-sm font-medium text-gray-500">Twitter</dt>
               <dd className="mt-1 text-sm text-gray-900 hover:bg-gray-50">

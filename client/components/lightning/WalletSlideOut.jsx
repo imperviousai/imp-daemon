@@ -137,25 +137,29 @@ export default function WalletSlideOut({ open, setOpen }) {
     return (
       <>
         <div className="py-8 px-16 w-full flex flex-col space-y-3">
-          <p className="font-semibold text-sm">Public Key</p>
-          <div className="flex w-full">
-            <CopyToClipboard
-              text={lightningConfig?.data.lightningConfig.pubkey}
-              onCopy={() => toast.success("Copied")}
-            >
-              <div className="flex">
-                <p className="text-sm">
-                  {`${lightningConfig?.data.lightningConfig.pubkey.substring(
-                    0,
-                    16
-                  )}...${lightningConfig?.data.lightningConfig.pubkey.substring(
-                    lightningConfig?.data.lightningConfig.pubkey.length - 16
-                  )}`}
-                </p>
-                <ClipboardCopyIcon className="text-gray-500 hover:text-gray-900 h-5 w-5 ml-3" />
+          {lightningConfig?.data.lightningConfig.pubkey && (
+            <>
+              <p className="font-semibold text-sm">Public Key</p>
+              <div className="flex w-full">
+                <CopyToClipboard
+                  text={lightningConfig?.data.lightningConfig.pubkey}
+                  onCopy={() => toast.success("Copied")}
+                >
+                  <div className="flex">
+                    <p className="text-sm">
+                      {`${lightningConfig?.data.lightningConfig.pubkey.substring(
+                        0,
+                        16
+                      )}...${lightningConfig?.data.lightningConfig.pubkey.substring(
+                        lightningConfig?.data.lightningConfig.pubkey.length - 16
+                      )}`}
+                    </p>
+                    <ClipboardCopyIcon className="text-gray-500 hover:text-gray-900 h-5 w-5 ml-3" />
+                  </div>
+                </CopyToClipboard>
               </div>
-            </CopyToClipboard>
-          </div>
+            </>
+          )}
         </div>
       </>
     );
