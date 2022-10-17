@@ -12,6 +12,8 @@ import { FaBitcoin } from "react-icons/fa";
 import { useSendMessage } from "../../hooks/messages";
 import { useFetchContacts } from "../../hooks/contacts";
 import ContactAvatar from "../contact/ContactAvatar";
+import { useFetchChannelsBalance } from "../../hooks/lightning";
+import sb from "satoshi-bitcoin";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -127,6 +129,7 @@ export default function PaymentsSlideOut({ open, setOpen, selectedContact }) {
   const [message, setMessage] = useState("");
   const [quickSend, setQuickSend] = useState(false);
   const { mutate: sendBasicMessage } = useSendMessage();
+  const { data: channelsBalance } = useFetchChannelsBalance();
 
   const onErrorSendMessage = () => {
     toast.error("Error sending message. Please try again.");
@@ -139,6 +142,10 @@ export default function PaymentsSlideOut({ open, setOpen, selectedContact }) {
   }, [selectedContact]);
 
   const sendPayment = () => {
+    if (channelsBalance < sats) {
+      toast.error("Insufficient funds.");
+      return;
+    }
     if (quickSend) {
       sendBasicMessage(
         {
@@ -245,7 +252,8 @@ export default function PaymentsSlideOut({ open, setOpen, selectedContact }) {
                     <div className="bg-primary py-6 px-4 sm:px-6">
                       <div className="flex items-center justify-between">
                         <Dialog.Title className="text-lg font-medium text-white inline-flex items-center">
-                          Send <FaBitcoin className="w-5 h-5 ml-1 mb-0.5" />
+                          Quick Send{" "}
+                          <FaBitcoin className="w-5 h-5 ml-1 mb-0.5" />
                         </Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -263,6 +271,19 @@ export default function PaymentsSlideOut({ open, setOpen, selectedContact }) {
                           Instantly send sats to anyone via the Lightning
                           Network.
                         </p>
+                      </div>
+                      <div className="mt-1">
+                        <p className="text-indigo-300 text-md">Your Balance</p>
+                        <div className="flex items-center">
+                          <p className="text-lg font-bold text-white">
+                            {Number(channelsBalance).toLocaleString()} Sats (
+                            {channelsBalance && sb.toBitcoin(channelsBalance)}{" "}
+                            BTC)
+                          </p>
+                          <span>
+                            <FaBitcoin className="ml-2 h-5 w-5 text-white" />
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div className="flex flex-1 flex-col justify-between">

@@ -2,6 +2,7 @@ import React from "react";
 import { DownloadIcon } from "@heroicons/react/solid";
 import { trigger } from "../../utils/events";
 import { saveAs } from "file-saver";
+import { filesize } from "filesize";
 
 export const FileDownload = ({ message, myDid, fileObj }) => {
   const downloadFile = () => {
@@ -23,7 +24,7 @@ export const FileDownload = ({ message, myDid, fileObj }) => {
                 {message.data ? message.data.name : "No File Name"}
               </h3>
               <p className="mt-1 text-sm font-light text-gray-500">
-                {message.data && `(${message.data.size} bytes)`}
+                {message.data && `(${filesize(message.data.size)})`}
               </p>
             </div>
           </div>
