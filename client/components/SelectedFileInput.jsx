@@ -3,6 +3,7 @@ import { XIcon } from "@heroicons/react/solid";
 import { TailSpin } from "react-loader-spinner";
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
 import { toast } from "react-toastify";
+import { filesize } from "filesize";
 
 function SelectedFileInput({ fileInput, setFileInput, progress }) {
   const removeFile = () => setFileInput();
@@ -47,7 +48,7 @@ function SelectedFileInput({ fileInput, setFileInput, progress }) {
               <p className="w-0 flex-1 text-sm font-medium text-gray-900">
                 {fileInput.name}{" "}
                 <span className="font-light text-gray-500">
-                  ({fileInput.size} bytes)
+                  ({filesize(fileInput.size)})
                 </span>
               </p>
             </div>

@@ -46,8 +46,8 @@ const RelayLightningSettings = () => {
   const [tlsCert, setTlsCert] = useState("");
   const [adminMacaroonHex, setAdminMacaroonHex] = useState("");
   const [tlsCertHex, setTLSCertHex] = useState("");
-  const [useTLSFilePath, setUseTLSFilePath] = useState(true);
-  const [useMacaroonFilePath, setUseMacaroonFilePath] = useState(true);
+  const [useTLSFilePath, setUseTLSFilePath] = useState(false);
+  const [useMacaroonFilePath, setUseMacaroonFilePath] = useState(false);
 
   const clearVoltageInfo = () => {
     setNodeCreationSuccess(false);
@@ -283,14 +283,35 @@ const RelayLightningSettings = () => {
         <h2 className="text-xl font-medium text-blue-gray-900">
           Build a Lightning Node
         </h2>
-        <p className="mt-1 mb-2 text-sm text-blue-gray-500">
+        <p className="my-1 text-sm text-blue-gray-500">
           Don&apos;t have a lightning node already? Impervious supports creating
-          a Voltage Lightning Node via the Voltage API. To get started, supply a
-          Voltage API Key and Node Password and we will handle the rest.
+          a{" "}
+          <a
+            href="https://voltage.cloud/"
+            className="font-bold underline hover:text-gray-600"
+          >
+            Voltage Lightning Node
+          </a>
+          .
         </p>
-        <a href="https://voltage.cloud/" className="text-sm text-primary">
-          Head over to voltage.cloud if you do not have an API key.
+        <a
+          href="https://voltage.cloud/"
+          className="mt-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-200 hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
+        >
+          <img src="/Voltage.svg" alt="Impervious" height="200" width="200" />
         </a>
+        <div>
+          <a
+            href="https://voltage.cloud/"
+            className="text-md text-gray-900 hover:text-gray-600 font-semibold underline"
+          >
+            Head over to Voltage if you do not have an API key.
+          </a>
+        </div>
+        <p className="mt-1 mb-2 text-sm text-blue-gray-500">
+          To get started, supply a Voltage API Key and Node Password and we will
+          handle the rest.
+        </p>
         {nodeCreationSuccess && (
           <>
             <div className="flex items-center space-x-2">
@@ -434,6 +455,19 @@ const RelayLightningSettings = () => {
           the Impervious daemon services and the application will experience a
           reboot.
         </p>
+        <p className="mt-1 mb-2 text-sm text-blue-gray-500 bg-gray-200 rounded-md p-2">
+          <b>NOTE:</b> This feature is still experimental, and supplying the
+          wrong lightning configuration information may cause known issues in
+          the application. Should you experience any issues or bugs, and need to
+          reset.{" "}
+          <a
+            target="_blank"
+            href="https://github.com/imperviousai/imp-launcher/blob/master/README.md"
+            className="pl-1 underline text-primary font-semibold"
+          >
+            Click here for reset instructions.
+          </a>
+        </p>
         <div>
           <label
             htmlFor="ip"
@@ -491,14 +525,7 @@ const RelayLightningSettings = () => {
             />
           </div>
         </div>
-        <span className="relative z-0 inline-flex shadow-sm rounded-md">
-          <button
-            type="button"
-            onClick={() => setUseTLSFilePath(true)}
-            className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            Use TLS Filepath
-          </button>
+        {/* <span className="relative z-0 inline-flex shadow-sm rounded-md">
           <button
             type="button"
             onClick={() => setUseTLSFilePath(false)}
@@ -506,7 +533,14 @@ const RelayLightningSettings = () => {
           >
             Use TLS Hex String
           </button>
-        </span>
+          <button
+            type="button"
+            onClick={() => setUseTLSFilePath(true)}
+            className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            Use TLS Filepath
+          </button>
+        </span> */}
         {useTLSFilePath ? (
           <div>
             <label
@@ -548,14 +582,7 @@ const RelayLightningSettings = () => {
             </div>
           </div>
         )}
-        <span className="relative z-0 inline-flex shadow-sm rounded-md">
-          <button
-            type="button"
-            onClick={() => setUseMacaroonFilePath(true)}
-            className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            Use Macaroon Filepath
-          </button>
+        {/* <span className="relative z-0 inline-flex shadow-sm rounded-md">
           <button
             type="button"
             onClick={() => setUseMacaroonFilePath(false)}
@@ -563,7 +590,14 @@ const RelayLightningSettings = () => {
           >
             Use Macaroon Hex String
           </button>
-        </span>
+          <button
+            type="button"
+            onClick={() => setUseMacaroonFilePath(true)}
+            className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            Use Macaroon Filepath
+          </button>
+        </span> */}
         {useMacaroonFilePath ? (
           <div>
             <label
