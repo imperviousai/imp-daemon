@@ -675,6 +675,7 @@ export default function MainNavigation({ children, currentPage }) {
                 <div className="ml-2 flex items-center space-x-4 sm:ml-6 sm:space-x-6">
                   <a
                     target="_blank"
+                    rel="noreferrer"
                     href="https://impervious.ai/"
                     className="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-0 sm:ml-0"
                   >

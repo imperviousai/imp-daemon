@@ -462,6 +462,7 @@ const RelayLightningSettings = () => {
           reset.{" "}
           <a
             target="_blank"
+            rel="noreferrer"
             href="https://github.com/imperviousai/imp-launcher/blob/master/README.md"
             className="pl-1 underline text-primary font-semibold"
           >
