@@ -2,7 +2,8 @@ name: Build-Artifacts
 on:
   push:
     branches:
-      - "release-candidate-1"
+      - "fix-gha"
+      - "master"
 
 
 permissions:
