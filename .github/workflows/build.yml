@@ -2,7 +2,7 @@ name: Build-Artifacts
 on:
   push:
     branches:
-      - "master"
+      - "release-candidate-1"
 
 
 permissions:
@@ -51,7 +51,7 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist --config .goreleaser_macosx.yml
+          args: release --config .goreleaser_macosx.yml --debug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
@@ -60,13 +60,17 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Impervious-macosx_arm64
-          path: dist/impervious-macos-arm64*/impervious.zip
+          # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-arm64_darwin_arm64/impervious
+          # path: dist/impervious-macos-arm64*/impervious.zip
+          path: dist/impervious-macos-arm64*/impervious
       - 
         name: Upload assets (macos-amd64)
         uses: actions/upload-artifact@v3
         with:
           name: Impervious-macosx_amd64
-          path: dist/impervious-macos-amd64*/impervious.zip
+          # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-amd64_darwin_amd64_v1/impervious
+          # path: dist/impervious-macos-amd64*/impervious.zip
+          path: dist/impervious-macos-amd64*/impervious
 
 
   goreleaser_linux:

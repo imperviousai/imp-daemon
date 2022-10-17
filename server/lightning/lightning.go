@@ -2,7 +2,6 @@ package lightning
 
 import (
 	"context"
-
 	"github.com/imperviousai/imp-daemon/core"
 	lightning_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/lightning"
 	"go.uber.org/zap"
@@ -76,14 +75,18 @@ func (l *lightningServer) CheckInvoice(ctx context.Context, req *lightning_proto
 // GetChannels Get the channels from the connected LND node
 func (l *lightningServer) GetChannels(ctx context.Context, req *lightning_proto.GetChannelsRequest) (*lightning_proto.GetChannelsResponse, error) {
 	zap.L().Info("[Server] Getchannels")
+
 	status, lerr := l.core.CheckLightningStatus() // check to see if we have a Lightning node
+
 	if lerr != nil {
 		zap.L().Error("[Server] Status failed", zap.String("error", lerr.Error()))
 		return &lightning_proto.GetChannelsResponse{
 			Amt: -1,
 		}, lerr
+
 	}
 	if len(status) == 0 {
+
 		return &lightning_proto.GetChannelsResponse{
 			Amt: -1,
 		}, lerr
@@ -107,14 +110,18 @@ func (l *lightningServer) GetChannels(ctx context.Context, req *lightning_proto.
 // ListPayments Get the transactions from the connected LND node
 func (l *lightningServer) ListPayments(ctx context.Context, req *lightning_proto.ListPaymentsRequest) (*lightning_proto.ListPaymentsResponse, error) {
 	zap.L().Info("[Server] ListPayments")
+
 	status, lerr := l.core.CheckLightningStatus() // check to see if we have a Lightning node
+
 	if lerr != nil {
 		zap.L().Error("[Server] Status failed", zap.String("error", lerr.Error()))
 		return &lightning_proto.ListPaymentsResponse{
 			Payments: "",
 		}, lerr
+
 	}
 	if len(status) == 0 {
+
 		return &lightning_proto.ListPaymentsResponse{
 			Payments: "",
 		}, lerr
@@ -138,14 +145,18 @@ func (l *lightningServer) ListPayments(ctx context.Context, req *lightning_proto
 // ListInvoices Get the invoices from the connected LND node
 func (l *lightningServer) ListInvoices(ctx context.Context, req *lightning_proto.ListInvoicesRequest) (*lightning_proto.ListInvoicesResponse, error) {
 	zap.L().Info("[Server] ListInvoices")
+
 	status, lerr := l.core.CheckLightningStatus() // check to see if we have a Lightning node
+
 	if lerr != nil {
 		zap.L().Error("[Server] Status failed", zap.String("error", lerr.Error()))
 		return &lightning_proto.ListInvoicesResponse{
 			Invoices: "",
 		}, nil
+
 	}
 	if len(status) == 0 {
+
 		return &lightning_proto.ListInvoicesResponse{
 			Invoices: "",
 		}, nil
