@@ -109,9 +109,10 @@ function Unlock() {
               </div>
               <div className="flex justify-center pt-5">
                 <p className="text-sm">
-                  Can't unlock?
+                  Can&apos;t unlock?
                   <a
                     target="_blank"
+                    rel="noreferrer"
                     href="https://github.com/imperviousai/imp-launcher/blob/master/README.md"
                     className="pl-1 underline text-primary font-semibold"
                   >
