@@ -2,7 +2,6 @@ package lightning
 
 import (
 	"context"
-
 	"github.com/imperviousai/imp-daemon/core"
 	lightning_proto "github.com/imperviousai/imp-daemon/gen/go/proto/imp/api/lightning"
 	"go.uber.org/zap"
@@ -76,50 +75,89 @@ func (l *lightningServer) CheckInvoice(ctx context.Context, req *lightning_proto
 // GetChannels Get the channels from the connected LND node
 func (l *lightningServer) GetChannels(ctx context.Context, req *lightning_proto.GetChannelsRequest) (*lightning_proto.GetChannelsResponse, error) {
 	zap.L().Info("[Server] Getchannels")
+	status, lerr := l.core.CheckLightningStatus() //check to see if we have a Lightning node
+	if lerr != nil {
+		zap.L().Error("[Server] Status failed", zap.String("error", lerr.Error()))
+		return &lightning_proto.GetChannelsResponse{
+			Amt: -1,
+		}, lerr
+	} else if len(status) == 0 {
+		return &lightning_proto.GetChannelsResponse{
+			Amt: -1,
+		}, lerr
+	} else {
+		resp, err := l.core.GetChannels()
+		if err != nil {
+			zap.L().Error("[Server] Getchannels failed", zap.String("error", err.Error()))
+			return &lightning_proto.GetChannelsResponse{
+				Amt: -1,
+			}, err
+		}
 
-	resp, err := l.core.GetChannels()
-	if err != nil {
-		zap.L().Error("[Server] Getchannels failed", zap.String("error", err.Error()))
-		return nil, err
+		zap.L().Info("[Server] Getchannels success")
+		return &lightning_proto.GetChannelsResponse{
+			Amt: resp,
+		}, nil
 	}
-
-	zap.L().Info("[Server] Getchannels success")
-	return &lightning_proto.GetChannelsResponse{
-		Amt: resp,
-	}, nil
 
 }
 
 // ListPayments Get the transactions from the connected LND node
 func (l *lightningServer) ListPayments(ctx context.Context, req *lightning_proto.ListPaymentsRequest) (*lightning_proto.ListPaymentsResponse, error) {
 	zap.L().Info("[Server] ListPayments")
-	var resp string
-	resp, err := l.core.ListPayments()
-	if err != nil {
-		zap.L().Error("[Server] GetTransactions failed", zap.String("error", err.Error()))
-		return nil, err
+	status, lerr := l.core.CheckLightningStatus() //check to see if we have a Lightning node
+	if lerr != nil {
+		zap.L().Error("[Server] Status failed", zap.String("error", lerr.Error()))
+		return &lightning_proto.ListPaymentsResponse{
+			Payments: "",
+		}, lerr
+	} else if len(status) == 0 {
+		return &lightning_proto.ListPaymentsResponse{
+			Payments: "",
+		}, lerr
+	} else {
+		var resp string
+		resp, err := l.core.ListPayments()
+		if err != nil {
+			zap.L().Error("[Server] GetTransactions failed", zap.String("error", err.Error()))
+			return &lightning_proto.ListPaymentsResponse{
+				Payments: "",
+			}, err
+		}
+
+		zap.L().Info("[Server] ListPayments success")
+		return &lightning_proto.ListPaymentsResponse{
+			Payments: resp,
+		}, nil
 	}
-
-	zap.L().Info("[Server] ListPayments success")
-	return &lightning_proto.ListPaymentsResponse{
-		Payments: resp,
-	}, nil
-
 }
 
 // ListInvoices Get the invoices from the connected LND node
 func (l *lightningServer) ListInvoices(ctx context.Context, req *lightning_proto.ListInvoicesRequest) (*lightning_proto.ListInvoicesResponse, error) {
 	zap.L().Info("[Server] ListInvoices")
-	var resp string
-	resp, err := l.core.ListInvoices()
-	if err != nil {
-		zap.L().Error("[Server] ListInvoices failed", zap.String("error", err.Error()))
-		return nil, err
-	}
+	status, lerr := l.core.CheckLightningStatus() //check to see if we have a Lightning node
+	if lerr != nil {
+		zap.L().Error("[Server] Status failed", zap.String("error", lerr.Error()))
+		return &lightning_proto.ListInvoicesResponse{
+			Invoices: "",
+		}, nil
+	} else if len(status) == 0 {
+		return &lightning_proto.ListInvoicesResponse{
+			Invoices: "",
+		}, nil
+	} else {
+		resp, err := l.core.ListInvoices()
+		if err != nil {
+			zap.L().Error("[Server] ListInvoices failed", zap.String("error", err.Error()))
+			return &lightning_proto.ListInvoicesResponse{
+				Invoices: "",
+			}, err
+		}
 
-	zap.L().Info("[Server] ListInvoices success")
-	return &lightning_proto.ListInvoicesResponse{
-		Invoices: resp,
-	}, nil
+		zap.L().Info("[Server] ListInvoices success")
+		return &lightning_proto.ListInvoicesResponse{
+			Invoices: resp,
+		}, nil
+	}
 
 }

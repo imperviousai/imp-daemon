@@ -9,6 +9,7 @@ import {
 
 // useCreateinvoice creates a lightning invoice
 export const useCreateInvoice = () => {
+  const queryClient = useQueryClient();
   return useMutation(generateInvoice, {
     onSuccess: () => {
       console.log("Invoice successfully generated.");

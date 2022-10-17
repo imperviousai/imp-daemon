@@ -60,6 +60,7 @@ import { PaperAirplaneIcon, UserAddIcon } from "@heroicons/react/solid";
 import { BsWallet } from "react-icons/bs";
 import WalletSlideOut from "./lightning/WalletSlideOut";
 import { useFetchLightningConfig } from "../hooks/config";
+import PaymentsSlideOut from "./lightning/PaymentsSlideOut";
 
 const sidebarNavigation = [
   { name: "Dashboard", href: "/d/dashboard", icon: HomeIcon, current: false },
@@ -361,6 +362,7 @@ const TwitterConnect = () => {
 export default function MainNavigation({ children, currentPage }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openAddContactForm, setOpenAddContactForm] = useState(false);
+  const [quickSend, setQuickSend] = useState(false);
   const [openWallet, setOpenWallet] = useState(false);
   const { data: myDid } = useFetchMyDid();
   const { mutate: addContact } = useAddContact();
@@ -435,7 +437,18 @@ export default function MainNavigation({ children, currentPage }) {
   return (
     <>
       {lightningConfig?.data.lightningConfig.listening && (
-        <WalletSlideOut open={openWallet} setOpen={setOpenWallet} />
+        <>
+          <WalletSlideOut
+            open={openWallet}
+            setOpen={setOpenWallet}
+            setQuickSend={setQuickSend}
+          />
+          <PaymentsSlideOut
+            open={quickSend}
+            setOpen={setQuickSend}
+            selectedContact={null}
+          />
+        </>
       )}
       <div className="h-screen w-screen flex">
         {/* Narrow sidebar */}
@@ -660,19 +673,21 @@ export default function MainNavigation({ children, currentPage }) {
                 </div>
 
                 <div className="ml-2 flex items-center space-x-4 sm:ml-6 sm:space-x-6">
-                  {/* <button
-                    type="button"
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href="https://impervious.ai/"
                     className="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-0 sm:ml-0"
                   >
                     Share Browser
-                  </button> */}
+                  </a>
                   <ShareContactButton myDid={myDid} />
                   <button
                     type="button"
                     onClick={() => setOpenAddContactForm(true)}
                     className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3"
                   >
-                    <UserAddIcon className="h-4 w-4 mr-1" /> Add Contact
+                    <UserAddIcon className="h-4 w-4 mr-1" /> Add
                   </button>
                   <TwitterConnect />
                 </div>

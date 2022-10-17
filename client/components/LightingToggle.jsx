@@ -22,7 +22,7 @@ export default function LightningToggle() {
     setLightningEnabled(value);
     if (value) {
       toast.info(
-        "Lightning payments are now enabled and lightning messages will now be prioritized over didcomm messages."
+        "The Lightning Network is now prioritized for sending and receiving DIDComm messages."
       );
     }
   };
