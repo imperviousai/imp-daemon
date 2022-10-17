@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { BsLightningChargeFill, BsWallet } from "react-icons/bs";
 import { useFetchLightningConfig } from "../../hooks/config";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { FaFileInvoice } from "react-icons/fa";
+import { FaBitcoin, FaFileInvoice } from "react-icons/fa";
 import {
   useCreateInvoice,
   usePayInvoice,
@@ -15,18 +15,19 @@ import {
 } from "../../hooks/lightning";
 import InvoiceModal from "./InvoiceModal";
 import moment from "moment";
+import sb from "satoshi-bitcoin";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function WalletSlideOut({ open, setOpen }) {
-  const tabs = [{ name: "Info" }, { name: "Actions" }, { name: "History" }];
+export default function WalletSlideOut({ open, setOpen, setQuickSend }) {
+  const tabs = [{ name: "Actions" }, { name: "History" }, { name: "Info" }];
 
   const [parsedPayments, setParsedPayments] = useState([]);
   const [parsedInvoices, setParsedInvoices] = useState([]);
 
-  const [currentTab, setCurrentTab] = useState("Info");
+  const [currentTab, setCurrentTab] = useState("Actions");
   const [invoice, setInvoice] = useState("");
   const [amount, setAmount] = useState("");
   const [memo, setMemo] = useState("");
@@ -230,6 +231,32 @@ export default function WalletSlideOut({ open, setOpen }) {
     );
   };
 
+  const openQuickSend = () => {
+    return (
+      <>
+        <p className="text-md text-gray-700 font-semibold">
+          Lightning Quick Send
+        </p>
+        <p className="text-sm text-gray-500">
+          Instantly send sats to anyone via the Lightning Network.
+        </p>
+        <div>
+          <button
+            type="button"
+            onClick={() => setQuickSend(true)}
+            className="w-full justify-center my-2 inline-flex items-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            <BsLightningChargeFill
+              className="-ml-1 mr-2 h-4 w-4"
+              aria-hidden="true"
+            />
+            Open Quick Send
+          </button>
+        </div>
+      </>
+    );
+  };
+
   const payInvoiceForm = () => {
     return (
       <>
@@ -358,6 +385,7 @@ export default function WalletSlideOut({ open, setOpen }) {
           <>
             {showCreateInvoice && createInvoiceForm()}
             {showPayInvoice && payInvoiceForm()}
+            {openQuickSend()}
           </>
         </div>
       </>
@@ -512,12 +540,17 @@ export default function WalletSlideOut({ open, setOpen }) {
                         </div>
                       </div>
                       <div className="mt-1">
-                        <p className="text-indigo-300 text-md">
-                          Balance (sats)
-                        </p>
-                        <p className="text-lg font-bold text-white">
-                          {channelsBalance} Sats
-                        </p>
+                        <p className="text-indigo-300 text-md">Your Balance</p>
+                        <div className="flex items-center">
+                          <p className="text-lg font-bold text-white">
+                            {Number(channelsBalance).toLocaleString()} Sats (
+                            {channelsBalance && sb.toBitcoin(channelsBalance)}{" "}
+                            BTC)
+                          </p>
+                          <span>
+                            <FaBitcoin className="ml-2 h-5 w-5 text-white" />
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <>

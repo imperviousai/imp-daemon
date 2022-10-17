@@ -107,6 +107,18 @@ function Unlock() {
                   </div>
                 )}
               </div>
+              <div className="flex justify-center pt-5">
+                <p className="text-sm">
+                  Can't unlock?
+                  <a
+                    target="_blank"
+                    href="https://github.com/imperviousai/imp-launcher/blob/master/README.md"
+                    className="pl-1 underline text-primary font-semibold"
+                  >
+                    Click here for reset instructions.
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
         </main>
