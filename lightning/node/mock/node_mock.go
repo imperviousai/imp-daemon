@@ -73,6 +73,34 @@ func (m *MockNode) GenerateInvoice(arg0 int64, arg1 string) (string, error) {
 	return ret0, ret1
 }
 
+// Getchannels mocks base method.
+func (m *MockNode) GetChannels() (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetChannels")
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListPayments mocks base method.
+func (m *MockNode) ListPayments() (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListPayments")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListInvoices mocks base method.
+func (m *MockNode) ListInvoices() (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListInvoices")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+
 // GenerateInvoice indicates an expected call of GenerateInvoice.
 func (mr *MockNodeMockRecorder) GenerateInvoice(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()

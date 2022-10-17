@@ -28,7 +28,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-//*
+// *
 // Represents a status request message.
 type StatusRequest struct {
 	state         protoimpl.MessageState
@@ -264,7 +264,7 @@ func (x *CommunicationStatus) GetWebsocketConnections() []string {
 	return nil
 }
 
-//*
+// *
 // Represents a response back from a status request.
 type StatusResponse struct {
 	state         protoimpl.MessageState
