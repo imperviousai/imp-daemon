@@ -842,17 +842,14 @@ func (l *lndNode) GetChannels() (int64, error) {
 func (l *lndNode) ListPayments() (string, error) {
 	var out string
 	resp, err := l.lndClient.ListPayments(context.Background(), &lnrpc.ListPaymentsRequest{})
+	if err != nil {
+		return "", err
+	}
 	fmt.Println("GetTransactions, number of Transactions: ", len(resp.GetPayments()))
-	//t, err := l.lndClient.GetTransactions(context.Background(), &lnrpc.GetTransactionsRequest{}) //layer 1
-	//fmt.Println("GET TRANSACTIONS DUMP:", t)
-	t, err := l.lndClient.ListInvoices(context.Background(), &lnrpc.ListInvoiceRequest{}) //
-	fmt.Println(".....")
-	fmt.Println("GET ListInvoices DUMP:", t)
-	fmt.Println(".....")
-	fmt.Println(".....")
+
+	// t, err := l.lndClient.ListInvoices(context.Background(), &lnrpc.ListInvoiceRequest{}) //
+
 	for _, y := range resp.GetPayments() {
-		//fmt.Println("Each chan local balance: ", v.LocalBalance)
-		//out += "$_$" + y.String()
 		out += "$_$" + y.String()
 	}
 	return out, err
@@ -865,8 +862,6 @@ func (l *lndNode) ListInvoices() (string, error) {
 	fmt.Println("GetTransactions, number of Transactions: ", len(resp.Invoices))
 
 	for _, y := range resp.Invoices {
-		//fmt.Println("Each chan local balance: ", v.LocalBalance)
-		//out += "$_$" + y.String()
 		out += "$_$" + y.String()
 	}
 	return out, err
