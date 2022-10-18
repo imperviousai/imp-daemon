@@ -20,9 +20,9 @@ builds:
       - darwin
     goarch:
       - arm64
-    hooks:
-      post:
-        - gon gon-macos-arm64.json
+    # hooks:
+    #   post:
+    #     - gon gon-macos-arm64.json # not working currently with CGO_ENABLED=1
 archives:
   - 
     format: zip
