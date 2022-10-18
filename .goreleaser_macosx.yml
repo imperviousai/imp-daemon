@@ -11,7 +11,6 @@ builds:
     main: ./cmd/impd
     env:
       - CGO_ENABLED=1
-      - AC_PASSWORD={{.Env.AC_PASSWORD}}
     binary: impervious
     goos:
       - darwin
@@ -19,12 +18,12 @@ builds:
       - amd64
     hooks:
       post:
-        - gon gon-macos-amd64.json
+        - 'codesign -f -s "Developer ID Application: Impervious Technologies Inc. (S722DY52YY)" -f --deep --options runtime dist/impervious-macos-amd64_darwin_amd64_v1/impervious'
+        - zip dist/impervious-macos-amd64_darwin_amd64_v1/impervious.zip dist/impervious-macos-amd64_darwin_amd64_v1/impervious
   - id: impervious-macos-arm64
     main: ./cmd/impd
     env:
       - CGO_ENABLED=1
-      - AC_PASSWORD={{.Env.AC_PASSWORD}}
     binary: impervious
     goos:
       - darwin
@@ -32,7 +31,8 @@ builds:
       - arm64
     hooks:
       post:
-        - gon gon-macos-arm64.json
+        - 'codesign -f -s "Developer ID Application: Impervious Technologies Inc. (S722DY52YY)" -f --deep --options runtime dist/impervious-macos-arm64_darwin_arm64/impervious'
+        - zip dist/impervious-macos-arm64_darwin_arm64/impervious.zip dist/impervious-macos-arm64_darwin_arm64/impervious
 archives:
   - 
     format: zip
