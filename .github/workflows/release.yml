@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   mac_goreleaser:
-    runs-on: macos-12
+    runs-on: macos-latest
     steps:
       -
         name: Checkout
@@ -36,14 +36,14 @@ jobs:
         with: 
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-      - 
-        name: Yarn install
-        working-directory: client
-        run: yarn
-      - 
-        name: Export the UI
-        working-directory: client
-        run: yarn export
+      # - 
+      #   name: Yarn install
+      #   working-directory: client
+      #   run: yarn
+      # - 
+      #   name: Export the UI
+      #   working-directory: client
+      #   run: yarn export
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
@@ -54,7 +54,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
-          CGO_ENABLED: 1
   linux_goreleaser:
     runs-on: ubuntu-latest
     steps:
@@ -74,14 +73,14 @@ jobs:
       - 
         name: Set Up Node
         uses: actions/setup-node@v3
-      - 
-        name: Yarn install
-        working-directory: client
-        run: yarn
-      - 
-        name: Export the UI
-        working-directory: client
-        run: yarn export
+      # - 
+      #   name: Yarn install
+      #   working-directory: client
+      #   run: yarn
+      # - 
+      #   name: Export the UI
+      #   working-directory: client
+      #   run: yarn export
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
