@@ -18,8 +18,7 @@ builds:
       - amd64
     hooks:
       post:
-        - 'codesign -f -s "Developer ID Application: Impervious Technologies Inc. (S722DY52YY)" -f --deep --options runtime dist/impervious-macos-amd64_darwin_amd64_v1/impervious'
-        - zip dist/impervious-macos-amd64_darwin_amd64_v1/impervious.zip dist/impervious-macos-amd64_darwin_amd64_v1/impervious
+        - gon gon-macos-amd64.json
   - id: impervious-macos-arm64
     main: ./cmd/impd
     env:
@@ -31,8 +30,7 @@ builds:
       - arm64
     hooks:
       post:
-        - 'codesign -f -s "Developer ID Application: Impervious Technologies Inc. (S722DY52YY)" -f --deep --options runtime dist/impervious-macos-arm64_darwin_arm64/impervious'
-        - zip dist/impervious-macos-arm64_darwin_arm64/impervious.zip dist/impervious-macos-arm64_darwin_arm64/impervious
+        - gon gon-macos-arm64.json
 archives:
   - 
     format: zip
