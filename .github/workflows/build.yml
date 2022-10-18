@@ -2,8 +2,7 @@ name: Build-Artifacts
 on:
   push:
     branches:
-      - "fix-gha"
-      - "master"
+      - "test-builder"
 
 
 permissions:
@@ -62,16 +61,16 @@ jobs:
         with:
           name: Impervious-macosx_arm64
           # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-arm64_darwin_arm64/impervious
-          # path: dist/impervious-macos-arm64*/impervious.zip
-          path: dist/impervious-macos-arm64*/impervious
+          path: dist/impervious-macos-arm64*/impervious.zip
+          # path: dist/impervious-macos-arm64*/impervious
       - 
         name: Upload assets (macos-amd64)
         uses: actions/upload-artifact@v3
         with:
           name: Impervious-macosx_amd64
           # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-amd64_darwin_amd64_v1/impervious
-          # path: dist/impervious-macos-amd64*/impervious.zip
-          path: dist/impervious-macos-amd64*/impervious
+          path: dist/impervious-macos-amd64*/impervious.zip
+          # path: dist/impervious-macos-amd64*/impervious
 
 
   goreleaser_linux:
