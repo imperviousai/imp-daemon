@@ -9,19 +9,20 @@ import {
 } from "../utils/messages";
 import { defaultRelayShortForm } from "../utils/onboard";
 import _ from "lodash";
-import { getShortFormId } from "../utils/id";
 
 const checkOpenInbox = ({ settings, messages, contacts }) => {
   // filter content based on openInbox setting,
   // if closed then we return messages that are only from saved contacts
-  if (!settings?.messages?.openInbox) {
-    return messages.filter((msg) =>
-      contacts.find((c) => c.did === getShortFormId(msg.data.from))
-        ? true
-        : false
-    );
-  } else {
+  if (
+    settings?.messages?.openInbox === true ||
+    settings?.messages?.openInbox === undefined
+  ) {
     return messages;
+  }
+  if (settings?.messages?.openInbox === false) {
+    return messages.filter((msg) =>
+      contacts.find((c) => msg?.recipients.includes(c.did)) ? true : false
+    );
   }
 };
 
