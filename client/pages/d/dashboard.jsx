@@ -64,9 +64,6 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
   };
 
   const renderContent = (lastMessage) => {
-    if (+lastMessage?.data.body.content !== "NaN") {
-      return lastMessage?.data.body.content;
-    }
     if (lastMessage?.data.type === "https://didcomm.org/webrtc/1.0/sdp") {
       return "Sent you an invite to connect.";
     } else if (lastMessage?.data.type === "file-transfer-done") {
@@ -78,7 +75,10 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
         return "File transfer.";
       }
     } else {
-      return `${lastMessage?.data.body.content?.slice(0, 50)} ${
+      if (+lastMessage?.data.body.content !== "NaN") {
+        return lastMessage?.data.body.content;
+      }
+      return `${lastMessage?.data.body.content?.slice(0, 50).toString()} ${
         lastMessage?.data.body.content?.length > 50 ? "..." : ""
       }`;
     }

@@ -152,9 +152,6 @@ const RenderConversationSection = ({ unreadMessages, message }) => {
   }, [message, contactsRes?.data.contacts, myDid]);
 
   const renderContent = () => {
-    if (+message?.data.body.content !== "NaN") {
-      return message?.data.body.content;
-    }
     if (message?.data.type === "https://didcomm.org/webrtc/1.0/sdp") {
       const { signal } = message?.data.body.content;
       if (signal.type === "offer") {
@@ -169,7 +166,10 @@ const RenderConversationSection = ({ unreadMessages, message }) => {
         return "File sent.";
       }
     } else {
-      return `${message?.data.body.content?.slice(0, 20)}`;
+      if (+message?.data.body.content !== "NaN") {
+        return message?.data.body.content;
+      }
+      return `${message?.data.body.content?.slice(0, 20).toString()}`;
     }
   };
   return (
