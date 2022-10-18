@@ -36,4 +36,4 @@ kv.db*
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 
-cmd/impd/out
+cmd/impd/out/
