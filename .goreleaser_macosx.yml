@@ -1,6 +1,8 @@
 builds:
   - id: impervious-macos-amd64
     main: ./cmd/impd
+    env:
+      - CGO_ENABLED=1
     binary: impervious
     goos:
       - darwin
@@ -11,6 +13,8 @@ builds:
         - gon gon-macos-amd64.json
   - id: impervious-macos-arm64
     main: ./cmd/impd
+    env:
+      - CGO_ENABLED=1
     binary: impervious
     goos:
       - darwin
