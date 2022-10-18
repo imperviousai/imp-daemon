@@ -920,38 +920,43 @@ const ConversationBody = ({ activeConversation }) => {
 
     // lastly check for images over didcomm (standard is different)
     const msg = message.data.body.content;
+    if (msg === 1 || msg === "1") {
+      return "1";
+    }
     if (isJSON(msg)) {
-      // check if file from did comm
-      const {
-        data: { name },
-        dataUri,
-      } = JSON.parse(msg);
-      if (name && dataUriRegex().test(dataUri)) {
-        const byteString = atob(dataUri.split(",")[1]);
-        const mimeString = dataUri.split(",")[0].split(":")[1].split(";")[0];
+      if (JSON.parse(msg).data) {
+        // check if file from did comm
+        const {
+          data: { name },
+          dataUri,
+        } = JSON.parse(msg);
+        if (name && dataUriRegex().test(dataUri)) {
+          const byteString = atob(dataUri.split(",")[1]);
+          const mimeString = dataUri.split(",")[0].split(":")[1].split(";")[0];
 
-        if (mimeString.split("/")[0] === "image") {
-          return <img src={dataUri} alt="" width={500} height={500} />;
-        } else {
-          // give them the generic download UI
-          let bytes = new Uint8Array(byteString.length);
-          for (let i = 0; i < byteString.length; i++) {
-            bytes[i] = byteString.charCodeAt(i);
+          if (mimeString.split("/")[0] === "image") {
+            return <img src={dataUri} alt="" width={500} height={500} />;
+          } else {
+            // give them the generic download UI
+            let bytes = new Uint8Array(byteString.length);
+            for (let i = 0; i < byteString.length; i++) {
+              bytes[i] = byteString.charCodeAt(i);
+            }
+            let file = new File([bytes], name, { type: mimeString });
+            return (
+              <FileDownload
+                message={{
+                  data: { name, type: mimeString, size: file.size, id: null },
+                  from: message.data.from,
+                }}
+                fileObj={file}
+                myDid={myDid.id}
+              />
+            );
           }
-          let file = new File([bytes], name, { type: mimeString });
-          return (
-            <FileDownload
-              message={{
-                data: { name, type: mimeString, size: file.size, id: null },
-                from: message.data.from,
-              }}
-              fileObj={file}
-              myDid={myDid.id}
-            />
-          );
+        } else {
+          return msg;
         }
-      } else {
-        return msg;
       }
     } else {
       return msg;
