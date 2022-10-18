@@ -152,6 +152,9 @@ const RenderConversationSection = ({ unreadMessages, message }) => {
   }, [message, contactsRes?.data.contacts, myDid]);
 
   const renderContent = () => {
+    if (+message?.data.body.content !== "NaN") {
+      return message?.data.body.content;
+    }
     if (message?.data.type === "https://didcomm.org/webrtc/1.0/sdp") {
       const { signal } = message?.data.body.content;
       if (signal.type === "offer") {
@@ -920,8 +923,8 @@ const ConversationBody = ({ activeConversation }) => {
 
     // lastly check for images over didcomm (standard is different)
     const msg = message.data.body.content;
-    if (msg === 1 || msg === "1") {
-      return "1";
+    if (+msg !== "NaN") {
+      return msg;
     }
     if (isJSON(msg)) {
       if (JSON.parse(msg).data) {

@@ -64,6 +64,9 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
   };
 
   const renderContent = (lastMessage) => {
+    if (+lastMessage?.data.body.content !== "NaN") {
+      return lastMessage?.data.body.content;
+    }
     if (lastMessage?.data.type === "https://didcomm.org/webrtc/1.0/sdp") {
       return "Sent you an invite to connect.";
     } else if (lastMessage?.data.type === "file-transfer-done") {
