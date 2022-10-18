@@ -55,6 +55,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+          CGO_ENABLED: 1
       - 
         name: Upload assets (macos-arm64)
         uses: actions/upload-artifact@v3
