@@ -36,4 +36,8 @@ kv.db*
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 
-cmd/impd/out/
+cmd/impd/out/404/index.html
+cmd/impd/out/index.html
+cmd/impd/out/_next/static/
+cmd/impd/out/d/
+
