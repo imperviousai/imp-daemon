@@ -67,7 +67,7 @@ func keyUnlockAction(c *cli.Context) error {
 	}
 
 	zap.L().Info("[CLI] UnlockSeed")
-	err = core.UnlockSeed(c.String("passphrase"))
+	_, err = core.UnlockSeed(c.String("passphrase"))
 	if err != nil {
 		zap.L().Error("[CLI] UnlockSeed failed", zap.String("error", err.Error()))
 		return err

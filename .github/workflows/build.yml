@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   goreleaser_mac:
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       -
         name: Checkout
@@ -37,36 +37,41 @@ jobs:
         with: 
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-      - 
-        name: Yarn install
-        working-directory: client
-        run: yarn
-      - 
-        name: Export the UI
-        working-directory: client
-        run: yarn export
+      # - 
+      #   name: Yarn install
+      #   working-directory: client
+      #   run: yarn
+      # - 
+      #   name: Export the UI
+      #   working-directory: client
+      #   run: yarn export
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist --config .goreleaser_macosx.yml
+          args: release --config .goreleaser_macosx.yml --debug --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+          CGO_ENABLED: 1
       - 
         name: Upload assets (macos-arm64)
         uses: actions/upload-artifact@v3
         with:
           name: Impervious-macosx_arm64
-          path: dist/impervious-macos-arm64*/impervious.zip
+          # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-arm64_darwin_arm64/impervious
+          # path: dist/impervious-macos-arm64*/impervious.zip
+          path: dist/impervious-macos-arm64*/impervious
       - 
         name: Upload assets (macos-amd64)
         uses: actions/upload-artifact@v3
         with:
           name: Impervious-macosx_amd64
+          # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-amd64_darwin_amd64_v1/impervious
           path: dist/impervious-macos-amd64*/impervious.zip
+          # path: dist/impervious-macos-amd64*/impervious
 
 
   goreleaser_linux:

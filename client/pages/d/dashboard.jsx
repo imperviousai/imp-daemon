@@ -75,7 +75,10 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
         return "File transfer.";
       }
     } else {
-      return `${lastMessage?.data.body.content?.slice(0, 50)} ${
+      if (+lastMessage?.data.body.content !== "NaN") {
+        return lastMessage?.data.body.content;
+      }
+      return `${lastMessage?.data.body.content?.slice(0, 50).toString()} ${
         lastMessage?.data.body.content?.length > 50 ? "..." : ""
       }`;
     }

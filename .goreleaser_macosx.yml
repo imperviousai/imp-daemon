@@ -1,12 +1,4 @@
 builds:
-  # - id: impervious-windows temporarily disabling arch that we dont currently support
-  #   main: ./cmd/impd
-  #   binary: impervious
-  #   goos:
-  #     - windows
-  #   goarch:
-  #     - 386
-  #     - amd64
   - id: impervious-macos-amd64
     main: ./cmd/impd
     env:
@@ -28,9 +20,9 @@ builds:
       - darwin
     goarch:
       - arm64
-    hooks:
-      post:
-        - gon gon-macos-arm64.json
+    # hooks:
+    #   post:
+    #     - gon gon-macos-arm64.json # not working currently with CGO_ENABLED=1
 archives:
   - 
     format: zip

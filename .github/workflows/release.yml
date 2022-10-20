@@ -36,21 +36,21 @@ jobs:
         with: 
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-      - 
-        name: Yarn install
-        working-directory: client
-        run: yarn
-      - 
-        name: Export the UI
-        working-directory: client
-        run: yarn export
+      # - 
+      #   name: Yarn install
+      #   working-directory: client
+      #   run: yarn
+      # - 
+      #   name: Export the UI
+      #   working-directory: client
+      #   run: yarn export
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist --config .goreleaser_macosx.yml
+          args: release --config .goreleaser_macosx.yml --debug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
@@ -73,14 +73,14 @@ jobs:
       - 
         name: Set Up Node
         uses: actions/setup-node@v3
-      - 
-        name: Yarn install
-        working-directory: client
-        run: yarn
-      - 
-        name: Export the UI
-        working-directory: client
-        run: yarn export
+      # - 
+      #   name: Yarn install
+      #   working-directory: client
+      #   run: yarn
+      # - 
+      #   name: Export the UI
+      #   working-directory: client
+      #   run: yarn export
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2

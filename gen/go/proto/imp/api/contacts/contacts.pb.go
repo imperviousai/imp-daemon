@@ -190,7 +190,7 @@ func (x *ContactUpdate) GetMetadata() string {
 	return ""
 }
 
-//*
+// *
 // Represents a request to get a contact list.
 type GetContactsListRequest struct {
 	state         protoimpl.MessageState
@@ -230,7 +230,7 @@ func (*GetContactsListRequest) Descriptor() ([]byte, []int) {
 	return file_proto_imp_api_contacts_contacts_proto_rawDescGZIP(), []int{2}
 }
 
-//*
+// *
 // Represents a response containing the contact list.
 type GetContactsListResponse struct {
 	state         protoimpl.MessageState
@@ -279,7 +279,7 @@ func (x *GetContactsListResponse) GetContacts() []*Contact {
 	return nil
 }
 
-//*
+// *
 // Represents a request to get a contact.
 type GetContactRequest struct {
 	state         protoimpl.MessageState
@@ -328,7 +328,7 @@ func (x *GetContactRequest) GetId() int64 {
 	return 0
 }
 
-//*
+// *
 // Represents a response containing the contact.
 type GetContactResponse struct {
 	state         protoimpl.MessageState
@@ -377,7 +377,7 @@ func (x *GetContactResponse) GetContact() *Contact {
 	return nil
 }
 
-//*
+// *
 // Represents a request to create a contact.
 type CreateContactRequest struct {
 	state         protoimpl.MessageState
@@ -426,7 +426,7 @@ func (x *CreateContactRequest) GetContact() *Contact {
 	return nil
 }
 
-//*
+// *
 // Represents a response containing the contact created.
 type CreateContactResponse struct {
 	state         protoimpl.MessageState
@@ -475,7 +475,7 @@ func (x *CreateContactResponse) GetContact() *Contact {
 	return nil
 }
 
-//*
+// *
 // Represents a request to create multiple contacts.
 type CreateContactsRequest struct {
 	state         protoimpl.MessageState
@@ -524,7 +524,7 @@ func (x *CreateContactsRequest) GetContacts() []*Contact {
 	return nil
 }
 
-//*
+// *
 // Represents a response containing the contacts created.
 type CreateContactsResponse struct {
 	state         protoimpl.MessageState
@@ -573,7 +573,7 @@ func (x *CreateContactsResponse) GetContacts() []*Contact {
 	return nil
 }
 
-//*
+// *
 // Represents a request to update a contact.
 type UpdateContactRequest struct {
 	state         protoimpl.MessageState
@@ -622,7 +622,7 @@ func (x *UpdateContactRequest) GetContact() *ContactUpdate {
 	return nil
 }
 
-//*
+// *
 // Represents a response containing the contact updated.
 type UpdateContactResponse struct {
 	state         protoimpl.MessageState
@@ -671,7 +671,7 @@ func (x *UpdateContactResponse) GetContact() *Contact {
 	return nil
 }
 
-//*
+// *
 // Represents a request to delete a contact.
 type DeleteContactRequest struct {
 	state         protoimpl.MessageState
@@ -720,7 +720,7 @@ func (x *DeleteContactRequest) GetId() int64 {
 	return 0
 }
 
-//*
+// *
 // Represents a response containing the contact deletion event.
 type DeleteContactResponse struct {
 	state         protoimpl.MessageState
