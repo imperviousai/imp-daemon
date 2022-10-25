@@ -43,7 +43,7 @@ import {
   WhatsappShareButton,
   WhatsappIcon,
 } from "react-share";
-import { createDid, resolveDid } from "../utils/id";
+import { resolveDid } from "../utils/id";
 import { useAddContact } from "../hooks/contacts";
 import LightningToggle from "./LightingToggle";
 import { Autocomplete } from "./navigation/Autocomplete";
@@ -662,7 +662,7 @@ export default function MainNavigation({ children, currentPage }) {
                             return (
                               <AutocompleteItem
                                 item={item}
-                                saveContactConfirm={saveContactConfirm}
+                                importContact={importContact}
                               />
                             );
                           },

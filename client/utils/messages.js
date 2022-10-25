@@ -94,12 +94,11 @@ export const showPaymentNotification = ({ detail: { msg, knownContact } }) => {
 };
 
 // handleDidCommMessage is a handler function for incoming messages
-export const handleDidCommMessage = ({
-  data,
-  contacts,
-  pathname,
-  blocklist,
-}) => {
+export const handleDidCommMessage = (
+  { data, contacts, pathname, blocklist },
+  index,
+  importContact
+) => {
   const d = JSON.parse(data).result?.data;
   if (d) {
     const msg = JSON.parse(atob(d));
@@ -115,6 +114,14 @@ export const handleDidCommMessage = ({
       shortFormDid: fromId,
       contacts,
     });
+
+    if (knownContact?.name === "Unknown") {
+      index.search(fromId).then(({ hits }) => {
+        if (hits.length) {
+          importContact(hits[0]);
+        }
+      });
+    }
 
     switch (msg && msg.type) {
       case "https://didcomm.org/basicmessage/2.0/message":
