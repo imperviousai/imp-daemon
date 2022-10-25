@@ -43,21 +43,21 @@ function MyApp({ Component, pageProps }: AppProps) {
       <SafeHydrate>
         <QueryClientProvider client={queryClient}>
           <ToastContainer />
-          <Auth>
-            <ErrorBoundary
-              FallbackComponent={ErrorFallback}
-              onReset={() => console.log("resetting")}
-            >
-              <Auth0Provider
-                {...auth0ProviderConfig}
-                cacheLocation="localstorage"
+          <ApolloWrapper>
+            <Auth>
+              <ErrorBoundary
+                FallbackComponent={ErrorFallback}
+                onReset={() => console.log("resetting")}
               >
-                <ApolloWrapper>
+                <Auth0Provider
+                  {...auth0ProviderConfig}
+                  cacheLocation="localstorage"
+                >
                   <Component {...pageProps} />
-                </ApolloWrapper>
-              </Auth0Provider>
-            </ErrorBoundary>
-          </Auth>
+                </Auth0Provider>
+              </ErrorBoundary>
+            </Auth>
+          </ApolloWrapper>
           <ReactQueryDevtools initialIsOpen={false} position="top-left" />
         </QueryClientProvider>
       </SafeHydrate>

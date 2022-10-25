@@ -1,11 +1,11 @@
 import { ArrowCircleDownIcon } from "@heroicons/react/outline";
 
-export function AutocompleteItem({ item, saveContactConfirm }) {
+export function AutocompleteItem({ item, importContact }) {
   return (
     <div
       className="flex space-x-4 items-center w-full px-4 hover:bg-gray-100"
       onClick={() => {
-        saveContactConfirm(item);
+        importContact(item);
       }}
     >
       <button

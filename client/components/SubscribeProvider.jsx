@@ -35,7 +35,11 @@ import {
   currentConversationAtom,
   lightningEnabledAtom,
 } from "../stores/messages";
-import { useFetchContacts, useFetchBlocklist } from "../hooks/contacts.js";
+import {
+  useFetchContacts,
+  useFetchBlocklist,
+  useAddContact,
+} from "../hooks/contacts.js";
 import { useFetchMyDid } from "../hooks/id";
 import { useRouter } from "next/router";
 import { defaultRelayShortForm } from "../utils/onboard";
@@ -46,6 +50,13 @@ import ErrorFallback from "../components/ErrorFallback";
 import { toast } from "react-toastify";
 import { saveAs } from "file-saver";
 import { useFetchSettings } from "../hooks/settings";
+import { resolveDid } from "../utils/id";
+import algoliasearch from "algoliasearch";
+import {
+  ALGOLIA_ID,
+  ALGOLIA_API_KEY,
+  ALGOLIA_DID_INDEX,
+} from "../utils/contacts";
 
 // subscribe to a certain events for push notifications
 const createMailboxWorker = () =>
@@ -79,7 +90,10 @@ const SubscribeProvider = ({ children }) => {
     blocklist,
     settings,
   });
+  const { mutate: addContact } = useAddContact();
 
+  const searchClient = algoliasearch(ALGOLIA_ID, ALGOLIA_API_KEY);
+  const index = searchClient.initIndex(ALGOLIA_DID_INDEX);
   const router = useRouter();
   // adding router to useCallback triggers infinite loop, using ref instead
   const routerRef = useRef(router);
@@ -442,6 +456,30 @@ const SubscribeProvider = ({ children }) => {
     [peers]
   );
 
+  const importContact = useCallback(
+    (item) => {
+      const { username, name, avatarUrl, longFormDid } = item;
+      resolveDid(longFormDid)
+        .then((res) => {
+          console.log(res);
+          addContact({
+            didDocument: JSON.parse(res.data.document),
+            username,
+            name,
+            avatarUrl,
+            myDid,
+          });
+        })
+        .catch((err) => {
+          toast.error(
+            "Unable to parse DID. Check formatting and try again. Long Form DID expected."
+          );
+          console.log("Unable to parse DID while importing contact: ", err);
+        });
+    },
+    [addContact, myDid]
+  );
+
   // setup the file transfer web worker
   useEffect(() => {
     filesWorker.current = new Worker(
@@ -505,10 +543,17 @@ const SubscribeProvider = ({ children }) => {
         pathname: router.pathname,
         blocklist,
       };
-      handleDidCommMessage(data);
+      handleDidCommMessage(data, index, importContact);
       queryClient.invalidateQueries("fetch-messages");
     };
-  }, [queryClient, contactsRes?.data.contacts, router.pathname, blocklist]);
+  }, [
+    queryClient,
+    contactsRes?.data.contacts,
+    router.pathname,
+    blocklist,
+    importContact,
+    index,
+  ]);
 
   useEffect(() => {
     on("received-peer-message", handleReceivedPeerMessage);
