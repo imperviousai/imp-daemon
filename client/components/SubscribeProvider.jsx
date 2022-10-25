@@ -465,7 +465,7 @@ const SubscribeProvider = ({ children }) => {
           addContact({
             didDocument: JSON.parse(res.data.document),
             username,
-            name,
+            name: `@${name}`,
             avatarUrl,
             myDid,
           });

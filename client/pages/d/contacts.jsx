@@ -300,9 +300,14 @@ export default function Contacts() {
       const result = categories
         .split("")
         .map((d) => {
-          return data.data.contacts.filter(
-            (c) => c.name[0].toLowerCase() === d.toLowerCase()
-          );
+          return data.data.contacts.filter((c) => {
+            let name =
+              c.name.charAt(0) === "@"
+                ? c.name.substring(1, c.name.length)
+                : name;
+
+            return name[0].toLowerCase() === d.toLowerCase();
+          });
         })
         .filter((d) => d.length > 0);
       setDirectory(result);
@@ -399,7 +404,11 @@ export default function Contacts() {
                     directory.map((d, i) => (
                       <div key={i} className="relative">
                         <div className="sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
-                          <h3>{d[0].name[0].toUpperCase()}</h3>
+                          <h3>
+                            {d[0].name[0] === "@"
+                              ? d[0].name[1].toUpperCase()
+                              : d[0].name[0].toUpperCase()}
+                          </h3>
                         </div>
                         <ul
                           role="list"
