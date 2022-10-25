@@ -31,6 +31,7 @@ import {
   isNotificationExpired,
   deleteConversation,
 } from "../../utils/messages";
+import { isJSON } from "../../utils/misc";
 import { getShortFormId } from "../../utils/id";
 import { sendPeerInvitation, confirmPeerInvite } from "../../utils/peers";
 import {
@@ -59,15 +60,6 @@ import FileSharingModal from "../../components/meeting/FileSharingModal";
 import BlockButton from "../../components/contact/BlockButton";
 import { useFetchSettings } from "../../hooks/settings";
 import { useFetchLightningConfig } from "../../hooks/config";
-
-const isJSON = (msg) => {
-  try {
-    JSON.parse(msg);
-  } catch (e) {
-    return false;
-  }
-  return true;
-};
 
 const EmojiPicker = dynamic(() => import("../../components/EmojiPicker"), {
   ssr: false,
@@ -160,15 +152,18 @@ const RenderConversationSection = ({ unreadMessages, message }) => {
     } else if (message?.data.type === "file-transfer-done") {
       return "File sent.";
     } else if (isJSON(message?.data.body.content)) {
-      const { filename, dataUri } = JSON.parse(message?.data.body.content);
-      if (filename && dataUri) {
-        // definitely a file
-        return "File sent.";
+      const data = JSON.parse(message?.data.body.content);
+      if (data.data) {
+        const {
+          data: { name },
+          dataUri,
+        } = data;
+        if (name && dataUri) {
+          // definitely a file
+          return "File transfer.";
+        }
       }
     } else {
-      if (+message?.data.body.content !== "NaN") {
-        return message?.data.body.content;
-      }
       return `${message?.data.body.content?.slice(0, 20).toString()}`;
     }
   };
@@ -923,9 +918,6 @@ const ConversationBody = ({ activeConversation }) => {
 
     // lastly check for images over didcomm (standard is different)
     const msg = message.data.body.content;
-    if (+msg !== "NaN") {
-      return msg;
-    }
     if (isJSON(msg)) {
       if (JSON.parse(msg).data) {
         // check if file from did comm
