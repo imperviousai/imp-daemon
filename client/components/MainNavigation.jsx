@@ -380,7 +380,7 @@ export default function MainNavigation({ children, currentPage }) {
         addContact({
           didDocument: JSON.parse(res.data.document),
           username,
-          name,
+          name: `@${name}`,
           avatarUrl,
           myDid,
         });
