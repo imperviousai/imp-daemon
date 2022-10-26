@@ -263,6 +263,7 @@ const ConversationHeader = ({
   setOpenPayment,
   sendInvite,
   activeConversation,
+  nickname,
 }) => {
   const [currentConversationPeer] = useAtom(currentConversationPeerAtom);
   const [, setCurrentConversation] = useAtom(currentConversationAtom);
@@ -331,6 +332,12 @@ const ConversationHeader = ({
                   <div className="flex flex-col ml-3">
                     <h1 className="text-lg font-semibold leading-7 text-gray-900 sm:leading-9 sm:truncate">
                       {currentConversationContact?.name}{" "}
+                      {currentConversationContact?.name === "Unknown" &&
+                        nickname && (
+                          <span className="text-gray-500 font-normal text-sm">
+                            (Maybe: {nickname})
+                          </span>
+                        )}
                     </h1>
                     {currentConversationContact?.metadata &&
                       JSON.parse(currentConversationContact?.metadata)
@@ -1101,6 +1108,7 @@ export default function Chat() {
   const [openPayment, setOpenPayment] = useState(false);
   const [toggleNewContact, setToggleNewContact] = useState(false);
   const [activeConversation, setActiveConversation] = useState();
+  const [nickname, setNickname] = useState("");
 
   const [currentConversation, setCurrentConversation] = useAtom(
     currentConversationAtom
@@ -1123,6 +1131,21 @@ export default function Chat() {
     settings,
   });
   const { mutate: sendBasicMessage } = useSendMessage();
+
+  useEffect(() => {
+    if (activeConversation) {
+      let m = activeConversation.messages.findLast((m) => {
+        if (m.data.body.metadata) {
+          if (m.data.body.metadata.nickname) {
+            return true;
+          }
+        }
+      });
+      if (m) {
+        setNickname(m.data.body.metadata.nickname);
+      }
+    }
+  }, [activeConversation]);
 
   // TODO: rework these two useEffecfts, but for now they work
   useEffect(() => {
@@ -1221,6 +1244,7 @@ export default function Chat() {
                     setOpenPayment={setOpenPayment}
                     sendInvite={sendInvite}
                     activeConversation={activeConversation}
+                    nickname={nickname}
                   />
                 </div>
                 <div className="grow flex-1 pl-8 pr-4 overflow-hidden">
