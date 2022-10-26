@@ -1,6 +1,9 @@
 import { getItem, setItem } from "./kv";
 
-const DEFAULT_SETTINGS = JSON.stringify({ messages: { openInbox: true } });
+const DEFAULT_SETTINGS = JSON.stringify({
+  messages: { openInbox: true },
+  identity: { nickname: "" },
+});
 export const initSettings = () => {
   getItem("settings")
     .then((res) => {

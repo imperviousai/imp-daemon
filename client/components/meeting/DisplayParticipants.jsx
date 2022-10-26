@@ -17,6 +17,7 @@ import { useSendMessage } from "../../hooks/messages";
 import { toast } from "react-toastify";
 import { trigger } from "../../utils/events";
 import ContactAvatar from "../contact/ContactAvatar";
+import { useFetchSettings } from "../../hooks/settings";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -188,6 +189,7 @@ export default function DisplayParticipants({
 
   const { data: myDid } = useFetchMyDid();
   const { mutate: sendBasicMessage } = useSendMessage();
+  const { data: settings } = useFetchSettings();
 
   const getPeersByType = (type) => {
     if (type === "video-call-invitation") return activeVideoPeers;
@@ -226,6 +228,7 @@ export default function DisplayParticipants({
         localStream,
         currentPeer,
         existingNetworkPeers,
+        settings,
       });
       addPeer(data);
     });

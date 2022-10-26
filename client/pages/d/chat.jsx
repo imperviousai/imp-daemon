@@ -587,6 +587,8 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
   const [currentVideoCallId] = useAtom(currentVideoCallAtom);
   const [currentConversationContact] = useAtom(currentConversationContactAtom);
   const { mutate: saveBasicMessage } = useSaveMessage();
+  const { data: settings } = useFetchSettings();
+
   const textAreaRef = useRef(null);
 
   useAutosizeTextArea(textAreaRef.current, msg);
@@ -656,6 +658,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
         amount: lightningEnabled ? 50 : 0,
         reply_to_id: "",
         isPayment: false,
+        settings,
       },
       { onError: onErrorSendMessage }
     );
@@ -679,9 +682,15 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
       did: currentConversationContact.did,
       networkId,
       type,
+      metadata: {
+        nickname: settings?.identity?.nickname
+          ? settings?.identity?.nickname
+          : "",
+      },
     };
     const payload =
       type === "live-message" ? { msg: data, ...header } : { data, ...header };
+    console.log("sending webrtc payload: ", payload);
 
     currentConversationPeer?.peer.write(JSON.stringify(payload));
   };
@@ -701,6 +710,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
           type: "file-transfer-done",
           from: myDid.id,
           did: currentConversationContact.did,
+          settings,
         });
       };
     } else {
@@ -709,6 +719,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
         type: "file-transfer-done",
         from: myDid.id,
         did: currentConversationContact.did,
+        settings,
       });
     }
     setFileInput();
@@ -754,6 +765,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
           type: "live-message",
           from: myDid.id,
           did: currentConversationContact.did,
+          settings,
         });
         setMsg("");
         return;
@@ -1157,6 +1169,7 @@ export default function Chat() {
       contact: currentConversationContact,
       type: "live-messaging-invitation",
       localStream: false,
+      settings,
     });
     toast.success("Invite Sent");
     addPeer(data);
