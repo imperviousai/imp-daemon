@@ -332,7 +332,24 @@ const ConversationHeader = ({
                     <h1 className="text-lg font-semibold leading-7 text-gray-900 sm:leading-9 sm:truncate">
                       {currentConversationContact?.name}{" "}
                     </h1>
-
+                    {currentConversationContact?.metadata &&
+                      JSON.parse(currentConversationContact?.metadata)
+                        ?.username && (
+                        <a
+                          className="text-sm text-blue-500 hover:underline font-normal"
+                          target="_blank"
+                          rel="noreferrer"
+                          href={`https://twitter.com/${
+                            JSON.parse(currentConversationContact?.metadata)
+                              ?.username
+                          }`}
+                        >
+                          {`(@${
+                            JSON.parse(currentConversationContact?.metadata)
+                              ?.username
+                          })`}
+                        </a>
+                      )}
                     {/* <CopyToClipboard
                       text={currentConversation.did}
                       onCopy={() => toast.info("Copied!")}
