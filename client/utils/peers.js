@@ -78,6 +78,7 @@ export const sendPeerInvitation = ({
   type,
   localStream,
   existingNetworkPeers,
+  settings,
 }) => {
   // super weird, but sendBasicMessage is a react-query mutation that can only be instantiated within a rendered component
   // going to do a pass through workaround until I find a better solution.
@@ -118,6 +119,7 @@ export const sendPeerInvitation = ({
       amount: lightningEnabled ? 50 : 0,
       replay_to_id: "",
       isPayment: false,
+      settings,
     };
     console.log("Sending invitation to person: ", data);
     sendBasicMessage(data);
@@ -140,6 +142,7 @@ export const acceptPeerInvitation = ({
   localStream,
   currentPeer,
   sourceType,
+  settings,
 }) => {
   console.log("Attempting to accept invitation and return answer to peer.");
   const metadata = {
@@ -169,6 +172,7 @@ export const acceptPeerInvitation = ({
       amount: lightningEnabled ? 50 : 0,
       replay_to_id: "",
       isPayment: false,
+      settings,
     };
     if (sourceType === "didcomm") {
       console.log(

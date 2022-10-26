@@ -28,8 +28,6 @@ import {
   currentVideoCallAtom,
   currentLiveDocsAtom,
   localStreamAtom,
-  peerFilesAtom,
-  draftStore,
 } from "../stores/peers";
 import {
   currentConversationAtom,
@@ -76,7 +74,6 @@ const SubscribeProvider = ({ children }) => {
   const [localStream, setLocalStream] = useAtom(localStreamAtom);
   const [, setCurrentConversation] = useAtom(currentConversationAtom);
   const [lightningEnabled] = useAtom(lightningEnabledAtom);
-  const [peerFiles, setPeerFiles] = useAtom(peerFilesAtom);
 
   const { mutate: sendBasicMessage } = useSendMessage();
   const { mutate: saveBasicMessage } = useSaveMessage();
@@ -195,6 +192,7 @@ const SubscribeProvider = ({ children }) => {
         localStream: stream,
         currentPeer,
         sourceType,
+        settings,
       });
       addPeer(data);
       if (type === "video-call-invitation") {
@@ -225,6 +223,7 @@ const SubscribeProvider = ({ children }) => {
       setCurrentVideoCallId,
       messages,
       router.pathname,
+      settings,
     ]
   );
 
@@ -330,9 +329,9 @@ const SubscribeProvider = ({ children }) => {
           `${knownContact?.name || "An unknown user"} just messaged you.`
         );
       }
-      saveBasicMessage({ msg, type, did, from });
+      saveBasicMessage({ msg, type, did, from, settings });
     },
-    [saveBasicMessage, contactsRes, router.pathname]
+    [saveBasicMessage, contactsRes, router.pathname, settings]
   );
 
   const handleFileTransfer = useCallback(
@@ -357,11 +356,17 @@ const SubscribeProvider = ({ children }) => {
             },
           });
         } else {
-          saveBasicMessage({ msg: data, type, did, from });
+          saveBasicMessage({ msg: data, type, did, fro, settings });
         }
       }
     },
-    [addPeerMessage, currentVideoCallId, saveBasicMessage, handleFileDownload]
+    [
+      addPeerMessage,
+      currentVideoCallId,
+      saveBasicMessage,
+      handleFileDownload,
+      settings,
+    ]
   );
 
   const handleFileDownload = useCallback(
@@ -505,6 +510,7 @@ const SubscribeProvider = ({ children }) => {
             type: "file-transfer-done",
             did,
             from,
+            settings,
           });
         };
         return;
@@ -515,7 +521,7 @@ const SubscribeProvider = ({ children }) => {
     return () => {
       filesWorker.current.terminate();
     };
-  }, [saveBasicMessage]);
+  }, [saveBasicMessage, settings]);
 
   useEffect(() => {
     // subscribe to the impervious daemon to listen for events/messages
