@@ -304,7 +304,7 @@ export default function Contacts() {
             let name =
               c.name.charAt(0) === "@"
                 ? c.name.substring(1, c.name.length)
-                : name;
+                : c.name;
 
             return name[0].toLowerCase() === d.toLowerCase();
           });
