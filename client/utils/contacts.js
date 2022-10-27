@@ -194,3 +194,19 @@ export const getContactsByMessage = ({ message, contacts, myDid }) => {
     }
   });
 };
+
+// getNicknameFromConvo looks through each messages and finds the latest nickname that has been set in the convo history
+export const getNicknameFromConvo = ({ messages }) => {
+  let m = messages.findLast((m) => {
+    if (m.data.body.metadata) {
+      if (m.data.body.metadata.nickname) {
+        return true;
+      }
+    }
+  });
+  if (m) {
+    return m.data.body.metadata.nickname;
+  } else {
+    return undefined;
+  }
+};

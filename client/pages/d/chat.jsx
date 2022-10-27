@@ -55,11 +55,16 @@ import { encode } from "base64-arraybuffer";
 import FileDownload from "../../components/meeting/FileDownload";
 import useAutosizeTextArea from "../../components/useAutosizeTextArea";
 import ContactAvatar from "../../components/contact/ContactAvatar";
-import { getContactByDid, getContactsByMessage } from "../../utils/contacts";
+import {
+  getContactByDid,
+  getContactsByMessage,
+  getNicknameFromConvo,
+} from "../../utils/contacts";
 import FileSharingModal from "../../components/meeting/FileSharingModal";
 import BlockButton from "../../components/contact/BlockButton";
 import { useFetchSettings } from "../../hooks/settings";
 import { useFetchLightningConfig } from "../../hooks/config";
+import TwitterConnected from "../../components/contact/TwitterConnected";
 
 const EmojiPicker = dynamic(() => import("../../components/EmojiPicker"), {
   ssr: false,
@@ -167,19 +172,23 @@ const RenderConversationSection = ({ unreadMessages, message }) => {
       return `${message?.data.body.content?.slice(0, 20).toString()}`;
     }
   };
+
   return (
     <div className="flex items-center justify-between space-x-4">
       <div className="flex space-x-4">
         {contact && <ContactAvatar contact={contact} className="w-10 h-10" />}
 
         <div className="flex flex-col">
-          <p
+          <div
             className={`${
               unreadMessages > 0 ? "font-bold" : "font-light"
-            } text-md`}
+            } text-md flex items-center space-x-2`}
           >
             {contact?.name}
-          </p>
+            {contact && (
+              <TwitterConnected contact={contact} className="ml-2 h-4 w-4" />
+            )}
+          </div>
 
           {/* <p className="font-light text-xs">{contact.did}</p> */}
           <p
@@ -330,15 +339,24 @@ const ConversationHeader = ({
                     className="w-10 h-10"
                   />
                   <div className="flex flex-col ml-3">
-                    <h1 className="text-lg font-semibold leading-7 text-gray-900 sm:leading-9 sm:truncate">
-                      {currentConversationContact?.name}{" "}
-                      {currentConversationContact?.name === "Unknown" &&
-                        nickname && (
-                          <span className="text-gray-500 font-normal text-sm">
-                            (Maybe: {nickname})
-                          </span>
-                        )}
-                    </h1>
+                    <div className="flex items-center space-x-2">
+                      <h1 className="text-lg font-semibold leading-7 text-gray-900 sm:leading-9 sm:truncate">
+                        {currentConversationContact?.name}
+                      </h1>
+                      {currentConversationContact && (
+                        <TwitterConnected
+                          contact={currentConversationContact}
+                          className="ml-2 h-4 w-4"
+                        />
+                      )}
+                    </div>
+
+                    {currentConversationContact?.name === "Unknown" &&
+                      nickname && (
+                        <h3 className="text-gray-500 font-normal text-sm">
+                          (Maybe: {nickname})
+                        </h3>
+                      )}
                     {currentConversationContact?.metadata &&
                       JSON.parse(currentConversationContact?.metadata)
                         ?.username && (
@@ -351,10 +369,10 @@ const ConversationHeader = ({
                               ?.username
                           }`}
                         >
-                          {`(@${
+                          {`@${
                             JSON.parse(currentConversationContact?.metadata)
                               ?.username
-                          })`}
+                          }`}
                         </a>
                       )}
                     {/* <CopyToClipboard
@@ -1134,15 +1152,9 @@ export default function Chat() {
 
   useEffect(() => {
     if (activeConversation) {
-      let m = activeConversation.messages.findLast((m) => {
-        if (m.data.body.metadata) {
-          if (m.data.body.metadata.nickname) {
-            return true;
-          }
-        }
-      });
-      if (m) {
-        setNickname(m.data.body.metadata.nickname);
+      let n = getNicknameFromConvo({ messages: activeConversation.messages });
+      if (n) {
+        setNickname(n);
       }
     }
   }, [activeConversation]);
