@@ -174,9 +174,12 @@ export const ContactView = ({
             </div>
           </div>
           <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 truncate">
-              {selectedContact?.name}
-            </h1>
+            <div className="flex space-x-2 items-center">
+              <h1 className="text-2xl font-bold text-gray-900 truncate">
+                {selectedContact?.name}
+              </h1>
+              <TwitterConnected contact={selectedContact} className="h-4 w-4" />
+            </div>
           </div>
         </div>
       </div>

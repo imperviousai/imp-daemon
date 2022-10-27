@@ -380,7 +380,7 @@ export default function MainNavigation({ children, currentPage }) {
         addContact({
           didDocument: JSON.parse(res.data.document),
           username,
-          name: `@${name}`,
+          name,
           avatarUrl,
           myDid,
         });
@@ -393,46 +393,46 @@ export default function MainNavigation({ children, currentPage }) {
       });
   };
 
-  const saveContactConfirm = (item) => {
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p className="pb-4">
-            Import contact{" "}
-            <a
-              href={`https://twitter.com/${item.username}`}
-              target="_blank"
-              rel="noreferrer"
-              className="text-md text-blue-400"
-            >
-              @{item.username}
-            </a>
-            ?
-          </p>
-          <div className="flex space-x-4">
-            <button
-              type="button"
-              onClick={() => {
-                importContact(item);
-                closeToast();
-              }}
-              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Import
-            </button>
-            <button
-              type="button"
-              onClick={closeToast}
-              className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      ),
-      { autoClose: false }
-    );
-  };
+  // const saveContactConfirm = (item) => {
+  //   toast(
+  //     ({ closeToast }) => (
+  //       <div>
+  //         <p className="pb-4">
+  //           Import contact{" "}
+  //           <a
+  //             href={`https://twitter.com/${item.username}`}
+  //             target="_blank"
+  //             rel="noreferrer"
+  //             className="text-md text-blue-400"
+  //           >
+  //             @{item.username}
+  //           </a>
+  //           ?
+  //         </p>
+  //         <div className="flex space-x-4">
+  //           <button
+  //             type="button"
+  //             onClick={() => {
+  //               importContact(item);
+  //               closeToast();
+  //             }}
+  //             className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+  //           >
+  //             Import
+  //           </button>
+  //           <button
+  //             type="button"
+  //             onClick={closeToast}
+  //             className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+  //           >
+  //             Cancel
+  //           </button>
+  //         </div>
+  //       </div>
+  //     ),
+  //     { autoClose: false }
+  //   );
+  // };
 
   return (
     <>

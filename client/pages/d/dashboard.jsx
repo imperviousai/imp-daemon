@@ -36,9 +36,14 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { myDidLongFormDocumentAtom } from "../../stores/id";
 import ContactAvatar from "../../components/contact/ContactAvatar";
 import { getShortFormId, resolveDid } from "../../utils/id";
-import { getContactsByMessage, getContactByDid } from "../../utils/contacts";
+import {
+  getContactsByMessage,
+  getContactByDid,
+  getNicknameFromConvo,
+} from "../../utils/contacts";
 import { useFetchSettings } from "../../hooks/settings";
 import { useFetchLightningConfig } from "../../hooks/config";
+import TwitterConnected from "../../components/contact/TwitterConnected";
 
 const pageTitle = "Dashboard";
 
@@ -76,6 +81,10 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
         lastMessage?.data.body.content?.length > 50 ? "..." : ""
       }`;
     }
+  };
+
+  const displayNickname = (messages) => {
+    return getNicknameFromConvo({ messages });
   };
 
   return (
@@ -124,9 +133,21 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                             className="h-8 w-8"
                           />
                           <div className="flex flex-col pl-2">
-                            <span className="pl-2 text-gray-900 text-md font-semibold pr-5">
+                            <div className="pl-2 text-gray-900 text-md font-semibold pr-5 flex items-center space-x-2">
                               {contact?.name}
-                            </span>
+                              {contact && (
+                                <TwitterConnected
+                                  contact={contact}
+                                  className="ml-2 h-4 w-4"
+                                />
+                              )}
+                            </div>
+                            {contact?.name === "Unknown" &&
+                              displayNickname(messages) && (
+                                <span className="text-gray-500 font-normal text-xs">
+                                  (Maybe: {displayNickname(messages)})
+                                </span>
+                              )}
                             {contact?.metadata &&
                               JSON.parse(contact?.metadata)?.username && (
                                 <a
@@ -285,9 +306,15 @@ const NotificationsTable = ({ notifications }) => {
                       <Fragment key={i}>
                         <ContactAvatar contact={contact} className="h-8 w-8" />
                         <div className="flex flex-col pl-2">
-                          <span className="pl-2 text-gray-900 text-md font-semibold pr-5">
+                          <div className="pl-2 text-gray-900 text-md font-semibold pr-5 flex items-center space-x-2">
                             {contact?.name}
-                          </span>
+                            {contact && (
+                              <TwitterConnected
+                                contact={contact}
+                                className="ml-2 h-4 w-4"
+                              />
+                            )}
+                          </div>
                           {contact?.metadata &&
                             JSON.parse(contact?.metadata)?.username && (
                               <a
@@ -424,11 +451,17 @@ const UsersTable = ({ peers, router }) => {
                     className="h-6 w-6"
                   />
                   <div className="truncate hover:text-gray-600">
-                    <span>
+                    <div className="flex items-center space-x-2">
                       {peer.metadata.contact
                         ? peer.metadata.contact.name
                         : "Unknown User"}
-                    </span>
+                      {peer.metadata.contact && (
+                        <TwitterConnected
+                          contact={peer.metadata.contact}
+                          className="ml-2 h-4 w-4"
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               </td>

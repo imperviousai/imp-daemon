@@ -1,7 +1,14 @@
-import React from "react";
+import { useEffect, useState } from "react";
 
 function TwitterConnected({ contact, className }) {
-  const { username } = JSON.parse(contact.metadata);
+  const [username, setUsername] = useState();
+
+  useEffect(() => {
+    if (contact) {
+      const { username } = JSON.parse(contact.metadata);
+      setUsername(username);
+    }
+  }, [contact]);
   return (
     <>
       {username && (
