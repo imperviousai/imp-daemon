@@ -1064,6 +1064,7 @@ const ContactQuickView = ({
   openContactPreview,
   setOpenContactPreview,
   currentConversationContact,
+  nickname,
 }) => {
   return (
     <Transition.Root show={openContactPreview} as={Fragment}>
@@ -1108,7 +1109,10 @@ const ContactQuickView = ({
                   <div className="relative mt-6 flex-1 px-4 sm:px-6">
                     {/* Replace with your content */}
                     {/* <div className="absolute inset-0 px-4 sm:px-6">check</div> */}
-                    <ContactView selectedContact={currentConversationContact} />
+                    <ContactView
+                      selectedContact={currentConversationContact}
+                      nickname={nickname}
+                    />
                     {/* /End replace */}
                   </div>
                 </div>
@@ -1242,6 +1246,7 @@ export default function Chat() {
           openContactPreview={openContactPreview}
           setOpenContactPreview={setOpenContactPreview}
           currentConversationContact={currentConversationContact}
+          nickname={nickname}
         />
       </div>
       <div className="flex-1 relative z-0 flex overflow-hidden h-full lg:pr-52 lg:mr-16">
