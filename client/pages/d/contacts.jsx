@@ -42,6 +42,7 @@ export const ContactView = ({
   selectedContact,
   setOpenAddContactForm,
   setSelectedContact,
+  nickname,
 }) => {
   const [openAddForm, setOpenAddForm] = useState(false);
   const [didToSave, setDidToSave] = useState();
@@ -124,6 +125,7 @@ export const ContactView = ({
         setOpen={setOpenAddForm}
         existingContact={null}
         defaultDid={didToSave}
+        defaultName={nickname}
       />
       <div>
         {selectedContact?.name === "Unknown" && (
