@@ -120,7 +120,7 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                   className="px-6 py-3 text-sm text-gray-500 font-medium"
                   onClick={() => goToConversation(groupId)}
                 >
-                  <div className="flex items-center space-x-2 justify-center lg:pl-2">
+                  <div className="flex items-center space-x-2 lg:pl-2">
                     <div className="flex flex-shrink-0 -space-x-1 items-center">
                       {getContactsByMessage({
                         message: messages.slice(-1)[0],
@@ -265,6 +265,10 @@ const NotificationsTable = ({ notifications }) => {
   const { data: contactsRes } = useFetchContacts();
   const { data: myDid } = useFetchMyDid();
 
+  const displayNickname = (messages) => {
+    return getNicknameFromConvo({ messages });
+  };
+
   return (
     <>
       <table className="min-w-full">
@@ -296,7 +300,7 @@ const NotificationsTable = ({ notifications }) => {
                 className="px-6 py-3 text-sm text-gray-500 font-medium"
                 onClick={() => goToConversation(groupId)}
               >
-                <div className="flex items-center space-x-2 justify-center lg:pl-2">
+                <div className="flex items-center space-x-2 lg:pl-2">
                   <div className="flex flex-shrink-0 -space-x-1 items-center">
                     {getContactsByMessage({
                       message: notification,
@@ -315,6 +319,12 @@ const NotificationsTable = ({ notifications }) => {
                               />
                             )}
                           </div>
+                          {contact?.name === "Unknown" &&
+                            displayNickname(notifications) && (
+                              <span className="text-gray-500 font-normal text-xs">
+                                (Maybe: {displayNickname(notifications)})
+                              </span>
+                            )}
                           {contact?.metadata &&
                             JSON.parse(contact?.metadata)?.username && (
                               <a

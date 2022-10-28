@@ -117,8 +117,8 @@ const ShareContactButton = ({ myDid }) => {
   }, [myDid, setMyDidLongFormDocument, setMyDidDocument]);
 
   const title = user
-    ? `Connect with me on the Impervious Browser @${user.nickname}!`
-    : "Connect with me on the Impervious Browser!";
+    ? `Connect with me on the Impervious Browser @${user.nickname}! @ImperviousAi`
+    : "Connect with me on the Impervious Browser! @ImperviousAi";
   const url = "https://impervious.ai";
   return (
     <Menu as="div" className="relative inline-block text-left">
