@@ -29,6 +29,7 @@ import {
   isNotificationExpired,
   deleteConversation,
 } from "../../utils/messages";
+import { isJSON } from "../../utils/misc";
 import { confirmPeerInvite } from "../../utils/peers";
 import { toast } from "react-toastify";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -40,16 +41,6 @@ import { useFetchSettings } from "../../hooks/settings";
 import { useFetchLightningConfig } from "../../hooks/config";
 
 const pageTitle = "Dashboard";
-
-// duplicate function, should go in a helper file
-const isJSON = (msg) => {
-  try {
-    JSON.parse(msg);
-  } catch (e) {
-    return false;
-  }
-  return true;
-};
 
 const MessagesTable = ({ conversations, unreadMessages }) => {
   const [, setCurrentConversation] = useAtom(currentConversationAtom);
@@ -69,15 +60,18 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
     } else if (lastMessage?.data.type === "file-transfer-done") {
       return "File transfer.";
     } else if (isJSON(lastMessage?.data.body.content)) {
-      const { filename, dataUri } = JSON.parse(lastMessage?.data.body.content);
-      if (filename && dataUri) {
-        // definitely a file
-        return "File transfer.";
+      const data = JSON.parse(lastMessage?.data.body.content);
+      if (data.data) {
+        const {
+          data: { name },
+          dataUri,
+        } = data;
+        if (name && dataUri) {
+          // definitely a file
+          return "File transfer.";
+        }
       }
     } else {
-      if (+lastMessage?.data.body.content !== "NaN") {
-        return lastMessage?.data.body.content;
-      }
       return `${lastMessage?.data.body.content?.slice(0, 50).toString()} ${
         lastMessage?.data.body.content?.length > 50 ? "..." : ""
       }`;

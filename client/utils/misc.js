@@ -8,3 +8,16 @@ export const getApiKey = () => {
     return "";
   }
 };
+
+export const isJSON = (msg) => {
+  try {
+    let message = JSON.parse(msg);
+    if (Object.keys(message).length) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    return false;
+  }
+};

@@ -1,0 +1,29 @@
+name: Release-To-Production
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  production_release:
+    name: Release to Production
+    runs-on: macos-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download Staging Artifacts
+        uses: robinraju/release-downloader@v1.6
+        with:
+          repository: "imperviousai/imp-daemon-staging"
+          latest: true
+          fileName: '*'
+          out-file-path:  "staging-artifacts"
+          token:  ${{ secrets.DOWNLOADPAT }}
+      - name: Release Staging Artifacts
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          draft: true
+          files: |
+            staging-artifacts/*
