@@ -199,12 +199,10 @@ const RenderConversationSection = ({ unreadMessages, message }) => {
             </span> */}
             {renderContent()}
           </p>
+          <p className="text-xs font-light">
+            {moment.unix(message?.data.created_time).fromNow()}
+          </p>
         </div>
-      </div>
-      <div className="flex flex-col pb-4">
-        <p className="text-sm font-light">
-          {moment.unix(message?.data.created_time).fromNow()}
-        </p>
       </div>
     </div>
   );
