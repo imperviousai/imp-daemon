@@ -150,16 +150,14 @@ export const getRandomAvatar = () => {
 };
 
 export const GET_DID_BY_TWITTER = gql`
-  query getDIDByTwitter($username: String!) {
-    listDIDS(filter: { username: { eq: $username } }) {
-      items {
-        avatarUrl
-        lastUpdated
-        longFormDid
-        shortFormDid
-        name
-        username
-      }
+  query getDIDByTwitter($username: String!, $shortFormDid: String!) {
+    getDID(shortFormDid: $shortFormDid, username: $username) {
+      avatarUrl
+      lastUpdated
+      longFormDid
+      shortFormDid
+      name
+      username
     }
   }
 `;
