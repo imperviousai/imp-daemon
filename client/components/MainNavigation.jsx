@@ -305,6 +305,7 @@ const TwitterConnect = () => {
     publishDid,
     currentRegistryUser?.nickname,
     setCurrentRegistryUser,
+    myDid?.id,
   ]);
 
   let returnUrl = "";
