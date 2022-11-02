@@ -43,7 +43,7 @@ import {
   WhatsappShareButton,
   WhatsappIcon,
 } from "react-share";
-import { createDid, resolveDid } from "../utils/id";
+import { resolveDid } from "../utils/id";
 import { useAddContact } from "../hooks/contacts";
 import LightningToggle from "./LightingToggle";
 import { Autocomplete } from "./navigation/Autocomplete";
@@ -101,6 +101,7 @@ const ShareContactButton = ({ myDid }) => {
   const [myDidLongFormDocument, setMyDidLongFormDocument] = useAtom(
     myDidLongFormDocumentAtom
   );
+  const { user } = useAuth0();
 
   useEffect(() => {
     if (myDid) {
@@ -115,7 +116,10 @@ const ShareContactButton = ({ myDid }) => {
     }
   }, [myDid, setMyDidLongFormDocument, setMyDidDocument]);
 
-  const title = "I want to share my Impervious contact with you!";
+  const title = user
+    ? `Connect with me on the Impervious Browser @${user.nickname}! @ImperviousAi`
+    : "Connect with me on the Impervious Browser! @ImperviousAi";
+  const url = "https://impervious.ai";
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -151,23 +155,19 @@ const ShareContactButton = ({ myDid }) => {
                       <ClipboardIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
                   </CopyToClipboard>
-                  <EmailShareButton subject={title} url={myDid}>
+                  <EmailShareButton subject={title} url={url}>
                     <EmailIcon size={32} round />
                   </EmailShareButton>
-                  <FacebookShareButton url={myDid} quote={title}>
+                  <FacebookShareButton url={url} quote={title}>
                     <FacebookIcon size={32} round />
                   </FacebookShareButton>
-                  <TwitterShareButton url={myDid} title={title}>
+                  <TwitterShareButton url={url} title={title}>
                     <TwitterIcon size={32} round />
                   </TwitterShareButton>
-                  <TelegramShareButton url={myDid} title={title}>
+                  <TelegramShareButton url={url} title={title}>
                     <TelegramIcon size={32} round />
                   </TelegramShareButton>
-                  <WhatsappShareButton
-                    url={myDid}
-                    title={title}
-                    separator=":: "
-                  >
+                  <WhatsappShareButton url={url} title={title} separator=":: ">
                     <WhatsappIcon size={32} round />
                   </WhatsappShareButton>
                 </div>
@@ -266,8 +266,8 @@ const TwitterConnect = () => {
     useLazyQuery(GET_DID_BY_TWITTER);
 
   useEffect(() => {
-    if (data?.listDIDS?.items?.length > 0) {
-      setPublishedDid(data.listDIDS.items[0]);
+    if (data?.getDID) {
+      setPublishedDid(data?.getDID);
     } else {
       setPublishedDid("");
     }
@@ -283,7 +283,7 @@ const TwitterConnect = () => {
           value: JSON.stringify(user),
         });
         getDidsbyTwitter({
-          variables: { username: user?.nickname },
+          variables: { username: user?.nickname, shortFormDid: myDid?.id },
         });
         if (user?.nickname !== currentRegistryUser?.nickname) {
           publishDid()
@@ -367,6 +367,7 @@ export default function MainNavigation({ children, currentPage }) {
   const { data: myDid } = useFetchMyDid();
   const { mutate: addContact } = useAddContact();
   const { data: lightningConfig } = useFetchLightningConfig();
+  const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
 
   const isCurrent = (name) => currentPage === name;
 
@@ -393,46 +394,46 @@ export default function MainNavigation({ children, currentPage }) {
       });
   };
 
-  const saveContactConfirm = (item) => {
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p className="pb-4">
-            Import contact{" "}
-            <a
-              href={`https://twitter.com/${item.username}`}
-              target="_blank"
-              rel="noreferrer"
-              className="text-md text-blue-400"
-            >
-              @{item.username}
-            </a>
-            ?
-          </p>
-          <div className="flex space-x-4">
-            <button
-              type="button"
-              onClick={() => {
-                importContact(item);
-                closeToast();
-              }}
-              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Import
-            </button>
-            <button
-              type="button"
-              onClick={closeToast}
-              className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      ),
-      { autoClose: false }
-    );
-  };
+  // const saveContactConfirm = (item) => {
+  //   toast(
+  //     ({ closeToast }) => (
+  //       <div>
+  //         <p className="pb-4">
+  //           Import contact{" "}
+  //           <a
+  //             href={`https://twitter.com/${item.username}`}
+  //             target="_blank"
+  //             rel="noreferrer"
+  //             className="text-md text-blue-400"
+  //           >
+  //             @{item.username}
+  //           </a>
+  //           ?
+  //         </p>
+  //         <div className="flex space-x-4">
+  //           <button
+  //             type="button"
+  //             onClick={() => {
+  //               importContact(item);
+  //               closeToast();
+  //             }}
+  //             className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+  //           >
+  //             Import
+  //           </button>
+  //           <button
+  //             type="button"
+  //             onClick={closeToast}
+  //             className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+  //           >
+  //             Cancel
+  //           </button>
+  //         </div>
+  //       </div>
+  //     ),
+  //     { autoClose: false }
+  //   );
+  // };
 
   return (
     <>
@@ -662,7 +663,7 @@ export default function MainNavigation({ children, currentPage }) {
                             return (
                               <AutocompleteItem
                                 item={item}
-                                saveContactConfirm={saveContactConfirm}
+                                importContact={importContact}
                               />
                             );
                           },
@@ -673,14 +674,23 @@ export default function MainNavigation({ children, currentPage }) {
                 </div>
 
                 <div className="ml-2 flex items-center space-x-4 sm:ml-6 sm:space-x-6">
-                  <a
-                    target="_blank"
-                    rel="noreferrer"
-                    href="https://impervious.ai/"
-                    className="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-0 sm:ml-0"
+                  <CopyToClipboard
+                    text={myDidLongFormDocument}
+                    onCopy={() =>
+                      toast.info("Copied to clipboard! Share this document!")
+                    }
                   >
-                    Share Browser
-                  </a>
+                    <button
+                      type="button"
+                      className="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-0 sm:ml-0"
+                    >
+                      <ClipboardIcon
+                        className="h-5 w-5 mr-2"
+                        aria-hidden="true"
+                      />
+                      Copy DID
+                    </button>
+                  </CopyToClipboard>
                   <ShareContactButton myDid={myDid} />
                   <button
                     type="button"

@@ -26,6 +26,18 @@ export default function AddContactSlideOut({
     }
   }, [defaultDid]);
 
+  useEffect(() => {
+    if (defaultName) {
+      setName(defaultName);
+    }
+  }, [defaultName]);
+
+  useEffect(() => {
+    if (existingContact) {
+      setName(existingContact.name);
+    }
+  }, [existingContact]);
+
   const onSuccessDelete = () => {
     toast.success("Contact successfully deleted!");
   };
@@ -199,9 +211,7 @@ export default function AddContactSlideOut({
                               <input
                                 type="text"
                                 name="name"
-                                defaultValue={
-                                  existingContact ? existingContact.name : ""
-                                }
+                                value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 id="name"
                                 className="block w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"

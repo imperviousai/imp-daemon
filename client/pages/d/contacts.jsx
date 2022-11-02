@@ -42,6 +42,7 @@ export const ContactView = ({
   selectedContact,
   setOpenAddContactForm,
   setSelectedContact,
+  nickname,
 }) => {
   const [openAddForm, setOpenAddForm] = useState(false);
   const [didToSave, setDidToSave] = useState();
@@ -124,6 +125,7 @@ export const ContactView = ({
         setOpen={setOpenAddForm}
         existingContact={null}
         defaultDid={didToSave}
+        defaultName={nickname}
       />
       <div>
         {selectedContact?.name === "Unknown" && (
@@ -174,9 +176,12 @@ export const ContactView = ({
             </div>
           </div>
           <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 truncate">
-              {selectedContact?.name}
-            </h1>
+            <div className="flex space-x-2 items-center">
+              <h1 className="text-2xl font-bold text-gray-900 truncate">
+                {selectedContact?.name}
+              </h1>
+              <TwitterConnected contact={selectedContact} className="h-4 w-4" />
+            </div>
           </div>
         </div>
       </div>
@@ -300,9 +305,14 @@ export default function Contacts() {
       const result = categories
         .split("")
         .map((d) => {
-          return data.data.contacts.filter(
-            (c) => c.name[0].toLowerCase() === d.toLowerCase()
-          );
+          return data.data.contacts.filter((c) => {
+            let name =
+              c.name.charAt(0) === "@"
+                ? c.name.substring(1, c.name.length)
+                : c.name;
+
+            return name[0].toLowerCase() === d.toLowerCase();
+          });
         })
         .filter((d) => d.length > 0);
       setDirectory(result);
@@ -399,7 +409,11 @@ export default function Contacts() {
                     directory.map((d, i) => (
                       <div key={i} className="relative">
                         <div className="sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
-                          <h3>{d[0].name[0].toUpperCase()}</h3>
+                          <h3>
+                            {d[0].name[0] === "@"
+                              ? d[0].name[1].toUpperCase()
+                              : d[0].name[0].toUpperCase()}
+                          </h3>
                         </div>
                         <ul
                           role="list"

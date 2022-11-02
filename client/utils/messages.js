@@ -28,7 +28,10 @@ export const sendMessage = (data) => {
   //   reply_to_id - usually an empty string
   //   isPayment - boolean flag to indicate messages a (payment w/ message attached)
   // }
-  const { msg, did, type, amount, reply_to_id, isPayment } = data;
+  const { msg, did, type, amount, reply_to_id, isPayment, settings } = data;
+  let nickname = settings?.identity?.nickname
+    ? settings?.identity?.nickname
+    : "";
   return request({
     url: "/v2/message/send",
     method: "post",
@@ -36,6 +39,7 @@ export const sendMessage = (data) => {
       body: JSON.stringify({
         content: msg,
         payment: isPayment ? amount : null,
+        metadata: { nickname },
       }),
       type,
       did,
@@ -49,13 +53,17 @@ export const sendMessage = (data) => {
 };
 
 export const saveMessage = (data) => {
-  const { msg, type, did, from } = data;
+  const { msg, type, did, from, settings } = data;
+  let nickname = settings?.identity?.nickname
+    ? settings?.identity?.nickname
+    : "";
   return request({
     url: "/v2/message/save",
     method: "post",
     data: {
       body: JSON.stringify({
         content: msg,
+        metadata: { nickname },
       }),
       type,
       from,
@@ -94,12 +102,11 @@ export const showPaymentNotification = ({ detail: { msg, knownContact } }) => {
 };
 
 // handleDidCommMessage is a handler function for incoming messages
-export const handleDidCommMessage = ({
-  data,
-  contacts,
-  pathname,
-  blocklist,
-}) => {
+export const handleDidCommMessage = (
+  { data, contacts, pathname, blocklist },
+  index,
+  importContact
+) => {
   const d = JSON.parse(data).result?.data;
   if (d) {
     const msg = JSON.parse(atob(d));
@@ -115,6 +122,14 @@ export const handleDidCommMessage = ({
       shortFormDid: fromId,
       contacts,
     });
+
+    if (knownContact?.name === "Unknown") {
+      index.search(fromId).then(({ hits }) => {
+        if (hits.length) {
+          importContact(hits[0]);
+        }
+      });
+    }
 
     switch (msg && msg.type) {
       case "https://didcomm.org/basicmessage/2.0/message":

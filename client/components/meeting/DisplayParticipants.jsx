@@ -17,6 +17,8 @@ import { useSendMessage } from "../../hooks/messages";
 import { toast } from "react-toastify";
 import { trigger } from "../../utils/events";
 import ContactAvatar from "../contact/ContactAvatar";
+import { useFetchSettings } from "../../hooks/settings";
+import TwitterConnected from "../contact/TwitterConnected";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -90,9 +92,15 @@ export const SelectParticipants = ({
                   <ContactAvatar contact={contact} className="h-8 w-8" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {contact.name}
-                  </p>
+                  <div className="text-sm font-medium text-gray-900 truncate flex items-center space-x-2">
+                    {contact?.name}
+                    {contact && (
+                      <TwitterConnected
+                        contact={contact}
+                        className="ml-2 h-4 w-4"
+                      />
+                    )}
+                  </div>
                   <p className="text-sm text-gray-500 truncate">
                     {getStatus(contact)}
                   </p>
@@ -153,9 +161,15 @@ const RenderParticipants = ({ peers }) => {
                 contact={peer.metadata.contact}
                 className="h-8 w-8"
               />
-              <p className="ml-4 text-sm font-medium text-gray-900">
+              <div className="ml-4 text-sm font-medium text-gray-900 flex items-center space-x-2">
                 {peer.metadata.contact.name}
-              </p>
+                {peer.metadata.contact && (
+                  <TwitterConnected
+                    contact={peer.metadata.contact}
+                    className="ml-2 h-4 w-4"
+                  />
+                )}
+              </div>
             </div>
             <div className="ml-6 text-sm font-medium text-gray-700">
               {peer.peer._channel.readyState === "open"
@@ -188,6 +202,7 @@ export default function DisplayParticipants({
 
   const { data: myDid } = useFetchMyDid();
   const { mutate: sendBasicMessage } = useSendMessage();
+  const { data: settings } = useFetchSettings();
 
   const getPeersByType = (type) => {
     if (type === "video-call-invitation") return activeVideoPeers;
@@ -226,6 +241,7 @@ export default function DisplayParticipants({
         localStream,
         currentPeer,
         existingNetworkPeers,
+        settings,
       });
       addPeer(data);
     });
