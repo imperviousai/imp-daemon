@@ -69,13 +69,16 @@ func DefaultConfig() Config {
 	if err != nil {
 		zap.L().Panic(err.Error())
 	}
-	homePath += "/.imp"
+	// homePath += "/.imp"
+	homePath = filepath.Join(homePath, ".imp")
 	if err := os.MkdirAll(filepath.Dir(homePath), 0750); err != nil {
 		zap.L().Panic(err.Error())
 	}
 
-	sqlPath := homePath + "/imp.db"
-	kvPath := homePath + "/kv.db"
+	// sqlPath := homePath + "/imp.db"
+	sqlPath := filepath.Join(homePath, ".imp.db")
+	// kvPath := homePath + "/kv.db"
+	kvPath := filepath.Join(homePath, "kv.db")
 
 	return Config{
 		Server: Server{
@@ -226,18 +229,18 @@ func (cfg *Config) writeFile(path string) error {
 func determinePath(path string) string {
 	// Priority: path, local config, default
 	if path == "" {
-		if _, err := os.Stat("config/config.yml"); os.IsNotExist(err) {
+		if _, err := os.Stat(filepath.Join("config", "config.yml")); os.IsNotExist(err) {
 			// create home path if not exists
 			homePath, err := os.UserHomeDir()
 			if err != nil {
 				zap.L().Panic(err.Error())
 			}
-			homePath += "/.imp"
+			homePath = filepath.Join(homePath, ".imp")
 			if err := os.MkdirAll(filepath.Dir(homePath), 0750); err != nil {
 				zap.L().Panic(err.Error())
 			}
 
-			path = homePath + "/config.yml"
+			path = filepath.Join(homePath, "config.yml")
 
 			// check if ~/.imp/config.yml is already a file
 			if _, err := os.Stat(path); os.IsNotExist(err) {
@@ -248,7 +251,7 @@ func determinePath(path string) string {
 				}
 			}
 		} else {
-			path = "config/config.yml"
+			path = filepath.Join("config", "config.yml")
 		}
 	}
 	return path
