@@ -266,8 +266,8 @@ const TwitterConnect = () => {
     useLazyQuery(GET_DID_BY_TWITTER);
 
   useEffect(() => {
-    if (data?.listDIDS?.items?.length > 0) {
-      setPublishedDid(data.listDIDS.items[0]);
+    if (data?.getDID) {
+      setPublishedDid(data?.getDID);
     } else {
       setPublishedDid("");
     }
@@ -283,7 +283,7 @@ const TwitterConnect = () => {
           value: JSON.stringify(user),
         });
         getDidsbyTwitter({
-          variables: { username: user?.nickname },
+          variables: { username: user?.nickname, shortFormDid: myDid?.id },
         });
         if (user?.nickname !== currentRegistryUser?.nickname) {
           publishDid()
