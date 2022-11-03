@@ -103,7 +103,7 @@ const IdentitySettings = () => {
                 </p>
                 <div className="flex space-x-4 items-center">
                   <p className="text-md text-blue-gray-900 font-semibold">
-                    {nickname.length ? nickname : "No Nickname Set"}
+                    {nickname.length ? nickname : "No Nickname"}
                   </p>
                   <button
                     type="button"
