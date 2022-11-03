@@ -1154,12 +1154,15 @@ export default function Chat() {
 
   useEffect(() => {
     if (activeConversation) {
-      let n = getNicknameFromConvo({ messages: activeConversation.messages });
+      let n = getNicknameFromConvo({
+        messages: activeConversation.messages,
+        contact: currentConversationContact,
+      });
       if (n) {
         setNickname(n);
       }
     }
-  }, [activeConversation]);
+  }, [activeConversation, currentConversationContact]);
 
   // TODO: rework these two useEffecfts, but for now they work
   useEffect(() => {
