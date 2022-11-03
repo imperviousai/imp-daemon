@@ -1,6 +1,7 @@
 import { request } from "./axios-utils";
 import { gql } from "@apollo/client";
 import { getApiKey } from "./misc";
+import { getShortFormId } from "./id";
 
 // Utility functions for the contacts management
 export const ALGOLIA_ID = "2AT1J9F6CY";
@@ -194,14 +195,16 @@ export const getContactsByMessage = ({ message, contacts, myDid }) => {
 };
 
 // getNicknameFromConvo looks through each messages and finds the latest nickname that has been set in the convo history
-export const getNicknameFromConvo = ({ messages }) => {
-  let m = messages.findLast((m) => {
-    if (m.data.body.metadata) {
-      if (m.data.body.metadata.nickname) {
-        return true;
+export const getNicknameFromConvo = ({ messages, contact }) => {
+  let m = messages
+    .filter((m) => getShortFormId(m.data.from) === contact.did)
+    .findLast((m) => {
+      if (m.data.body.metadata) {
+        if (m.data.body.metadata.nickname) {
+          return true;
+        }
       }
-    }
-  });
+    });
   if (m) {
     return m.data.body.metadata.nickname;
   } else {

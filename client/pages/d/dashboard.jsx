@@ -83,10 +83,6 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
     }
   };
 
-  const displayNickname = (messages) => {
-    return getNicknameFromConvo({ messages });
-  };
-
   return (
     <>
       <table className="min-w-full">
@@ -143,9 +139,10 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                               )}
                             </div>
                             {contact?.name === "Unknown" &&
-                              displayNickname(messages) && (
+                              getNicknameFromConvo({ messages, contact }) && (
                                 <span className="text-gray-500 font-normal text-xs">
-                                  (Maybe: {displayNickname(messages)})
+                                  (Maybe:{" "}
+                                  {getNicknameFromConvo({ messages, contact })})
                                 </span>
                               )}
                             {contact?.metadata &&
@@ -265,10 +262,6 @@ const NotificationsTable = ({ notifications }) => {
   const { data: contactsRes } = useFetchContacts();
   const { data: myDid } = useFetchMyDid();
 
-  const displayNickname = (messages) => {
-    return getNicknameFromConvo({ messages });
-  };
-
   return (
     <>
       <table className="min-w-full">
@@ -320,9 +313,17 @@ const NotificationsTable = ({ notifications }) => {
                             )}
                           </div>
                           {contact?.name === "Unknown" &&
-                            displayNickname(notifications) && (
+                            getNicknameFromConvo({
+                              messages: notifications,
+                              contact,
+                            }) && (
                               <span className="text-gray-500 font-normal text-xs">
-                                (Maybe: {displayNickname(notifications)})
+                                (Maybe:{" "}
+                                {getNicknameFromConvo({
+                                  messages: notifications,
+                                  contact,
+                                })}
+                                )
                               </span>
                             )}
                           {contact?.metadata &&
