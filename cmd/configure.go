@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -256,7 +257,12 @@ func ConfigureLogger(globalCfg config.GlobalConfig) (*zap.Logger, error) {
 		if err != nil {
 			zap.L().Panic(err.Error())
 		}
-		path += "/.imp/log.txt"
+		if runtime.GOOS == "windows" { // https://github.com/uber-go/zap/issues/621
+			path = filepath.Join("log.txt")
+		} else {
+			path = filepath.Join(path, ".imp", "log.txt")
+		}
+
 		if err := os.MkdirAll(filepath.Dir(path), 0750); err != nil {
 			zap.L().Panic(err.Error())
 		}

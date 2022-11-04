@@ -36,9 +36,14 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { myDidLongFormDocumentAtom } from "../../stores/id";
 import ContactAvatar from "../../components/contact/ContactAvatar";
 import { getShortFormId, resolveDid } from "../../utils/id";
-import { getContactsByMessage, getContactByDid } from "../../utils/contacts";
+import {
+  getContactsByMessage,
+  getContactByDid,
+  getNicknameFromConvo,
+} from "../../utils/contacts";
 import { useFetchSettings } from "../../hooks/settings";
 import { useFetchLightningConfig } from "../../hooks/config";
+import TwitterConnected from "../../components/contact/TwitterConnected";
 
 const pageTitle = "Dashboard";
 
@@ -84,6 +89,9 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
         <thead>
           <tr className="border-t border-gray-200">
             <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Contact
+            </th>
+            <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <span className="lg:pl-2">Conversations</span>
             </th>
             <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -105,11 +113,11 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                 }`}
               >
                 <td
+                  className="px-6 py-3 text-sm text-gray-500 font-medium"
                   onClick={() => goToConversation(groupId)}
-                  className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900"
                 >
-                  <div className="flex items-center space-x-3 lg:pl-2">
-                    <div className="truncate hover:text-gray-600 flex items-center">
+                  <div className="flex items-center space-x-2 lg:pl-2">
+                    <div className="flex flex-shrink-0 -space-x-1 items-center">
                       {getContactsByMessage({
                         message: messages.slice(-1)[0],
                         contacts: contactsRes?.data.contacts,
@@ -118,13 +126,53 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                         <Fragment key={i}>
                           <ContactAvatar
                             contact={contact}
-                            className="h-10 w-10"
+                            className="h-8 w-8"
                           />
-                          <span className="pl-2 text-gray-900 text-md font-semibold pr-5">
-                            {contact?.name}
-                          </span>
+                          <div className="flex flex-col pl-2">
+                            <div className="pl-2 text-gray-900 text-md font-semibold pr-5 flex items-center space-x-2">
+                              {contact?.name}
+                              {contact && (
+                                <TwitterConnected
+                                  contact={contact}
+                                  className="ml-2 h-4 w-4"
+                                />
+                              )}
+                            </div>
+                            {contact?.name === "Unknown" &&
+                              getNicknameFromConvo({ messages, contact }) && (
+                                <span className="text-gray-500 font-normal text-xs">
+                                  (Maybe:{" "}
+                                  {getNicknameFromConvo({ messages, contact })})
+                                </span>
+                              )}
+                            {contact?.metadata &&
+                              JSON.parse(contact?.metadata)?.username && (
+                                <a
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  href={`https://twitter.com/${
+                                    JSON.parse(contact?.metadata)?.username
+                                  }`}
+                                  className="pl-2 text-blue-500 text-sm hover:underline font-normal"
+                                >{`(@${
+                                  JSON.parse(contact?.metadata)?.username
+                                })`}</a>
+                              )}
+                          </div>
                         </Fragment>
                       ))}
+                    </div>
+                    {/* <span className="flex-shrink-0 text-xs leading-5 font-medium">
+                      +{messages.slice(-1)[0]?.recipients.length}
+                    </span> */}
+                  </div>
+                </td>
+                <td
+                  onClick={() => goToConversation(groupId)}
+                  className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="truncate hover:text-gray-600 flex items-center">
                       {unreadMessages[groupId] > 0 && (
                         <div className="flex items-center space-x-4 pr-4">
                           <div
@@ -148,7 +196,10 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-3 text-sm text-gray-500 font-medium">
+                <td
+                  className="px-6 py-3 text-sm text-gray-500 font-medium"
+                  onClick={() => goToConversation(groupId)}
+                >
                   <div className="flex items-center space-x-2 justify-center">
                     <div className="flex flex-shrink-0 -space-x-1 items-center">
                       {getContactsByMessage({
@@ -170,7 +221,10 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
                     </span> */}
                   </div>
                 </td>
-                <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
+                <td
+                  className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right"
+                  onClick={() => goToConversation(groupId)}
+                >
                   {moment
                     .unix(messages.slice(-1)[0]?.data.created_time)
                     .fromNow()}
@@ -214,6 +268,9 @@ const NotificationsTable = ({ notifications }) => {
         <thead>
           <tr className="border-t border-gray-200">
             <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Contact
+            </th>
+            <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <span className="lg:pl-2">Notifications</span>
             </th>
             <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -232,8 +289,11 @@ const NotificationsTable = ({ notifications }) => {
                   : "bg-gray-100"
               } `}
             >
-              <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
-                <div className="flex items-center space-x-3 lg:pl-2">
+              <td
+                className="px-6 py-3 text-sm text-gray-500 font-medium"
+                onClick={() => goToConversation(groupId)}
+              >
+                <div className="flex items-center space-x-2 lg:pl-2">
                   <div className="flex flex-shrink-0 -space-x-1 items-center">
                     {getContactsByMessage({
                       message: notification,
@@ -241,16 +301,55 @@ const NotificationsTable = ({ notifications }) => {
                       myDid,
                     }).map((contact, i) => (
                       <Fragment key={i}>
-                        <ContactAvatar
-                          contact={contact}
-                          className="h-10 w-10"
-                        />
-                        <span className="pl-2 text-gray-900 text-md font-semibold pr-5">
-                          {contact?.name}
-                        </span>
+                        <ContactAvatar contact={contact} className="h-8 w-8" />
+                        <div className="flex flex-col pl-2">
+                          <div className="pl-2 text-gray-900 text-md font-semibold pr-5 flex items-center space-x-2">
+                            {contact?.name}
+                            {contact && (
+                              <TwitterConnected
+                                contact={contact}
+                                className="ml-2 h-4 w-4"
+                              />
+                            )}
+                          </div>
+                          {contact?.name === "Unknown" &&
+                            getNicknameFromConvo({
+                              messages: notifications,
+                              contact,
+                            }) && (
+                              <span className="text-gray-500 font-normal text-xs">
+                                (Maybe:{" "}
+                                {getNicknameFromConvo({
+                                  messages: notifications,
+                                  contact,
+                                })}
+                                )
+                              </span>
+                            )}
+                          {contact?.metadata &&
+                            JSON.parse(contact?.metadata)?.username && (
+                              <a
+                                target="_blank"
+                                rel="noreferrer"
+                                href={`https://twitter.com/${
+                                  JSON.parse(contact?.metadata)?.username
+                                }`}
+                                className="pl-2 text-blue-500 text-sm hover:underline font-normal"
+                              >{`(@${
+                                JSON.parse(contact?.metadata)?.username
+                              })`}</a>
+                            )}
+                        </div>
                       </Fragment>
                     ))}
                   </div>
+                  {/* <span className="flex-shrink-0 text-xs leading-5 font-medium">
+                      +{messages.slice(-1)[0]?.recipients.length}
+                    </span> */}
+                </div>
+              </td>
+              <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
+                <div className="flex items-center space-x-3 lg:pl-2">
                   <div href="#" className="truncate hover:text-gray-600">
                     <span
                       className={`${
@@ -363,11 +462,17 @@ const UsersTable = ({ peers, router }) => {
                     className="h-6 w-6"
                   />
                   <div className="truncate hover:text-gray-600">
-                    <span>
+                    <div className="flex items-center space-x-2">
                       {peer.metadata.contact
                         ? peer.metadata.contact.name
                         : "Unknown User"}
-                    </span>
+                      {peer.metadata.contact && (
+                        <TwitterConnected
+                          contact={peer.metadata.contact}
+                          className="ml-2 h-4 w-4"
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               </td>

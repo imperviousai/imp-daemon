@@ -5,12 +5,36 @@ import Identity from "./Identity";
 import AvatarRotator from "../contact/AvatarRotator";
 import { useAtom } from "jotai";
 import { myDidLongFormDocumentAtom } from "../../stores/id";
+import { useFetchSettings, useUpdateSettings } from "../../hooks/settings";
 
 const IdentitySettings = () => {
-  const [longFormDid, setLongFormDid] = useState("");
-  const { data: myDid } = useFetchMyDid();
   const { isAuthenticated, user } = useAuth0();
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
+  const [editNickname, setEditNickname] = useState(true);
+  const [nickname, setNickname] = useState("");
+
+  const { data: settings } = useFetchSettings();
+  const { mutate: updateSettings } = useUpdateSettings();
+
+  const toggleEditNickname = () => setEditNickname(!editNickname);
+
+  const saveNickname = () => {
+    let update = settings;
+    if (!update.identity) {
+      update.identity = { nickname };
+    } else {
+      update.identity.nickname = nickname;
+    }
+    updateSettings({ key: "settings", value: JSON.stringify(update) });
+    toggleEditNickname();
+  };
+
+  useEffect(() => {
+    if (settings?.identity?.nickname) {
+      setNickname(settings?.identity?.nickname);
+      setEditNickname(false);
+    }
+  }, [settings?.identity?.nickname]);
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
@@ -24,7 +48,75 @@ const IdentitySettings = () => {
             Manage your decentalized identity.
           </p>
         </div>
-
+        <div className="sm:col-span-6">
+          <label
+            htmlFor="description"
+            className="block text-lg font-medium text-blue-gray-900"
+          >
+            Nickname
+          </label>
+          <div className="mt-1">
+            {editNickname ? (
+              <>
+                <p className="mt-1 text-sm font-medium text-blue-gray-900 pb-4">
+                  Set a nickname for yourself. It will be used to identify
+                  yourself if your DID is unpublished or you are unknown to
+                  outside parties.
+                </p>
+                <div className="w-full flex space-x-4">
+                  <input
+                    type="text"
+                    name="nickName"
+                    value={nickname}
+                    onChange={(e) => setNickname(e.target.value)}
+                    id="nickName"
+                    className="px-2 block w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => saveNickname()}
+                      className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (settings?.identity?.nickname) {
+                          setNickname(settings.identity.nickname);
+                        }
+                        setEditNickname(!editNickname);
+                      }}
+                      className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="mt-1 text-sm font-medium text-blue-gray-900 pb-4">
+                  You nickname will be be used to identify yourself if your DID
+                  is unpublished or you are unknown to outside parties.
+                </p>
+                <div className="flex space-x-4 items-center">
+                  <p className="text-md text-blue-gray-900 font-semibold">
+                    {nickname.length ? nickname : "No Nickname"}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => toggleEditNickname()}
+                    className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  >
+                    {nickname.length ? "Change Nickname" : "Add Nickname"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
         {user ? (
           <div className="sm:col-span-6">
             <p
@@ -53,7 +145,7 @@ const IdentitySettings = () => {
           <div className="sm:col-span-6">
             <label
               htmlFor="photo"
-              className="block text-xl font-medium text-blue-gray-900"
+              className="block text-lg font-medium text-blue-gray-900"
             >
               Avatar
             </label>
@@ -67,7 +159,7 @@ const IdentitySettings = () => {
         <div className="sm:col-span-6">
           <label
             htmlFor="description"
-            className="block text-sm font-medium text-blue-gray-900"
+            className="block text-lg font-medium text-blue-gray-900"
           >
             Decentralized Identity
           </label>

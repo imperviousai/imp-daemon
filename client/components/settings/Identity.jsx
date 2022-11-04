@@ -17,12 +17,12 @@ function Identity({ longFormDid }) {
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
 
   const { data, loading, error } = useQuery(GET_DID_BY_TWITTER, {
-    variables: { username: user?.nickname },
+    variables: { username: user?.nickname, shortFormDid: myDid?.id },
   });
 
   useEffect(() => {
-    if (data?.listDIDS?.items?.length > 0) {
-      setPublishedDid(data.listDIDS.items[0]);
+    if (data?.getDID) {
+      setPublishedDid(data?.getDID);
     } else {
       setPublishedDid("");
     }

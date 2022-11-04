@@ -394,10 +394,6 @@ function Onboard() {
     }
   };
 
-  const copied = () => {
-    toast.info("Recovery seed copied!");
-  };
-
   const goToDashboard = () => {
     updateCompletedSetup({ key: "completedSetup", value: "true" });
     setOnboardInProgress(false);
@@ -711,27 +707,6 @@ function Onboard() {
           Please back it up and never share with a third-party (including
           Impervious). We cannot help you recover data in the event of loss.
         </p>
-        <div className="flex w-full place-content-between px-6 pb-2">
-          <p className="text-md font-semibold">Account Recovery Seed:</p>
-          <CopyToClipboard text={recoverySeed} onCopy={() => copied()}>
-            <p className="underline text-center font-semibold text-gray-70 hover:bg-gray-100">
-              Copy
-            </p>
-          </CopyToClipboard>
-        </div>
-        <CopyToClipboard text={recoverySeed} onCopy={() => copied()}>
-          <p className="mx-6 border-2 border-gray-200 py-6 mb-6 text-center text-lg font-semibold text-gray-70 hover:bg-gray-100">
-            {recoverySeed}
-          </p>
-        </CopyToClipboard>
-        {/* <CopyToClipboard text={seed} onCopy={() => copied()}>
-          <button
-            type="button"
-            className="w-full items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary focus:primary-hover focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Copy
-          </button>
-        </CopyToClipboard> */}
         <div className="relative flex items-start items-center py-4">
           <div className="flex items-center h-5">
             <input

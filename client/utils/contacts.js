@@ -1,6 +1,7 @@
 import { request } from "./axios-utils";
 import { gql } from "@apollo/client";
 import { getApiKey } from "./misc";
+import { getShortFormId } from "./id";
 
 // Utility functions for the contacts management
 export const ALGOLIA_ID = "2AT1J9F6CY";
@@ -150,16 +151,14 @@ export const getRandomAvatar = () => {
 };
 
 export const GET_DID_BY_TWITTER = gql`
-  query getDIDByTwitter($username: String!) {
-    listDIDS(filter: { username: { eq: $username } }) {
-      items {
-        avatarUrl
-        lastUpdated
-        longFormDid
-        shortFormDid
-        name
-        username
-      }
+  query getDIDByTwitter($username: String!, $shortFormDid: String!) {
+    getDID(shortFormDid: $shortFormDid, username: $username) {
+      avatarUrl
+      lastUpdated
+      longFormDid
+      shortFormDid
+      name
+      username
     }
   }
 `;
@@ -193,4 +192,22 @@ export const getContactsByMessage = ({ message, contacts, myDid }) => {
       return getContactByDid({ shortFormDid: recipient, contacts });
     }
   });
+};
+
+// getNicknameFromConvo looks through each messages and finds the latest nickname that has been set in the convo history
+export const getNicknameFromConvo = ({ messages, contact }) => {
+  let m = messages
+    .filter((m) => getShortFormId(m.data.from) === contact.did)
+    .findLast((m) => {
+      if (m.data.body.metadata) {
+        if (m.data.body.metadata.nickname) {
+          return true;
+        }
+      }
+    });
+  if (m) {
+    return m.data.body.metadata.nickname;
+  } else {
+    return undefined;
+  }
 };

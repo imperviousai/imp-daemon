@@ -14,6 +14,7 @@ import { useFetchContacts } from "../../hooks/contacts";
 import ContactAvatar from "../contact/ContactAvatar";
 import { useFetchChannelsBalance } from "../../hooks/lightning";
 import sb from "satoshi-bitcoin";
+import { useFetchSettings } from "../../hooks/settings";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -130,6 +131,7 @@ export default function PaymentsSlideOut({ open, setOpen, selectedContact }) {
   const [quickSend, setQuickSend] = useState(false);
   const { mutate: sendBasicMessage } = useSendMessage();
   const { data: channelsBalance } = useFetchChannelsBalance();
+  const { data: settings } = useFetchSettings();
 
   const onErrorSendMessage = () => {
     toast.error("Error sending message. Please try again.");
@@ -155,6 +157,7 @@ export default function PaymentsSlideOut({ open, setOpen, selectedContact }) {
           amount: parseInt(sats),
           reply_to_id: "",
           isPayment: true,
+          settings,
         },
         { onError: onErrorSendMessage }
       );
@@ -180,6 +183,7 @@ export default function PaymentsSlideOut({ open, setOpen, selectedContact }) {
                   amount: parseInt(sats),
                   reply_to_id: "",
                   isPayment: true,
+                  settings,
                 });
                 setMessage("");
                 toast.success("You've just sent sats!");

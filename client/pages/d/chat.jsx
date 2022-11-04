@@ -55,11 +55,16 @@ import { encode } from "base64-arraybuffer";
 import FileDownload from "../../components/meeting/FileDownload";
 import useAutosizeTextArea from "../../components/useAutosizeTextArea";
 import ContactAvatar from "../../components/contact/ContactAvatar";
-import { getContactByDid, getContactsByMessage } from "../../utils/contacts";
+import {
+  getContactByDid,
+  getContactsByMessage,
+  getNicknameFromConvo,
+} from "../../utils/contacts";
 import FileSharingModal from "../../components/meeting/FileSharingModal";
 import BlockButton from "../../components/contact/BlockButton";
 import { useFetchSettings } from "../../hooks/settings";
 import { useFetchLightningConfig } from "../../hooks/config";
+import TwitterConnected from "../../components/contact/TwitterConnected";
 
 const EmojiPicker = dynamic(() => import("../../components/EmojiPicker"), {
   ssr: false,
@@ -167,19 +172,23 @@ const RenderConversationSection = ({ unreadMessages, message }) => {
       return `${message?.data.body.content?.slice(0, 20).toString()}`;
     }
   };
+
   return (
     <div className="flex items-center justify-between space-x-4">
       <div className="flex space-x-4">
         {contact && <ContactAvatar contact={contact} className="w-10 h-10" />}
 
         <div className="flex flex-col">
-          <p
+          <div
             className={`${
               unreadMessages > 0 ? "font-bold" : "font-light"
-            } text-md`}
+            } text-md flex items-center space-x-2`}
           >
             {contact?.name}
-          </p>
+            {contact && (
+              <TwitterConnected contact={contact} className="ml-2 h-4 w-4" />
+            )}
+          </div>
 
           {/* <p className="font-light text-xs">{contact.did}</p> */}
           <p
@@ -190,12 +199,10 @@ const RenderConversationSection = ({ unreadMessages, message }) => {
             </span> */}
             {renderContent()}
           </p>
+          <p className="text-xs font-light">
+            {moment.unix(message?.data.created_time).fromNow()}
+          </p>
         </div>
-      </div>
-      <div className="flex flex-col pb-4">
-        <p className="text-sm font-light">
-          {moment.unix(message?.data.created_time).fromNow()}
-        </p>
       </div>
     </div>
   );
@@ -263,6 +270,7 @@ const ConversationHeader = ({
   setOpenPayment,
   sendInvite,
   activeConversation,
+  nickname,
 }) => {
   const [currentConversationPeer] = useAtom(currentConversationPeerAtom);
   const [, setCurrentConversation] = useAtom(currentConversationAtom);
@@ -329,10 +337,42 @@ const ConversationHeader = ({
                     className="w-10 h-10"
                   />
                   <div className="flex flex-col ml-3">
-                    <h1 className="text-lg font-semibold leading-7 text-gray-900 sm:leading-9 sm:truncate">
-                      {currentConversationContact?.name}{" "}
-                    </h1>
+                    <div className="flex items-center space-x-2">
+                      <h1 className="text-lg font-semibold leading-7 text-gray-900 sm:leading-9 sm:truncate">
+                        {currentConversationContact?.name}
+                      </h1>
+                      {currentConversationContact && (
+                        <TwitterConnected
+                          contact={currentConversationContact}
+                          className="ml-2 h-4 w-4"
+                        />
+                      )}
+                    </div>
 
+                    {currentConversationContact?.name === "Unknown" &&
+                      nickname && (
+                        <h3 className="text-gray-500 font-normal text-sm">
+                          (Maybe: {nickname})
+                        </h3>
+                      )}
+                    {currentConversationContact?.metadata &&
+                      JSON.parse(currentConversationContact?.metadata)
+                        ?.username && (
+                        <a
+                          className="text-sm text-blue-500 hover:underline font-normal"
+                          target="_blank"
+                          rel="noreferrer"
+                          href={`https://twitter.com/${
+                            JSON.parse(currentConversationContact?.metadata)
+                              ?.username
+                          }`}
+                        >
+                          {`@${
+                            JSON.parse(currentConversationContact?.metadata)
+                              ?.username
+                          }`}
+                        </a>
+                      )}
                     {/* <CopyToClipboard
                       text={currentConversation.did}
                       onCopy={() => toast.info("Copied!")}
@@ -587,6 +627,8 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
   const [currentVideoCallId] = useAtom(currentVideoCallAtom);
   const [currentConversationContact] = useAtom(currentConversationContactAtom);
   const { mutate: saveBasicMessage } = useSaveMessage();
+  const { data: settings } = useFetchSettings();
+
   const textAreaRef = useRef(null);
 
   useAutosizeTextArea(textAreaRef.current, msg);
@@ -656,6 +698,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
         amount: lightningEnabled ? 50 : 0,
         reply_to_id: "",
         isPayment: false,
+        settings,
       },
       { onError: onErrorSendMessage }
     );
@@ -679,9 +722,15 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
       did: currentConversationContact.did,
       networkId,
       type,
+      metadata: {
+        nickname: settings?.identity?.nickname
+          ? settings?.identity?.nickname
+          : "",
+      },
     };
     const payload =
       type === "live-message" ? { msg: data, ...header } : { data, ...header };
+    console.log("sending webrtc payload: ", payload);
 
     currentConversationPeer?.peer.write(JSON.stringify(payload));
   };
@@ -701,6 +750,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
           type: "file-transfer-done",
           from: myDid.id,
           did: currentConversationContact.did,
+          settings,
         });
       };
     } else {
@@ -709,6 +759,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
         type: "file-transfer-done",
         from: myDid.id,
         did: currentConversationContact.did,
+        settings,
       });
     }
     setFileInput();
@@ -754,6 +805,7 @@ const ConversationFooter = ({ sendBasicMessage, myDid }) => {
           type: "live-message",
           from: myDid.id,
           did: currentConversationContact.did,
+          settings,
         });
         setMsg("");
         return;
@@ -1010,6 +1062,7 @@ const ContactQuickView = ({
   openContactPreview,
   setOpenContactPreview,
   currentConversationContact,
+  nickname,
 }) => {
   return (
     <Transition.Root show={openContactPreview} as={Fragment}>
@@ -1054,7 +1107,10 @@ const ContactQuickView = ({
                   <div className="relative mt-6 flex-1 px-4 sm:px-6">
                     {/* Replace with your content */}
                     {/* <div className="absolute inset-0 px-4 sm:px-6">check</div> */}
-                    <ContactView selectedContact={currentConversationContact} />
+                    <ContactView
+                      selectedContact={currentConversationContact}
+                      nickname={nickname}
+                    />
                     {/* /End replace */}
                   </div>
                 </div>
@@ -1072,6 +1128,7 @@ export default function Chat() {
   const [openPayment, setOpenPayment] = useState(false);
   const [toggleNewContact, setToggleNewContact] = useState(false);
   const [activeConversation, setActiveConversation] = useState();
+  const [nickname, setNickname] = useState("");
 
   const [currentConversation, setCurrentConversation] = useAtom(
     currentConversationAtom
@@ -1094,6 +1151,18 @@ export default function Chat() {
     settings,
   });
   const { mutate: sendBasicMessage } = useSendMessage();
+
+  useEffect(() => {
+    if (activeConversation) {
+      let n = getNicknameFromConvo({
+        messages: activeConversation.messages,
+        contact: currentConversationContact,
+      });
+      if (n) {
+        setNickname(n);
+      }
+    }
+  }, [activeConversation, currentConversationContact]);
 
   // TODO: rework these two useEffecfts, but for now they work
   useEffect(() => {
@@ -1157,6 +1226,7 @@ export default function Chat() {
       contact: currentConversationContact,
       type: "live-messaging-invitation",
       localStream: false,
+      settings,
     });
     toast.success("Invite Sent");
     addPeer(data);
@@ -1177,6 +1247,7 @@ export default function Chat() {
           openContactPreview={openContactPreview}
           setOpenContactPreview={setOpenContactPreview}
           currentConversationContact={currentConversationContact}
+          nickname={nickname}
         />
       </div>
       <div className="flex-1 relative z-0 flex overflow-hidden h-full lg:pr-52 lg:mr-16">
@@ -1191,6 +1262,7 @@ export default function Chat() {
                     setOpenPayment={setOpenPayment}
                     sendInvite={sendInvite}
                     activeConversation={activeConversation}
+                    nickname={nickname}
                   />
                 </div>
                 <div className="grow flex-1 pl-8 pr-4 overflow-hidden">

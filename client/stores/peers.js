@@ -134,9 +134,6 @@ export const currentConversationPeerAtom = atom((get) => {
   }
 });
 
-// atom to store files that have been sent to them through webrtc, primarily handles images only
-export const peerFilesAtom = atom([]);
-
 // draftStore is a localForage instance for holding drafts. A jotai implementation would
 // require several atoms created for each draft? I prefer to instance.set(title, draftUpdate) flow
 export const draftStore = localforage.createInstance({
