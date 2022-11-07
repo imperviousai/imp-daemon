@@ -163,6 +163,21 @@ export const GET_DID_BY_TWITTER = gql`
   }
 `;
 
+export const LIST_DIDS_BY_TWITTER = gql`
+  query listDIDByTwitter($username: String!) {
+    listDIDS(filter: { name: { eq: $username } }) {
+      items {
+        avatarUrl
+        lastUpdated
+        longFormDid
+        shortFormDid
+        name
+        username
+      }
+    }
+  }
+`;
+
 // getContactByDid will attempt to return a contact associated with the given did. If there is not a saved contact,
 // we will return an unknown contact object instead
 // TODO: perform automatic lookups in algolia for the contact, if the contact is not saved

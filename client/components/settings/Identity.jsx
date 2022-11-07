@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, gql } from "@apollo/client";
-import { GET_DID_BY_TWITTER } from "./../../utils/contacts";
+import {
+  GET_DID_BY_TWITTER,
+  LIST_DIDS_BY_TWITTER,
+} from "./../../utils/contacts";
 import { createDID, updateDID, deleteDID } from "../../src/graphql/mutations";
 import { toast } from "react-toastify";
 import { CheckCircleIcon } from "@heroicons/react/solid";
@@ -20,6 +23,10 @@ function Identity({ longFormDid }) {
     variables: { username: user?.nickname, shortFormDid: myDid?.id },
   });
 
+  const { data: publishedDids } = useQuery(LIST_DIDS_BY_TWITTER, {
+    variables: { username: "markhandlersec" },
+  });
+
   useEffect(() => {
     if (data?.getDID) {
       setPublishedDid(data?.getDID);
@@ -27,6 +34,28 @@ function Identity({ longFormDid }) {
       setPublishedDid("");
     }
   }, [data, setPublishedDid]);
+
+  useEffect(() => {
+    if (publishedDids) {
+      console.log("we've got other dids: ", publishedDids);
+    }
+  }, [publishedDids]);
+
+  const unpublishDids = () => {
+    // unpublish all existing dids that are in the registry
+    publishedDids?.listDIDS.items.forEach((item) => {
+      console.log("Found a did", item);
+      // deleteDid({
+      //   variables: {
+      //     input: {
+      //       shortFormDid: item.shortFormDid,
+      //       username: item.username,
+      //     },
+      //   },
+      //   refetchQueries: [{ query: GET_DID_BY_TWITTER }, "getDIDByTwitter"],
+      // });
+    });
+  };
 
   const [publishDid] = useMutation(gql(createDID), {
     variables: {
@@ -58,15 +87,7 @@ function Identity({ longFormDid }) {
     refetchQueries: [{ query: GET_DID_BY_TWITTER }, "getDIDByTwitter"],
   });
 
-  const [deleteDid] = useMutation(gql(deleteDID), {
-    variables: {
-      input: {
-        shortFormDid: publishedDid.shortFormDid,
-        username: publishedDid.username,
-      },
-    },
-    refetchQueries: [{ query: GET_DID_BY_TWITTER }, "getDIDByTwitter"],
-  });
+  const [deleteDid] = useMutation(gql(deleteDID));
 
   if (loading) return "Loading ...";
 
@@ -74,9 +95,7 @@ function Identity({ longFormDid }) {
     toast(
       ({ closeToast }) => (
         <div>
-          <p className="pb-4">
-            Are you sure you want to update your published DID?
-          </p>
+          <p className="pb-4">Are you sure you want to publish your DID?</p>
           <div className="flex space-x-4">
             <button
               type="button"
@@ -84,6 +103,7 @@ function Identity({ longFormDid }) {
                 try {
                   // TODO: handle the actual graphql mutation
                   if (user) {
+                    unpublishDids();
                     publishDid()
                       .then(({ data }) => {
                         toast.success("DID Published Successfuly");
@@ -185,7 +205,18 @@ function Identity({ longFormDid }) {
                 try {
                   // TODO: handle the actual graphql mutation
                   if (user) {
-                    deleteDid()
+                    deleteDid({
+                      variables: {
+                        input: {
+                          shortFormDid: publishedDid.shortFormDid,
+                          username: publishedDid.username,
+                        },
+                      },
+                      refetchQueries: [
+                        { query: GET_DID_BY_TWITTER },
+                        "getDIDByTwitter",
+                      ],
+                    })
                       .then(() => {
                         toast.success("DID Sucessfully Unpublished!");
                       })

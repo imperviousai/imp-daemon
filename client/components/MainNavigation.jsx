@@ -54,7 +54,7 @@ import {
 } from "../utils/contacts";
 import { AutocompleteItem } from "./navigation/AutocompleteItem";
 import { createDID } from "../src/graphql/mutations";
-import { GET_DID_BY_TWITTER } from "../utils/contacts";
+import { GET_DID_BY_TWITTER, LIST_DIDS_BY_TWITTER } from "../utils/contacts";
 import { useLazyQuery, useMutation, gql } from "@apollo/client";
 import { PaperAirplaneIcon, UserAddIcon } from "@heroicons/react/solid";
 import { BsWallet } from "react-icons/bs";
@@ -286,6 +286,8 @@ const TwitterConnect = () => {
           variables: { username: user?.nickname, shortFormDid: myDid?.id },
         });
         if (user?.nickname !== currentRegistryUser?.nickname) {
+          // delete any currently published dids, and then publish this one
+
           publishDid()
             .then(() =>
               console.log("Successfuly published did to the registery")
