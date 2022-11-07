@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { MenuIcon } from "@heroicons/react/outline";
+import { ChatAlt2Icon, MenuIcon } from "@heroicons/react/outline";
 import {
-  ChatAlt2Icon,
   ChevronLeftIcon,
   ExclamationIcon,
   PencilAltIcon,
@@ -18,14 +17,8 @@ import {
   useFetchBlocklist,
 } from "../../hooks/contacts";
 const tabs = [{ name: "Contact Info", href: "#", current: true }];
-
 const categories = "abcdefghijklmnopqrstuvwxyz1234567890";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 import MainNavigation from "../../components/MainNavigation";
-import { BsLightningChargeFill } from "react-icons/bs";
 import ContactAvatar from "../../components/contact/ContactAvatar";
 import TwitterLink from "../../components/contact/TwitterLink";
 import TwitterConnected from "../../components/contact/TwitterConnected";
@@ -35,6 +28,13 @@ import { useFetchMessages } from "../../hooks/messages";
 import { useFetchMyDid } from "../../hooks/id";
 import { getShortFormId } from "../../utils/id";
 import { useFetchSettings } from "../../hooks/settings";
+import { useRouter } from "next/router";
+import { currentConversationContactAtom } from "../../stores/messages";
+import { useAtom } from "jotai";
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const pageTitle = "Contacts";
 
@@ -57,6 +57,10 @@ export const ContactView = ({
     blocklist,
     settings,
   });
+  const router = useRouter();
+  const [, setCurrentConversationContact] = useAtom(
+    currentConversationContactAtom
+  );
 
   const onSuccessDelete = () => {
     toast.success("Contact successfully deleted!");
@@ -117,6 +121,12 @@ export const ContactView = ({
       }
     }
   };
+
+  const goToMessage = () => {
+    setCurrentConversationContact(selectedContact);
+    router.push("/d/chat");
+  };
+
   return (
     <article>
       {/* Profile header */}
@@ -169,21 +179,27 @@ export const ContactView = ({
           <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
             <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1 flex flex-col">
               <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
-                <h1 className="text-2xl font-bold text-gray-900 truncate">
+                <div className="text-2xl font-bold text-gray-900 truncate">
                   {selectedContact?.name}
-                </h1>
+                </div>
               </div>
             </div>
           </div>
-          <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
-            <div className="flex space-x-2 items-center">
-              <h1 className="text-2xl font-bold text-gray-900 truncate">
-                {selectedContact?.name}
-              </h1>
-              <TwitterConnected contact={selectedContact} className="h-4 w-4" />
-            </div>
-          </div>
         </div>
+      </div>
+      {/* Action buttons */}
+      <div className="flex items-center justify-center space-x-4 pt-2">
+        <button
+          type="button"
+          onClick={() => goToMessage()}
+          className="inline-flex items-center px-2.5 py-1.5 shadow-sm text-xs font-medium rounded text-white bg-primary hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        >
+          <ChatAlt2Icon
+            className="-ml-1 mr-2 h-5 w-5 text-white"
+            aria-hidden="true"
+          />
+          Chat
+        </button>
       </div>
 
       {/* Tabs */}
