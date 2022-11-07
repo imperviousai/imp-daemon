@@ -36,7 +36,7 @@ export const useAddContact = () => {
   return useMutation(addContact, {
     onSuccess: () => {
       queryClient.invalidateQueries("fetch-contacts");
-      // toast.success("Contact added successfully!");
+      toast.success("Contact has been imported.");
     },
     onError: (error) => {
       toast.error("Error adding contact. Please try again.");
