@@ -165,7 +165,7 @@ export const GET_DID_BY_TWITTER = gql`
 
 export const LIST_DIDS_BY_TWITTER = gql`
   query listDIDByTwitter($username: String!) {
-    listDIDS(filter: { name: { eq: $username } }) {
+    listDIDS(filter: { name: { eq: $username } }, limit: 1000) {
       items {
         avatarUrl
         lastUpdated

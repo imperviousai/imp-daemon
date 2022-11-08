@@ -24,7 +24,7 @@ function Identity({ longFormDid }) {
   });
 
   const { data: publishedDids } = useQuery(LIST_DIDS_BY_TWITTER, {
-    variables: { username: "markhandlersec" },
+    variables: { username: user?.nickname },
   });
 
   useEffect(() => {
@@ -35,25 +35,18 @@ function Identity({ longFormDid }) {
     }
   }, [data, setPublishedDid]);
 
-  useEffect(() => {
-    if (publishedDids) {
-      console.log("we've got other dids: ", publishedDids);
-    }
-  }, [publishedDids]);
-
-  const unpublishDids = () => {
+  const unpublishDids = async () => {
     // unpublish all existing dids that are in the registry
-    publishedDids?.listDIDS.items.forEach((item) => {
-      console.log("Found a did", item);
-      // deleteDid({
-      //   variables: {
-      //     input: {
-      //       shortFormDid: item.shortFormDid,
-      //       username: item.username,
-      //     },
-      //   },
-      //   refetchQueries: [{ query: GET_DID_BY_TWITTER }, "getDIDByTwitter"],
-      // });
+    await publishedDids?.listDIDS.items.forEach(async (item) => {
+      await deleteDid({
+        variables: {
+          input: {
+            shortFormDid: item.shortFormDid,
+            username: item.username,
+          },
+        },
+        refetchQueries: [{ query: GET_DID_BY_TWITTER }, "getDIDByTwitter"],
+      });
     });
   };
 
@@ -99,12 +92,12 @@ function Identity({ longFormDid }) {
           <div className="flex space-x-4">
             <button
               type="button"
-              onClick={() => {
+              onClick={async () => {
                 try {
                   // TODO: handle the actual graphql mutation
                   if (user) {
-                    unpublishDids();
-                    publishDid()
+                    await unpublishDids();
+                    await publishDid()
                       .then(({ data }) => {
                         toast.success("DID Published Successfuly");
                       })
