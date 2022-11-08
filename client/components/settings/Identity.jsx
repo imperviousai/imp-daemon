@@ -212,6 +212,8 @@ function Identity({ longFormDid }) {
                     })
                       .then(() => {
                         toast.success("DID Sucessfully Unpublished!");
+                        // delete any remaining dids
+                        unpublishDids();
                       })
                       .catch((e) => {
                         toast.error("Unable to publish DID. Please try again");
