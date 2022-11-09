@@ -1,10 +1,17 @@
-import { ChatAlt2Icon } from "@heroicons/react/outline";
+import {
+  CameraIcon,
+  ChatAlt2Icon,
+  VideoCameraIcon,
+} from "@heroicons/react/outline";
 import React, { useState } from "react";
 import { useFetchContacts } from "../hooks/contacts";
 import ContactAvatar from "./contact/ContactAvatar";
 import TwitterConnected from "./contact/TwitterConnected";
 import { useRouter } from "next/router";
-import { currentConversationContactAtom } from "../stores/messages";
+import {
+  currentConversationContactAtom,
+  meetingInviteListAtom,
+} from "../stores/messages";
 import { useAtom } from "jotai";
 import PaymentsSlideOut from "./lightning/PaymentsSlideOut";
 import { BsLightning } from "react-icons/bs";
@@ -20,6 +27,7 @@ function ContactsList() {
   const [selectedContact, setSelectedContact] = useState();
   const [openPayment, setOpenPayment] = useState(false);
   const { data: lightningConfig } = useFetchLightningConfig();
+  const [, setInviteList] = useAtom(meetingInviteListAtom);
 
   const message = (contact) => {
     setCurrentConversationContact(contact);
@@ -34,7 +42,10 @@ function ContactsList() {
     setOpenPayment(true);
   };
 
-  const click = () => alert("hello");
+  const call = (contact) => {
+    setInviteList((p) => p.push(contact));
+    router.push("/d/meeting");
+  };
 
   return (
     <>
@@ -70,6 +81,13 @@ function ContactsList() {
                       onClick={() => pay(contact)}
                     >
                       <BsLightning className="h-5 w-5" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      className="inline-flex items-center border border-1 border-gray-300 rounded-full p-1 text-gray-400"
+                      onClick={() => call(contact)}
+                    >
+                      <VideoCameraIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
