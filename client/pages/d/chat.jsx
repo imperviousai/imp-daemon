@@ -65,6 +65,7 @@ import BlockButton from "../../components/contact/BlockButton";
 import { useFetchSettings } from "../../hooks/settings";
 import { useFetchLightningConfig } from "../../hooks/config";
 import TwitterConnected from "../../components/contact/TwitterConnected";
+import ContactsList from "../../components/ContactsList";
 
 const EmojiPicker = dynamic(() => import("../../components/EmojiPicker"), {
   ssr: false,
@@ -1250,55 +1251,65 @@ export default function Chat() {
           nickname={nickname}
         />
       </div>
-      <div className="flex-1 relative z-0 flex overflow-hidden h-full lg:pr-52 lg:mr-16">
-        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white border-r">
-          {/* Start main area*/}
-          {(currentConversation || currentConversationContact) && (
-            <>
-              <div className="flex flex-col h-full">
-                <div className="flex-none">
-                  <ConversationHeader
-                    setOpenContactPreview={setOpenContactPreview}
-                    setOpenPayment={setOpenPayment}
-                    sendInvite={sendInvite}
-                    activeConversation={activeConversation}
-                    nickname={nickname}
-                  />
+      <div className="flex h-full">
+        <div className="flex-1 relative z-0 flex overflow-hidden w-5/6">
+          <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white border-r">
+            {/* Start main area*/}
+            {(currentConversation || currentConversationContact) && (
+              <>
+                <div className="flex flex-col h-full">
+                  <div className="flex-none">
+                    <ConversationHeader
+                      setOpenContactPreview={setOpenContactPreview}
+                      setOpenPayment={setOpenPayment}
+                      sendInvite={sendInvite}
+                      activeConversation={activeConversation}
+                      nickname={nickname}
+                    />
+                  </div>
+                  <div className="grow flex-1 pl-8 pr-4 overflow-hidden">
+                    <ConversationBody activeConversation={activeConversation} />
+                  </div>
+                  <div className="flex-none">
+                    <ConversationFooter
+                      sendBasicMessage={sendBasicMessage}
+                      myDid={myDid}
+                    />
+                  </div>
                 </div>
-                <div className="grow flex-1 pl-8 pr-4 overflow-hidden">
-                  <ConversationBody activeConversation={activeConversation} />
-                </div>
-                <div className="flex-none">
-                  <ConversationFooter
-                    sendBasicMessage={sendBasicMessage}
-                    myDid={myDid}
-                  />
-                </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
 
-          {/* End main area */}
-        </main>
-        <aside className="hidden relative xl:order-first xl:flex xl:flex-col flex-shrink-0 w-80 border-r border-gray-200 overflow-y-auto">
-          {/* Start secondary column (hidden on smaller screens) */}
-          <NewConversationHeader
-            setToggleNewContact={setToggleNewContact}
-            toggleNewContact={toggleNewContact}
-          />
-          {!toggleNewContact ? (
-            <>
-              <ConversationsHeader />
-              <ListConversations />
-            </>
-          ) : (
-            <ListContacts
+            {/* End main area */}
+          </main>
+          <aside className="hidden relative xl:order-first xl:flex xl:flex-col flex-shrink-0 w-80 border-r border-gray-200 overflow-y-auto">
+            {/* Start secondary column (hidden on smaller screens) */}
+            <NewConversationHeader
               setToggleNewContact={setToggleNewContact}
-              setCurrentConversationContact={setCurrentConversationContact}
+              toggleNewContact={toggleNewContact}
             />
-          )}
-          {/* End secondary column */}
-        </aside>
+            {!toggleNewContact ? (
+              <>
+                <ConversationsHeader />
+                <ListConversations />
+              </>
+            ) : (
+              <ListContacts
+                setToggleNewContact={setToggleNewContact}
+                setCurrentConversationContact={setCurrentConversationContact}
+              />
+            )}
+            {/* End secondary column */}
+          </aside>
+        </div>
+        <div className="flex flex-col w-1/6 border-1 border-l overflow-y-scroll">
+          <div className="flex justify-center py-4">
+            <h2 className="text-sm font-medium text-gray-500 uppercase">
+              Contacts
+            </h2>
+          </div>
+          <ContactsList />
+        </div>
       </div>
     </MainNavigation>
   );
