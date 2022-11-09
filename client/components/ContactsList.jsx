@@ -8,6 +8,8 @@ import { currentConversationContactAtom } from "../stores/messages";
 import { useAtom } from "jotai";
 import PaymentsSlideOut from "./lightning/PaymentsSlideOut";
 import { BsLightning } from "react-icons/bs";
+import { useFetchLightningConfig } from "../hooks/config";
+import { toast } from "react-toastify";
 
 function ContactsList() {
   const { data } = useFetchContacts();
@@ -17,15 +19,19 @@ function ContactsList() {
   );
   const [selectedContact, setSelectedContact] = useState();
   const [openPayment, setOpenPayment] = useState(false);
+  const { data: lightningConfig } = useFetchLightningConfig();
 
   const message = (contact) => {
     setCurrentConversationContact(contact);
     router.push("/d/chat");
   };
   const pay = (contact) => {
+    if (!lightningConfig?.data.lightningConfig.listening) {
+      toast.info("Connect to a lightning node to use this action.");
+      return;
+    }
     setSelectedContact(contact);
     setOpenPayment(true);
-    alert("Done");
   };
 
   const click = () => alert("hello");
@@ -39,14 +45,11 @@ function ContactsList() {
       />
       <ul role="list" className="relative divide-y divide-gray-200">
         {data?.data.contacts.map((contact, i) => (
-          <li key={i}>
-            <div className="relative px-6 py-2 flex items-center space-x-3 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary">
-              <div className="flex-shrink-0">
+          <>
+            <li key={i}>
+              <div className="px-6 py-2 flex items-center space-x-3 hover:bg-gray-50">
                 <ContactAvatar contact={contact} className="h-10 w-10" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="focus:outline-none">
-                  <span className="absolute inset-0" aria-hidden="true" />
+                <div className="flex flex-col">
                   <span className="flex items-center space-x-2">
                     <p className="text-sm font-medium text-gray-900">
                       {contact.name}
@@ -69,12 +72,10 @@ function ContactsList() {
                       <BsLightning className="h-5 w-5" aria-hidden="true" />
                     </button>
                   </div>
-
-                  {/* <p className="text-sm text-gray-500 truncate">{contact.did}</p> */}
                 </div>
               </div>
-            </div>
-          </li>
+            </li>
+          </>
         ))}
       </ul>
     </>
