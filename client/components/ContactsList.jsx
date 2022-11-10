@@ -17,6 +17,7 @@ import PaymentsSlideOut from "./lightning/PaymentsSlideOut";
 import { BsLightning } from "react-icons/bs";
 import { useFetchLightningConfig } from "../hooks/config";
 import { toast } from "react-toastify";
+import _ from "lodash";
 
 function ContactsList() {
   const { data } = useFetchContacts();
@@ -55,7 +56,9 @@ function ContactsList() {
         selectedContact={selectedContact}
       />
       <ul role="list" className="relative divide-y divide-gray-200">
-        {data?.data.contacts.map((contact, i) => (
+        {_.orderBy(data?.data.contacts, (c) => c.name.toLowerCase(), [
+          "asc",
+        ]).map((contact, i) => (
           <li key={i}>
             <div className="px-6 py-2 flex items-center space-x-3 hover:bg-gray-50">
               <ContactAvatar contact={contact} className="h-10 w-10" />
