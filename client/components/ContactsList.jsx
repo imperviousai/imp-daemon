@@ -56,44 +56,42 @@ function ContactsList() {
       />
       <ul role="list" className="relative divide-y divide-gray-200">
         {data?.data.contacts.map((contact, i) => (
-          <>
-            <li key={i}>
-              <div className="px-6 py-2 flex items-center space-x-3 hover:bg-gray-50">
-                <ContactAvatar contact={contact} className="h-10 w-10" />
-                <div className="flex flex-col">
-                  <span className="flex items-center space-x-2">
-                    <p className="text-sm font-medium text-gray-900">
-                      {contact.name}
-                    </p>
-                    <TwitterConnected contact={contact} className="h-4 w-4" />
-                  </span>
-                  <div className="flex space-x-2">
-                    <button
-                      type="button"
-                      className="inline-flex items-center border border-1 border-gray-300 rounded-full p-1 text-gray-400"
-                      onClick={() => message(contact)}
-                    >
-                      <ChatAlt2Icon className="h-5 w-5" aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      className="inline-flex items-center border border-1 border-gray-300 rounded-full p-1 text-gray-400"
-                      onClick={() => pay(contact)}
-                    >
-                      <BsLightning className="h-5 w-5" aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      className="inline-flex items-center border border-1 border-gray-300 rounded-full p-1 text-gray-400"
-                      onClick={() => call(contact)}
-                    >
-                      <VideoCameraIcon className="h-5 w-5" aria-hidden="true" />
-                    </button>
-                  </div>
+          <li key={i}>
+            <div className="px-6 py-2 flex items-center space-x-3 hover:bg-gray-50">
+              <ContactAvatar contact={contact} className="h-10 w-10" />
+              <div className="flex flex-col">
+                <span className="flex items-center space-x-2">
+                  <p className="text-sm font-medium text-gray-900">
+                    {contact.name}
+                  </p>
+                  <TwitterConnected contact={contact} className="h-4 w-4" />
+                </span>
+                <div className="flex space-x-2">
+                  <button
+                    type="button"
+                    className="inline-flex items-center border border-1 border-gray-300 rounded-full p-1 text-gray-400"
+                    onClick={() => message(contact)}
+                  >
+                    <ChatAlt2Icon className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex items-center border border-1 border-gray-300 rounded-full p-1 text-gray-400"
+                    onClick={() => pay(contact)}
+                  >
+                    <BsLightning className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex items-center border border-1 border-gray-300 rounded-full p-1 text-gray-400"
+                    onClick={() => call(contact)}
+                  >
+                    <VideoCameraIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
                 </div>
               </div>
-            </li>
-          </>
+            </div>
+          </li>
         ))}
       </ul>
     </>

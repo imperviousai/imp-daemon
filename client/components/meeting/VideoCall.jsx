@@ -72,7 +72,6 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
   useEffect(() => {
     // check for invite list
     if (inviteList && inviteList?.length > 0) {
-      console.log(inviteList);
       setOpenParticipants(true);
     }
   }, [inviteList]);

@@ -222,8 +222,8 @@ export default function DisplayParticipants({
     if (inviteList && inviteList?.length > 0) {
       inviteList.forEach((contact) => {
         setSelected((selected) => [...selected, contact]);
-        setInviteList((invited) => invited.filter((c) => c !== contact));
       });
+      setInviteList([]);
     }
   }, [inviteList, setInviteList]);
 
