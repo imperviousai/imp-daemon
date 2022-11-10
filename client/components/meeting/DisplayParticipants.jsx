@@ -381,7 +381,9 @@ export default function DisplayParticipants({
                             onClick={() => sendInvites()}
                             className="w-full flex-1 rounded-md border border-transparent bg-primary py-3 px-3 text-md font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                           >
-                            Send Invites ({selected.length})
+                            {selected.length > 1
+                              ? `Send Invitations (${selected.length})`
+                              : "Send Invitation"}
                           </button>
                         </div>
                       )}
