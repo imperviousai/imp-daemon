@@ -211,6 +211,7 @@ function Onboard() {
   const [recoveryKit, setRecoveryKit] = useState();
   const [showPasswordScreen, setShowPasswordScreen] = useState(false);
   const [file, setFile] = useState();
+  const [kit, setKit] = useState();
 
   const hiddenFileInput = useRef(null);
 
@@ -304,6 +305,7 @@ function Onboard() {
       .then(({ data: { recoveryKit } }) => {
         setPasswordSet(true);
         downloadRecoveryKit(recoveryKit);
+        setKit(recoveryKit);
         console.log("Attempting to register with relay now.");
         return relayRequest(relayEndpoint);
       })
@@ -524,17 +526,20 @@ function Onboard() {
       <div className="flex w-full justify-center flex-col items-center">
         {!isRecovering ? (
           <>
-            <h1 className="font-bold text-xl mb-1">Recovery</h1>
+            <h1 className="font-bold text-2xl mb-1">Recovery Mode</h1>
             <p className="mt-1 text-lg text-base text-gray-800 pt-2">
-              You will need to <b>enter and confirm a passphrase below </b>and
-              then <b>provide your Identity Recovery Kit.</b>
+              <b>Create and confirm a new password below,</b> this will be used
+              to lock and unlock your browser’s local database.
             </p>
             <p className="mt-1 text-md text-base text-gray-800 pb-4">
-              <b>Save a copy of this password in a safe place.</b> Impervious
-              CANNOT help you recovery this password.
+              <b>
+                Save a copy of your password in a safe place. Impervious CANNOT
+                help you recover this password.
+              </b>
             </p>
-            <p className="mt-1 text-md text-light text-gray-800">
-              Enter a password at least 8 characters long
+            <p className="mt-1 text-md text-base text-gray-800 pb-4">
+              If the password is lost, you’ll need to perform a factory reset of
+              the browser and restore with the Identity Recovery Kit.
             </p>
             <form
               className="w-full flex flex-col items-center justify-center w-full"
@@ -553,7 +558,7 @@ function Onboard() {
                 className={`shadow-sm h-10 w-full text-center focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${
                   invalid ? "border-red-300" : "border-gray-300"
                 } border-4 rounded-md my-4`}
-                placeholder="Enter your password"
+                placeholder="Enter Password: Minimum 8 Characters"
               />
               <input
                 type="password"
@@ -563,11 +568,8 @@ function Onboard() {
                 className={`shadow-sm h-10 w-full text-center focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${
                   invalid ? "border-red-300" : "border-gray-300"
                 } border-4 rounded-md my-4`}
-                placeholder="Confirm your password"
+                placeholder="Confirm Password"
               />
-              <p className="mt-1 text-lg text-base text-gray-800 pt-2 pb-4">
-                Please select your recovery kit.
-              </p>
               {file && (
                 <p className="pb-2">
                   File Selected:{" "}
@@ -578,9 +580,9 @@ function Onboard() {
                 <button
                   type="button"
                   onClick={handleClick}
-                  className="w-1/2 items-center px-6 py-3 border-2 border-primary text-base font-medium rounded-md shadow-sm text-primary bg-white hover:text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="w-1/2 items-center px-6 py-3 border-2 border-primary text-base font-medium rounded-md shadow-sm text-white bg-primary hover:text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                  Select Recovery Kit
+                  Select Identity Recovery Kit
                 </button>
                 <input
                   type="file"
@@ -631,17 +633,20 @@ function Onboard() {
     return (
       <div className="flex w-full justify-center flex-col items-center">
         <>
-          <h1 className="font-bold text-xl mb-1">New User</h1>
+          <h1 className="font-bold text-2xl mb-1">New User</h1>
           <p className="mt-1 text-lg text-base text-gray-800 pt-2">
-            You will need to <b>enter and confirm a passphrase below </b>and
-            then <b>save your Identity Recovery Kit.</b>
+            <b>Create and confirm a new password below,</b> this will be used to
+            lock and unlock your browser’s local database.
           </p>
           <p className="mt-1 text-md text-base text-gray-800 pb-4">
-            <b>Save a copy of this password in a safe place.</b> Impervious
-            CANNOT help you recovery this password.
+            <b>
+              Save a copy of your password in a safe place. Impervious CANNOT
+              help you recover this password.
+            </b>
           </p>
-          <p className="mt-1 text-md text-light text-gray-800">
-            Enter a password at least 8 characters long
+          <p className="mt-1 text-md text-base text-gray-800 pb-4">
+            If the password is lost, you’ll need to perform a factory reset of
+            the browser and restore with the Identity Recovery Kit.
           </p>
           <form
             className="w-full flex flex-col items-center justify-center w-full"
@@ -660,7 +665,7 @@ function Onboard() {
               className={`shadow-sm h-10 w-full text-center focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${
                 invalid ? "border-red-300" : "border-gray-300"
               } border-4 rounded-md my-4`}
-              placeholder="Enter your password"
+              placeholder="Enter Password: Minimum 8 Characters"
             />
             <input
               type="password"
@@ -671,7 +676,7 @@ function Onboard() {
               className={`shadow-sm h-10 w-full text-center focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm ${
                 invalid ? "border-red-300" : "border-gray-300"
               } border-4 rounded-md my-4`}
-              placeholder="Confirm your password"
+              placeholder="Confirm Password"
             />
             {isLoading ? (
               <Rings
@@ -713,14 +718,20 @@ function Onboard() {
         </h1>
         <p className="mt-1 text-lg font-semibold pb-4 mx-6 mt-4">
           The Identity Recovery Kit is used to recover your Impervious
-          Decentralized Identity (DID).
+          Decentralized Identity.
         </p>
         <p className="mx-6 pb-4 font-light">
           Please back it up and never share with a third-party (including
-          Impervious). We cannot help you recover your identity if you loose
-          your recovery kit.
+          Impervious). We cannot help you recover your identity if you lose your
+          Identity Recovery Kit.
         </p>
-        <div className="relative flex items-start items-center py-4">
+        <button
+          className="items-center px-6 py-3 mb-4 border-2 border-primary text-base font-medium rounded-md shadow-sm text-white bg-primary hover:text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          onClick={() => downloadRecoveryKit(kit)}
+        >
+          Download Recovery Kit
+        </button>
+        <div className="relative flex items-start items-center py-4 py-2 px-2 rounded-md border-2 border-primary">
           <div className="flex items-center h-5">
             <input
               id="comments"
@@ -737,7 +748,7 @@ function Onboard() {
           <div className="ml-3 text-sm">
             <label
               htmlFor="comments"
-              className="text-lg font-bold text-gray-700"
+              className="text-lg font-semibold text-primary"
             >
               I have backed up the Identity Recovery Kit.
             </label>
@@ -756,9 +767,6 @@ function Onboard() {
               <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
                 Welcome to the Impervious Browser
               </h1>
-              <h1 className="text-2xl font-bold text-gray-900 tracking-tight sm:text-2xl">
-                Your Portal to the Peer-to-Peer Internet
-              </h1>
             </div>
             <div className="pt-4 flex flex-col items-center">
               {showingRecovery
@@ -776,9 +784,9 @@ function Onboard() {
                       setRecoverySeed("");
                       goToDashboard();
                     }}
-                    className="w-1/2 inline-flex items-center px-6 py-3 border-4 border-primary shadow-sm text-base font-medium rounded-md text-primary bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex items-center px-3 py-1.5 border-4 border-primary shadow-sm text-base font-medium rounded-md text-white bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Take me to the Peer to Peer Internet!
+                    Next
                   </button>
                 </div>
               )}

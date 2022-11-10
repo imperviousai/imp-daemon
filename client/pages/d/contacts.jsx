@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { ChatAlt2Icon, MenuIcon } from "@heroicons/react/outline";
+import {
+  ChatAlt2Icon,
+  MenuIcon,
+  VideoCameraIcon,
+} from "@heroicons/react/outline";
 import {
   ChevronLeftIcon,
   ExclamationIcon,
   PencilAltIcon,
   SearchIcon,
-  VideoCameraIcon,
   XCircleIcon,
 } from "@heroicons/react/solid";
 import { toast } from "react-toastify";
@@ -29,7 +32,10 @@ import { useFetchMyDid } from "../../hooks/id";
 import { getShortFormId } from "../../utils/id";
 import { useFetchSettings } from "../../hooks/settings";
 import { useRouter } from "next/router";
-import { currentConversationContactAtom } from "../../stores/messages";
+import {
+  currentConversationContactAtom,
+  meetingInviteListAtom,
+} from "../../stores/messages";
 import { useAtom } from "jotai";
 
 function classNames(...classes) {
@@ -61,6 +67,7 @@ export const ContactView = ({
   const [, setCurrentConversationContact] = useAtom(
     currentConversationContactAtom
   );
+  const [, setInviteList] = useAtom(meetingInviteListAtom);
 
   const onSuccessDelete = () => {
     toast.success("Contact successfully deleted!");
@@ -125,6 +132,11 @@ export const ContactView = ({
   const goToMessage = () => {
     setCurrentConversationContact(selectedContact);
     router.push("/d/chat");
+  };
+
+  const goToCall = () => {
+    setInviteList((invited) => [...invited, selectedContact]);
+    router.push("/d/meeting");
   };
 
   return (
@@ -192,13 +204,24 @@ export const ContactView = ({
         <button
           type="button"
           onClick={() => goToMessage()}
-          className="inline-flex items-center px-2.5 py-1.5 shadow-sm text-xs font-medium rounded text-white bg-primary hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          className="inline-flex items-center px-2.5 py-1.5 shadow-sm text-xs font-medium rounded text-white bg-primary hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
         >
           <ChatAlt2Icon
             className="-ml-1 mr-2 h-5 w-5 text-white"
             aria-hidden="true"
           />
           Chat
+        </button>
+        <button
+          type="button"
+          onClick={() => goToCall()}
+          className="inline-flex items-center px-2.5 py-1.5 shadow-sm text-xs font-medium rounded text-white bg-primary hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        >
+          <VideoCameraIcon
+            className="-ml-1 mr-2 h-5 w-5 text-white"
+            aria-hidden="true"
+          />
+          Call
         </button>
       </div>
 
@@ -293,7 +316,7 @@ export const ContactView = ({
             <button
               type="button"
               onClick={() => deleteContactConfirm(selectedContact)}
-              className="inline-flex items-center px-2.5 py-1.5 border border-red-300 shadow-sm text-xs font-medium rounded text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              className="inline-flex items-center px-2.5 py-1.5 border border-red-300 shadow-sm text-xs font-medium rounded text-red-700 bg-white hover:bg--50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
             >
               <XCircleIcon
                 className="-ml-1 mr-2 h-5 w-5 text-red-400"
