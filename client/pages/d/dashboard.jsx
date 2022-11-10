@@ -8,8 +8,10 @@ import {
   VideoCameraIcon,
   ChatIcon,
   UserIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
 } from "@heroicons/react/solid";
-import uniqBy from "lodash/uniqBy";
+import _ from "lodash";
 import { BsFillLightningChargeFill } from "react-icons/bs";
 import { RiUserSharedFill } from "react-icons/ri";
 import { useRouter } from "next/router";
@@ -53,6 +55,19 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
   const { mutate: deleteGroupMessage } = useDeleteGroupMessages();
   const router = useRouter();
   const { data: myDid } = useFetchMyDid();
+  const [isAscending, setIsAscending] = useState(false);
+  const [sortedConversations, setSortedConversations] = useState([]);
+
+  useEffect(() => {
+    if (conversations) {
+      setSortedConversations(conversations);
+    }
+  }, [conversations]);
+
+  const toggleConversations = () => {
+    setIsAscending(!isAscending);
+    setSortedConversations(_.reverse(sortedConversations));
+  };
 
   const goToConversation = (groupId) => {
     setCurrentConversation(groupId);
@@ -92,7 +107,19 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
               Contact
             </th>
             <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <span className="lg:pl-2">Conversations</span>
+              <div className="flex items-center">
+                <span
+                  className="ml-2 flex-none rounded bg-gray-200 text-gray-900 hover:bg-gray-300"
+                  onClick={toggleConversations}
+                >
+                  {isAscending ? (
+                    <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+                  ) : (
+                    <ChevronUpIcon className="h-5 w-5" aria-hidden="true" />
+                  )}
+                </span>
+                <span className="lg:pl-2">Conversations</span>
+              </div>
             </th>
             <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Participants
@@ -104,8 +131,8 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
-          {conversations &&
-            conversations.map(({ groupId, messages }, i) => (
+          {sortedConversations &&
+            sortedConversations.map(({ groupId, messages }, i) => (
               <tr
                 key={i}
                 className={`${
@@ -589,7 +616,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (peers) {
       const connections = peers.filter((p) => p.peer._connected);
-      setConnectedPeers(uniqBy(connections, "metadata.dest"));
+      setConnectedPeers(_.uniqBy(connections, "metadata.dest"));
     }
   }, [peers]);
 

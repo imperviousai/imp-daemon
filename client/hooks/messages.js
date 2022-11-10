@@ -50,6 +50,7 @@ const getNotifications = ({
     messages: notifications,
     contacts,
   });
+
   return notifications;
 };
 
@@ -89,7 +90,14 @@ const convertMessagesintoConversations = ({
     });
   });
 
-  return conversations;
+  // return conversations;
+  return _.orderBy(
+    conversations,
+    function (c) {
+      return c.messages.slice(-1)[0]?.data.created_time;
+    },
+    ["desc"]
+  );
 };
 
 // useFetchMessages gets all of the messages, sorts them into conversations assuming a 1:1 pair (for now).
