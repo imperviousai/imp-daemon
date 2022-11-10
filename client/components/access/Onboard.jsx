@@ -525,8 +525,16 @@ function Onboard() {
         {!isRecovering ? (
           <>
             <h1 className="font-bold text-xl mb-1">Recovery</h1>
-            <p className="mt-1 text-lg text-base text-gray-800 pt-2 pb-4">
-              Please set and confirm your password
+            <p className="mt-1 text-lg text-base text-gray-800 pt-2">
+              You will need to <b>enter and confirm a passphrase below </b>and
+              then <b>provide your Identity Recovery Kit.</b>
+            </p>
+            <p className="mt-1 text-md text-base text-gray-800 pb-4">
+              <b>Save a copy of this password in a safe place.</b> Impervious
+              CANNOT help you recovery this password.
+            </p>
+            <p className="mt-1 text-md text-light text-gray-800">
+              Enter a password at least 8 characters long
             </p>
             <form
               className="w-full flex flex-col items-center justify-center w-full"
@@ -623,12 +631,16 @@ function Onboard() {
     return (
       <div className="flex w-full justify-center flex-col items-center">
         <>
-          <h1 className="font-bold text-xl mb-1">Set a Password Manually</h1>
-          <p className="mt-1 text-lg text-base text-gray-800 pt-2 pb-4">
+          <h1 className="font-bold text-xl mb-1">New User</h1>
+          <p className="mt-1 text-lg text-base text-gray-800 pt-2">
             You will need to <b>enter and confirm a passphrase below </b>and
-            then <b>save your Recovery Kit</b>
+            then <b>save your Identity Recovery Kit.</b>
           </p>
-          <p className="mt-1 text-md text-light text-gray-500">
+          <p className="mt-1 text-md text-base text-gray-800 pb-4">
+            <b>Save a copy of this password in a safe place.</b> Impervious
+            CANNOT help you recovery this password.
+          </p>
+          <p className="mt-1 text-md text-light text-gray-800">
             Enter a password at least 8 characters long
           </p>
           <form
@@ -695,17 +707,18 @@ function Onboard() {
 
   const copySeed = () => {
     return (
-      <div className="flex w-1/2 justify-center flex-col items-center">
+      <div className="flex w-2/3 text-center justify-center flex-col items-center">
         <h1 className="font-bold text-xl mb-1">
-          Step 3: Save Your Account Recovery Kit
+          Step 3: Save Your Identity Recovery Kit
         </h1>
         <p className="mt-1 text-lg font-semibold pb-4 mx-6 mt-4">
-          The Account Recovery Kit can be used to recover encrypted data stored
-          on your local Impervious database.
+          The Identity Recovery Kit is used to recover your Impervious
+          Decentralized Identity (DID).
         </p>
         <p className="mx-6 pb-4 font-light">
           Please back it up and never share with a third-party (including
-          Impervious). We cannot help you recover data in the event of loss.
+          Impervious). We cannot help you recover your identity if you loose
+          your recovery kit.
         </p>
         <div className="relative flex items-start items-center py-4">
           <div className="flex items-center h-5">
@@ -726,7 +739,7 @@ function Onboard() {
               htmlFor="comments"
               className="text-lg font-bold text-gray-700"
             >
-              I have backed up the Account Recovery Kit.
+              I have backed up the Identity Recovery Kit.
             </label>
           </div>
         </div>
