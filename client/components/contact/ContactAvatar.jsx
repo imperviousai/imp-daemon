@@ -16,11 +16,7 @@ function ContactAvatar({ contact, className }) {
   return (
     <Fragment>
       {avatarUrl ? (
-        <img
-          className={`rounded-full ${className}`}
-          src={avatarUrl}
-          alt="avatar"
-        />
+        <img className={`rounded-full ${className}`} src={avatarUrl} />
       ) : avatar ? (
         <BigHead className={className} {...avatar} />
       ) : (

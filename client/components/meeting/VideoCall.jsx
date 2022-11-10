@@ -22,6 +22,7 @@ import {
 import { XCircleIcon } from "@heroicons/react/outline";
 import { toast } from "react-toastify";
 import { useFetchLightningConfig } from "../../hooks/config";
+import { meetingInviteListAtom } from "../../stores/messages";
 
 const Video = ({ peer }) => {
   const ref = useRef();
@@ -64,8 +65,16 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
   const [peerMessages, setPeerMessages] = useAtom(peerMessagesAtom);
   const [currentVideoCallId] = useAtom(currentVideoCallAtom);
   const [hasUnreadVideoMessages] = useAtom(hasUnreadVideoMessagesAtom);
+  const [inviteList] = useAtom(meetingInviteListAtom);
 
   const { data: lightningConfig } = useFetchLightningConfig();
+
+  useEffect(() => {
+    // check for invite list
+    if (inviteList && inviteList?.length > 0) {
+      setOpenParticipants(true);
+    }
+  }, [inviteList]);
 
   useEffect(() => {
     connectAudioandVideo();
