@@ -166,10 +166,10 @@ jobs:
           SSL_TOTP: ${{ secrets.SSL_TOTP }}
           SSL_CREDENTIAL_ID: ${{ secrets.SSL_CREDENTIAL_ID }}
         run: |
-          Invoke-WebRequest -Uri https://www.ssl.com/download/codesigntool-for-windows/ -UseBasicParsing -OutFile ./codesign.zip
-          Expand-Archive -Path .\codesign.zip -DestinationPath signingDir
-          mkdir signingDir\signed
-          get-childitem -path $env:GITHUB_WORKSPACE\signingDir
+          Invoke-WebRequest -Uri https://www.ssl.com/download/codesigntool-for-windows/ -UseBasicParsing -OutFile ..\codesign.zip
+          Expand-Archive -Path ..\codesign.zip -DestinationPath ..\signingDir
+          mkdir ..\signingDir\signed
+          get-childitem -path $env:GITHUB_WORKSPACE\..\signingDir
 
       -
         name: Run GoReleaser
