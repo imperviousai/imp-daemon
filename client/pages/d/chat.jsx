@@ -39,6 +39,7 @@ import {
   currentConversationAtom,
   currentConversationContactAtom,
   lightningEnabledAtom,
+  meetingInviteListAtom,
 } from "../../stores/messages";
 import { useAtom } from "jotai";
 import { v4 as uuidv4 } from "uuid";
@@ -66,6 +67,7 @@ import { useFetchSettings } from "../../hooks/settings";
 import { useFetchLightningConfig } from "../../hooks/config";
 import TwitterConnected from "../../components/contact/TwitterConnected";
 import ContactsList from "../../components/ContactsList";
+import { useRouter } from "next/router";
 
 const EmojiPicker = dynamic(() => import("../../components/EmojiPicker"), {
   ssr: false,
@@ -284,6 +286,8 @@ const ConversationHeader = ({
   const disconnectPeer = () => {
     currentConversationPeer.peer.destroy();
   };
+  const [, setInviteList] = useAtom(meetingInviteListAtom);
+  const router = useRouter();
 
   const addVideo = () => {
     navigator.mediaDevices
@@ -319,6 +323,11 @@ const ConversationHeader = ({
       return;
     }
     setOpenPayment(true);
+  };
+
+  const goToCall = () => {
+    setInviteList((invited) => [...invited, currentConversationContact]);
+    router.push("/d/meeting");
   };
 
   return (
@@ -444,6 +453,14 @@ const ConversationHeader = ({
                 Connect
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => goToCall()}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+            >
+              <VideoCameraIcon className="h-6 w-6 mr-2" aria-hidden="true" />
+              Meet
+            </button>
 
             <div className="flex items-center">
               <button
