@@ -43,7 +43,7 @@ function ContactsList() {
   };
 
   const call = (contact) => {
-    setInviteList((p) => p.push(contact));
+    setInviteList((invited) => [...invited, contact]);
     router.push("/d/meeting");
   };
 

@@ -9,7 +9,10 @@ import {
   activeLiveDocsPeersAtom,
   removePeerAtom,
 } from "../../stores/peers";
-import { lightningEnabledAtom } from "../../stores/messages";
+import {
+  lightningEnabledAtom,
+  meetingInviteListAtom,
+} from "../../stores/messages";
 import { sendPeerInvitation } from "../../utils/peers";
 import { useFetchMyDid } from "../../hooks/id";
 import { useFetchContacts, useFetchBlocklist } from "../../hooks/contacts";
@@ -116,7 +119,11 @@ export const SelectParticipants = ({
                         {!isInvited(contact) ? (
                           <button
                             onClick={() => toggleSelected(contact)}
-                            className="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50"
+                            className={`${
+                              isSelected(contact)
+                                ? "text-white bg-primary hover:bg-primary-hover"
+                                : "text-gray-700 bg-white hover:bg-gray-50"
+                            } inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full `}
                           >
                             {/* TODO: need to account for invited but connected */}
                             {isSelected(contact) ? "Undo" : "Invite"}
@@ -199,6 +206,7 @@ export default function DisplayParticipants({
   const [activeVideoPeers] = useAtom(activeVideoPeersAtom);
   const [activeLiveDocsPeers] = useAtom(activeLiveDocsPeersAtom);
   const [lightningEnabled] = useAtom(lightningEnabledAtom);
+  const [inviteList, setInviteList] = useAtom(meetingInviteListAtom);
 
   const { data: myDid } = useFetchMyDid();
   const { mutate: sendBasicMessage } = useSendMessage();
@@ -208,6 +216,16 @@ export default function DisplayParticipants({
     if (type === "video-call-invitation") return activeVideoPeers;
     if (type === "doc-collab-request") return activeLiveDocsPeers;
   };
+
+  // check for inviteList contacts and prepopulate the list, then clear after prepolulated
+  useEffect(() => {
+    if (inviteList && inviteList?.length > 0) {
+      inviteList.forEach((contact) => {
+        setSelected((selected) => [...selected, contact]);
+        setInviteList((invited) => invited.filter((c) => c !== contact));
+      });
+    }
+  }, [inviteList, setInviteList]);
 
   // we can probably check for pending invitations to re-populate invited[] in useEffect
   const sendInvites = () => {
