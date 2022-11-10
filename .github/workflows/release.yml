@@ -8,110 +8,141 @@ permissions:
   contents: write
 
 jobs:
-  mac_amd_goreleaser:
-    runs-on: macos-12
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      -
-        name: Fetch all tags
-        run: git fetch --force --tags
-      -
-        name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.19
-      - 
-        name: Set Up Node
-        uses: actions/setup-node@v3
-      - 
-        name: Set up Gon
-        run: brew tap mitchellh/gon && brew install mitchellh/gon/gon
-      - 
-        name: Import Keychain Certs
-        uses: apple-actions/import-codesign-certs@v1
-        with: 
-          p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
-          p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-      # - 
-      #   name: Yarn install
-      #   working-directory: client
-      #   run: yarn
-      # - 
-      #   name: Export the UI
-      #   working-directory: client
-      #   run: yarn export
-      -
-        name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --config .goreleaser_macosx_amd.yml --debug
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
-          CGO_ENABLED: 1
+  # mac_amd_goreleaser:
+  #   runs-on: macos-12
+  #   steps:
+  #     -
+  #       name: Checkout
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     -
+  #       name: Fetch all tags
+  #       run: git fetch --force --tags
+  #     -
+  #       name: Set up Go
+  #       uses: actions/setup-go@v2
+  #       with:
+  #         go-version: 1.19
+  #     - 
+  #       name: Set Up Node
+  #       uses: actions/setup-node@v3
+  #     - 
+  #       name: Set up Gon
+  #       run: brew tap mitchellh/gon && brew install mitchellh/gon/gon
+  #     - 
+  #       name: Import Keychain Certs
+  #       uses: apple-actions/import-codesign-certs@v1
+  #       with: 
+  #         p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
+  #         p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+  #     # - 
+  #     #   name: Yarn install
+  #     #   working-directory: client
+  #     #   run: yarn
+  #     # - 
+  #     #   name: Export the UI
+  #     #   working-directory: client
+  #     #   run: yarn export
+  #     -
+  #       name: Run GoReleaser
+  #       uses: goreleaser/goreleaser-action@v2
+  #       with:
+  #         distribution: goreleaser
+  #         version: latest
+  #         args: release --config .goreleaser_macosx_amd.yml --debug
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+  #         CGO_ENABLED: 1
 
 
 
-  mac_arm_goreleaser:
-    runs-on: self-hosted
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      -
-        name: Fetch all tags
-        run: git fetch --force --tags
-      # -
-      #   name: Set up Go
-      #   uses: actions/setup-go@v2
-      #   with:
-      #     go-version: 1.19
-      # - 
-      #   name: Set Up Node
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 12
-      # - 
-      #   name: Set up Gon
-      #   run: brew tap mitchellh/gon && brew install mitchellh/gon/gon
-      # - 
-      #   name: Import Keychain Certs
-      #   uses: apple-actions/import-codesign-certs@v1
-      #   with: 
-      #     p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
-      #     p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-      # - 
-      #   name: Yarn install
-      #   working-directory: client
-      #   run: yarn
-      # - 
-      #   name: Export the UI
-      #   working-directory: client
-      #   run: yarn export
-      -
-        name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --config .goreleaser_macosx_arm.yml --debug --rm-dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
-          CGO_ENABLED: 1
+  # mac_arm_goreleaser:
+  #   runs-on: self-hosted
+  #   steps:
+  #     -
+  #       name: Checkout
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     -
+  #       name: Fetch all tags
+  #       run: git fetch --force --tags
+  #     # -
+  #     #   name: Set up Go
+  #     #   uses: actions/setup-go@v2
+  #     #   with:
+  #     #     go-version: 1.19
+  #     # - 
+  #     #   name: Set Up Node
+  #     #   uses: actions/setup-node@v3
+  #     #   with:
+  #     #     node-version: 12
+  #     # - 
+  #     #   name: Set up Gon
+  #     #   run: brew tap mitchellh/gon && brew install mitchellh/gon/gon
+  #     # - 
+  #     #   name: Import Keychain Certs
+  #     #   uses: apple-actions/import-codesign-certs@v1
+  #     #   with: 
+  #     #     p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
+  #     #     p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+  #     # - 
+  #     #   name: Yarn install
+  #     #   working-directory: client
+  #     #   run: yarn
+  #     # - 
+  #     #   name: Export the UI
+  #     #   working-directory: client
+  #     #   run: yarn export
+  #     -
+  #       name: Run GoReleaser
+  #       uses: goreleaser/goreleaser-action@v2
+  #       with:
+  #         distribution: goreleaser
+  #         version: latest
+  #         args: release --config .goreleaser_macosx_arm.yml --debug --rm-dist
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+  #         CGO_ENABLED: 1
 
 
           
-  linux_goreleaser:
-    runs-on: ubuntu-latest
+  # linux_goreleaser:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     -
+  #       name: Checkout
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     -
+  #       name: Fetch all tags
+  #       run: git fetch --force --tags
+  #     -
+  #       name: Set up Go
+  #       uses: actions/setup-go@v2
+  #       with:
+  #         go-version: 1.19
+  #     - 
+  #       name: Set Up Node
+  #       uses: actions/setup-node@v3
+
+  #     -
+  #       name: Run GoReleaser
+  #       uses: goreleaser/goreleaser-action@v2
+  #       with:
+  #         distribution: goreleaser
+  #         version: latest
+  #         args: release --rm-dist --config .goreleaser_linux.yml
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+
+  windows_goreleaser:
+    runs-on: windows-latest
     steps:
       -
         name: Checkout
@@ -126,24 +157,31 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.19
-      - 
-        name: Set Up Node
-        uses: actions/setup-node@v3
-      # - 
-      #   name: Yarn install
-      #   working-directory: client
-      #   run: yarn
-      # - 
-      #   name: Export the UI
-      #   working-directory: client
-      #   run: yarn export
+      -
+        name: Set up certificate environment
+        shell: pwsh
+        env:
+          SSL_USERNAME: ${{ secrets.SSL_USERNAME }}
+          SSL_PASSWORD: ${{ secrets.SSL_PASSWORD }}
+          SSL_TOTP: ${{ secrets.SSL_TOTP }}
+          SSL_CREDENTIAL_ID: ${{ secrets.SSL_CREDENTIAL_ID }}
+        run: |
+          Invoke-WebRequest -Uri https://www.ssl.com/download/codesigntool-for-windows/ -UseBasicParsing -OutFile ./codesign.zip
+          Expand-Archive -Path .\codesign.zip -DestinationPath signingDir
+          mkdir signingDir\signed
+          get-childitem -path $env:GITHUB_WORKSPACE\signingDir
+
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist --config .goreleaser_linux.yml
+          args: release --rm-dist --config .goreleaser_windows.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+          CGO_ENABLED: 1
+          SSL_USERNAME: ${{ secrets.SSL_USERNAME }}
+          SSL_PASSWORD: ${{ secrets.SSL_PASSWORD }}
+          SSL_TOTP: ${{ secrets.SSL_TOTP }}
+          SSL_CREDENTIAL_ID: ${{ secrets.SSL_CREDENTIAL_ID }}
