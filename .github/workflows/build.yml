@@ -2,7 +2,7 @@ name: Build-Artifacts
 on:
   push:
     branches:
-      - "win-build"
+      - "master"
 
 
 permissions:
@@ -67,163 +67,163 @@ jobs:
           path: dist\impervious-windows*\impervious.exe
 
 
-  # goreleaser_mac_amd:
-  #   runs-on: macos-12
-  #   steps:
-  #     -
-  #       name: Checkout
-  #       uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-  #     -
-  #       name: Fetch all tags
-  #       run: git fetch --force --tags
-  #     -
-  #       name: Set up Go
-  #       uses: actions/setup-go@v2
-  #       with:
-  #         go-version: 1.19
-  #     - 
-  #       name: Set Up Node
-  #       uses: actions/setup-node@v3
-  #     - 
-  #       name: Set up Gon
-  #       run: brew tap mitchellh/gon && brew install mitchellh/gon/gon
-  #     - 
-  #       name: Import Keychain Certs
-  #       uses: apple-actions/import-codesign-certs@v1
-  #       with: 
-  #         p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
-  #         p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-  #     # - 
-  #     #   name: Yarn install
-  #     #   working-directory: client
-  #     #   run: yarn
-  #     # - 
-  #     #   name: Export the UI
-  #     #   working-directory: client
-  #     #   run: yarn export
-  #     -
-  #       name: Run GoReleaser
-  #       uses: goreleaser/goreleaser-action@v2
-  #       with:
-  #         distribution: goreleaser
-  #         version: latest
-  #         args: release --config .goreleaser_macosx_amd.yml --debug --rm-dist
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
-  #         CGO_ENABLED: 1
-  #     - 
-  #       name: Upload assets (macos-amd64)
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: Impervious-macosx_amd64
-  #         # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-amd64_darwin_amd64_v1/impervious
-  #         path: dist/impervious-macos-amd64*/impervious.zip
-  #         # path: dist/impervious-macos-amd64*/impervious
+  goreleaser_mac_amd:
+    runs-on: macos-12
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        name: Fetch all tags
+        run: git fetch --force --tags
+      -
+        name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+      - 
+        name: Set Up Node
+        uses: actions/setup-node@v3
+      - 
+        name: Set up Gon
+        run: brew tap mitchellh/gon && brew install mitchellh/gon/gon
+      - 
+        name: Import Keychain Certs
+        uses: apple-actions/import-codesign-certs@v1
+        with: 
+          p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
+          p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+      # - 
+      #   name: Yarn install
+      #   working-directory: client
+      #   run: yarn
+      # - 
+      #   name: Export the UI
+      #   working-directory: client
+      #   run: yarn export
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --config .goreleaser_macosx_amd.yml --debug --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+          CGO_ENABLED: 1
+      - 
+        name: Upload assets (macos-amd64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: Impervious-macosx_amd64
+          # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-amd64_darwin_amd64_v1/impervious
+          path: dist/impervious-macos-amd64*/impervious.zip
+          # path: dist/impervious-macos-amd64*/impervious
 
 
 
-  # goreleaser_mac_arm:
-  #   runs-on: self-hosted
-  #   steps:
-  #     -
-  #       name: Checkout
-  #       uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-  #     -
-  #       name: Fetch all tags
-  #       run: git fetch --force --tags
-  #     # -
-  #     #   name: Set up Go
-  #     #   uses: actions/setup-go@v2
-  #     #   with:
-  #     #     go-version: 1.19
-  #     # - 
-  #     #   name: Set Up Node
-  #     #   uses: actions/setup-node@v3
-  #     # - 
-  #     #   name: Set up Gon
-  #     #   run: brew tap mitchellh/gon && brew install mitchellh/gon/gon
-  #     # - 
-  #     #   name: Import Keychain Certs
-  #     #   uses: apple-actions/import-codesign-certs@v1
-  #     #   with: 
-  #     #     p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
-  #     #     p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-  #     # - 
-  #     #   name: Yarn install
-  #     #   working-directory: client
-  #     #   run: yarn
-  #     # - 
-  #     #   name: Export the UI
-  #     #   working-directory: client
-  #     #   run: yarn export
-  #     -
-  #       name: Run GoReleaser
-  #       uses: goreleaser/goreleaser-action@v2
-  #       with:
-  #         distribution: goreleaser
-  #         version: latest
-  #         args: release --config .goreleaser_macosx_arm.yml --debug --rm-dist
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
-  #         CGO_ENABLED: 1
-  #     - 
-  #       name: Upload assets (macos-arm64)
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: Impervious-macosx_arm64
-  #         # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-arm64_darwin_arm64/impervious
-  #         path: dist/impervious-macos-arm64*/impervious.zip
-  #         # path: dist/impervious-macos-arm64*/impervious
+  goreleaser_mac_arm:
+    runs-on: self-hosted
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        name: Fetch all tags
+        run: git fetch --force --tags
+      # -
+      #   name: Set up Go
+      #   uses: actions/setup-go@v2
+      #   with:
+      #     go-version: 1.19
+      # - 
+      #   name: Set Up Node
+      #   uses: actions/setup-node@v3
+      # - 
+      #   name: Set up Gon
+      #   run: brew tap mitchellh/gon && brew install mitchellh/gon/gon
+      # - 
+      #   name: Import Keychain Certs
+      #   uses: apple-actions/import-codesign-certs@v1
+      #   with: 
+      #     p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
+      #     p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+      # - 
+      #   name: Yarn install
+      #   working-directory: client
+      #   run: yarn
+      # - 
+      #   name: Export the UI
+      #   working-directory: client
+      #   run: yarn export
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --config .goreleaser_macosx_arm.yml --debug --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+          CGO_ENABLED: 1
+      - 
+        name: Upload assets (macos-arm64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: Impervious-macosx_arm64
+          # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-arm64_darwin_arm64/impervious
+          path: dist/impervious-macos-arm64*/impervious.zip
+          # path: dist/impervious-macos-arm64*/impervious
 
 
-  # goreleaser_linux:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     -
-  #       name: Checkout
-  #       uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-  #     -
-  #       name: Fetch all tags
-  #       run: git fetch --force --tags
-  #     -
-  #       name: Set up Go
-  #       uses: actions/setup-go@v2
-  #       with:
-  #         go-version: 1.19
-  #     - 
-  #       name: Set Up Node
-  #       uses: actions/setup-node@v3
-  #     - 
-  #       name: Yarn install
-  #       working-directory: client
-  #       run: yarn
-  #     - 
-  #       name: Export the UI
-  #       working-directory: client
-  #       run: yarn export
-  #     -
-  #       name: Run GoReleaser
-  #       uses: goreleaser/goreleaser-action@v2
-  #       with:
-  #         distribution: goreleaser
-  #         version: latest
-  #         args: release --rm-dist --config .goreleaser_linux.yml
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
-  #     - 
-  #       name: Upload assets (linux-multi)
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: Impervious-linux-multi
-  #         path: dist/impervious-linux*/*
+  goreleaser_linux:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        name: Fetch all tags
+        run: git fetch --force --tags
+      -
+        name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+      - 
+        name: Set Up Node
+        uses: actions/setup-node@v3
+      - 
+        name: Yarn install
+        working-directory: client
+        run: yarn
+      - 
+        name: Export the UI
+        working-directory: client
+        run: yarn export
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist --config .goreleaser_linux.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+      - 
+        name: Upload assets (linux-multi)
+        uses: actions/upload-artifact@v3
+        with:
+          name: Impervious-linux-multi
+          path: dist/impervious-linux*/*
 
   
