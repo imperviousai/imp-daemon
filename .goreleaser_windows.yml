@@ -8,12 +8,12 @@ builds:
       - amd64
     hooks:
       post: 
-        - cmd:  cmd.exe /c '.\CodeSignTool.bat sign -credential_id={{.Env.SSL_CREDENTIAL_ID}} -username={{.Env.SSL_USERNAME}} -password={{.Env.SSL_PASSWORD}} -totp_secret={{.Env.SSL_TOTP}} -output_dir_path=signed -input_file_path=..\dist\impervious-windows_windows_amd64_v1/impervious.exe'
-          dir: .\signingDir
+        - cmd:  cmd.exe /c '.\CodeSignTool.bat sign -credential_id={{.Env.SSL_CREDENTIAL_ID}} -username={{.Env.SSL_USERNAME}} -password={{.Env.SSL_PASSWORD}} -totp_secret={{.Env.SSL_TOTP}} -output_dir_path=signed -input_file_path=..\imp-daemon-staging\dist\impervious-windows_windows_amd64_v1/impervious.exe'
+          dir: ..\signingDir
           output: true
-        - cmd:  cmd.exe /c 'copy signed\impervious.exe ..\dist\impervious-windows_windows_amd64_v1\impervious.exe'
+        - cmd:  cmd.exe /c 'copy signed\impervious.exe ..\imp-daemon-staging\dist\impervious-windows_windows_amd64_v1\impervious.exe'
           output: true
-          dir: .\signingDir
+          dir: ..\signingDir
 
 archives:
   - 
