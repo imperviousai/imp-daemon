@@ -147,7 +147,7 @@ const ShareContactButton = ({ myDid }) => {
             <Menu.Item>
               {({ active }) => (
                 <div className="grid grid-cols-4 gap-2 p-4">
-                  <CopyToClipboard
+                  {/* <CopyToClipboard
                     text={myDidLongFormDocument}
                     onCopy={() =>
                       toast.info("Copied to clipboard! Share this document!")
@@ -159,7 +159,7 @@ const ShareContactButton = ({ myDid }) => {
                     >
                       <ClipboardIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
-                  </CopyToClipboard>
+                  </CopyToClipboard> */}
                   <EmailShareButton subject={title} url={url}>
                     <EmailIcon size={32} round />
                   </EmailShareButton>

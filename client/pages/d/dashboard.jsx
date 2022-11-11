@@ -718,7 +718,7 @@ export default function Dashboard() {
                           Lightning
                         </p>
                       </div>
-                      <div className="flex flex-col items-center">
+                      {/* <div className="flex flex-col items-center">
                         <CopyToClipboard
                           text={myDidLongFormDocument}
                           onCopy={() =>
@@ -740,7 +740,7 @@ export default function Dashboard() {
                         <p className="text-gray-900 font-medium hover:text-gray-600 text-sm pt-1">
                           Share
                         </p>
-                      </div>
+                      </div> */}
                     </div>
                   </li>
                   <Overview
