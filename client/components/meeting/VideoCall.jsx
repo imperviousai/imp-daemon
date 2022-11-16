@@ -94,18 +94,24 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
   const connectAudioandVideo = useCallback(
     () =>
       new Promise((resolve, reject) => {
-        navigator.mediaDevices
-          .getUserMedia({ audio: true, video: true })
-          .then((stream) => {
-            if (userVideo.current) userVideo.current.srcObject = stream;
-            setLocalStream(stream);
-            resolve(stream);
-          })
-          .catch((err) => {
-            console.log("Unable to capture video stream: ", err);
-            toast.error("Unable to turn on audio and video. Please try again.");
-            reject(err);
-          });
+        try {
+          navigator.mediaDevices
+            .getUserMedia({ audio: true, video: true })
+            .then((stream) => {
+              if (userVideo.current) userVideo.current.srcObject = stream;
+              setLocalStream(stream);
+              resolve(stream);
+            })
+            .catch((err) => {
+              console.log("Unable to capture video stream: ", err);
+              toast.error(
+                "Unable to turn on audio and video. Please try again."
+              );
+              reject(err);
+            });
+        } catch (e) {
+          console.log("unable to capture stream");
+        }
       }),
     [setLocalStream]
   );
@@ -181,13 +187,17 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
           replaceStream(stream);
         });
     } else {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: true })
-        .then((stream) => {
-          if (userVideo.current) userVideo.current.srcObject = stream;
-          setLocalStream(stream);
-          replaceStream(stream);
-        });
+      try {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true, video: true })
+          .then((stream) => {
+            if (userVideo.current) userVideo.current.srcObject = stream;
+            setLocalStream(stream);
+            replaceStream(stream);
+          });
+      } catch (e) {
+        console.log("Unable to detect stream.");
+      }
     }
   };
 

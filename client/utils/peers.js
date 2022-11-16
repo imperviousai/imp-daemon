@@ -223,22 +223,26 @@ export const confirmPeerInvite = ({
   };
   const accept = () => {
     if (type === "video-call-invitation") {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: true })
-        .then((stream) => {
-          trigger("accept-peer-invitation", {
-            message,
-            knownContact,
-            stream,
-            sourceType,
+      try {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true, video: true })
+          .then((stream) => {
+            trigger("accept-peer-invitation", {
+              message,
+              knownContact,
+              stream,
+              sourceType,
+            });
+          })
+          .catch((error) => {
+            toast.error(
+              "Unable to grab audio and video for call. Please try again."
+            );
+            console.log("unable to grab audio and video. Error: ", error);
           });
-        })
-        .catch((error) => {
-          toast.error(
-            "Unable to grab audio and video for call. Please try again."
-          );
-          console.log("unable to grab audio and video. Error: ", error);
-        });
+      } catch (e) {
+        console.log("Unable to detect stream.");
+      }
     } else {
       trigger("accept-peer-invitation", {
         message,
