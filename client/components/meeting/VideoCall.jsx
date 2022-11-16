@@ -91,20 +91,24 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
     }
   }, [peers, localStream]);
 
-  const connectAudioandVideo = useCallback(() => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true, video: true })
-      .then((stream) => {
-        if (userVideo.current) userVideo.current.srcObject = stream;
-        setLocalStream(stream);
-        resolve(stream);
-      })
-      .catch((err) => {
-        console.log("Unable to capture video stream: ", err);
-        toast.error("Unable to turn on audio and video. Please try again.");
-        reject(err);
-      });
-  }, [setLocalStream]);
+  const connectAudioandVideo = useCallback(
+    () =>
+      new Promise((resolve, reject) => {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true, video: true })
+          .then((stream) => {
+            if (userVideo.current) userVideo.current.srcObject = stream;
+            setLocalStream(stream);
+            resolve(stream);
+          })
+          .catch((err) => {
+            console.log("Unable to capture video stream: ", err);
+            toast.error("Unable to turn on audio and video. Please try again.");
+            reject(err);
+          });
+      }),
+    [setLocalStream]
+  );
 
   const disconnectAudioandVideo = () => {
     localStream?.getTracks().forEach((track) => {
