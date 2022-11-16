@@ -212,8 +212,8 @@ export const getContactsByMessage = ({ message, contacts, myDid }) => {
 // getNicknameFromConvo looks through each messages and finds the latest nickname that has been set in the convo history
 export const getNicknameFromConvo = ({ messages, contact }) => {
   let m = messages
-    .filter((m) => getShortFormId(m.data.from) === contact?.did)
-    .findLast((m) => {
+    ?.filter((m) => getShortFormId(m.data.from) === contact?.did)
+    ?.findLast((m) => {
       if (m.data.body.metadata) {
         if (m.data.body.metadata.nickname) {
           return true;
