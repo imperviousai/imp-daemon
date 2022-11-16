@@ -91,30 +91,20 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
     }
   }, [peers, localStream]);
 
-  const connectAudioandVideo = useCallback(
-    () =>
-      new Promise((resolve, reject) => {
-        try {
-          navigator.mediaDevices
-            .getUserMedia({ audio: true, video: true })
-            .then((stream) => {
-              if (userVideo.current) userVideo.current.srcObject = stream;
-              setLocalStream(stream);
-              resolve(stream);
-            })
-            .catch((err) => {
-              console.log("Unable to capture video stream: ", err);
-              toast.error(
-                "Unable to turn on audio and video. Please try again."
-              );
-              reject(err);
-            });
-        } catch (e) {
-          console.log("unable to capture stream");
-        }
-      }),
-    [setLocalStream]
-  );
+  const connectAudioandVideo = useCallback(() => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: true })
+      .then((stream) => {
+        if (userVideo.current) userVideo.current.srcObject = stream;
+        setLocalStream(stream);
+        resolve(stream);
+      })
+      .catch((err) => {
+        console.log("Unable to capture video stream: ", err);
+        toast.error("Unable to turn on audio and video. Please try again.");
+        reject(err);
+      });
+  }, [setLocalStream]);
 
   const disconnectAudioandVideo = () => {
     localStream?.getTracks().forEach((track) => {
@@ -187,17 +177,13 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
           replaceStream(stream);
         });
     } else {
-      try {
-        navigator.mediaDevices
-          .getUserMedia({ audio: true, video: true })
-          .then((stream) => {
-            if (userVideo.current) userVideo.current.srcObject = stream;
-            setLocalStream(stream);
-            replaceStream(stream);
-          });
-      } catch (e) {
-        console.log("Unable to detect stream.");
-      }
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: true })
+        .then((stream) => {
+          if (userVideo.current) userVideo.current.srcObject = stream;
+          setLocalStream(stream);
+          replaceStream(stream);
+        });
     }
   };
 
