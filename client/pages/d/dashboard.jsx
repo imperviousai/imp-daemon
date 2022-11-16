@@ -788,7 +788,7 @@ export default function Dashboard() {
               </div>
             </main>
           </div>
-          <div className="flex flex-col w-1/6 border-1 border-l overflow-y-scroll">
+          <div className="flex flex-col w-1/6 border-1 border-l">
             <div className="flex justify-center py-4">
               <h2 className="text-sm font-medium text-gray-500 uppercase">
                 Contacts
