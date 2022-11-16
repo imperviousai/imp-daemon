@@ -2,6 +2,7 @@ import { request } from "./axios-utils";
 import { gql } from "@apollo/client";
 import { getApiKey } from "./misc";
 import { getShortFormId } from "./id";
+import _ from "lodash";
 
 // Utility functions for the contacts management
 export const ALGOLIA_ID = "2AT1J9F6CY";
@@ -213,13 +214,9 @@ export const getContactsByMessage = ({ message, contacts, myDid }) => {
 export const getNicknameFromConvo = ({ messages, contact }) => {
   let m = messages
     ?.filter((m) => getShortFormId(m.data.from) === contact?.did)
-    ?.findLast((m) => {
-      if (m.data.body.metadata) {
-        if (m.data.body.metadata.nickname) {
-          return true;
-        }
-      }
-    });
+    ?.reverse()
+    ?.find((m) => (m?.data?.body?.metadata?.nickname ? true : false));
+
   if (m) {
     return m.data.body.metadata.nickname;
   } else {
