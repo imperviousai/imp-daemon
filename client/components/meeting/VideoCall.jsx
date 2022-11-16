@@ -42,8 +42,8 @@ const Video = ({ peer }) => {
   }, [peer.peer._remoteStreams]);
 
   return (
-    <div className="flex justify-center bg-gray-100 rounded-lg m-2 px-2">
-      <div className="relative">
+    <div className="flex justify-center bg-gray-100 rounded-lg relative">
+      <div className="relative h-full w-full flex flex-col items-center">
         <video className="h-full" playsInline ref={ref} autoPlay />
         <div className="bg-gray-900 opacity-75 text-white rounded-md text-sm absolute bottom-0 left-0 px-4 m-2">
           {peer.metadata.contact.name}
@@ -258,8 +258,8 @@ const VideoCall = ({ toggleMessaging, peers, id }) => {
     <div className="bg-gray-50 w-full h-full flex items-center flex-col">
       <div className="h-5/6 w-full pl-12 pr-12 mt-8">
         <div className={`grid w-full h-full ${getGridLayout(peers.length)}`}>
-          <div className="flex justify-center bg-gray-100 rounded-lg m-2 px-2 relative">
-            <div className="relative">
+          <div className="flex justify-center bg-gray-100 rounded-lg relative">
+            <div className="relative h-full w-full flex flex-col items-center">
               <video
                 className="h-full"
                 playsInline
