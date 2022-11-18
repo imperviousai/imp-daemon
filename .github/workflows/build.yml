@@ -67,6 +67,7 @@ jobs:
           path: dist\impervious-windows*\impervious.exe
 
 
+
   goreleaser_mac_amd:
     runs-on: macos-12
     steps:
@@ -227,3 +228,4 @@ jobs:
           path: dist/impervious-linux*/*
 
   
+

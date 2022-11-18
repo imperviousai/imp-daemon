@@ -160,6 +160,7 @@ const ShareContactButton = ({ myDid }) => {
                       <ClipboardIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
                   </CopyToClipboard> */}
+
                   <EmailShareButton subject={title} url={url}>
                     <EmailIcon size={32} round />
                   </EmailShareButton>
