@@ -44,13 +44,15 @@ import {
   WhatsappIcon,
 } from "react-share";
 import { resolveDid } from "../utils/id";
-import { useAddContact } from "../hooks/contacts";
+import { useAddContact, useFetchContacts } from "../hooks/contacts";
 import LightningToggle from "./LightingToggle";
 import { Autocomplete } from "./navigation/Autocomplete";
 import {
   ALGOLIA_ID,
   ALGOLIA_API_KEY,
   ALGOLIA_DID_INDEX,
+  getContactByDid,
+  getRandomAvatar,
 } from "../utils/contacts";
 import { AutocompleteItem } from "./navigation/AutocompleteItem";
 import { createDID } from "../src/graphql/mutations";
@@ -61,6 +63,9 @@ import { BsWallet } from "react-icons/bs";
 import WalletSlideOut from "./lightning/WalletSlideOut";
 import { useFetchLightningConfig } from "../hooks/config";
 import PaymentsSlideOut from "./lightning/PaymentsSlideOut";
+import { currentConversationContactAtom } from "../stores/messages";
+import { useRouter } from "next/router";
+import { route } from "next/dist/server/router";
 
 const sidebarNavigation = [
   { name: "Dashboard", href: "/d/dashboard", icon: HomeIcon, current: false },
@@ -142,7 +147,7 @@ const ShareContactButton = ({ myDid }) => {
             <Menu.Item>
               {({ active }) => (
                 <div className="grid grid-cols-4 gap-2 p-4">
-                  <CopyToClipboard
+                  {/* <CopyToClipboard
                     text={myDidLongFormDocument}
                     onCopy={() =>
                       toast.info("Copied to clipboard! Share this document!")
@@ -154,7 +159,8 @@ const ShareContactButton = ({ myDid }) => {
                     >
                       <ClipboardIcon className="h-5 w-5" aria-hidden="true" />
                     </button>
-                  </CopyToClipboard>
+                  </CopyToClipboard> */}
+
                   <EmailShareButton subject={title} url={url}>
                     <EmailIcon size={32} round />
                   </EmailShareButton>
@@ -369,6 +375,11 @@ export default function MainNavigation({ children, currentPage }) {
   const { mutate: addContact } = useAddContact();
   const { data: lightningConfig } = useFetchLightningConfig();
   const [myDidLongFormDocument] = useAtom(myDidLongFormDocumentAtom);
+  const [, setCurrentConversationContact] = useAtom(
+    currentConversationContactAtom
+  );
+  const { data: contactsRes } = useFetchContacts();
+  const router = useRouter();
 
   const isCurrent = (name) => currentPage === name;
 
@@ -376,7 +387,14 @@ export default function MainNavigation({ children, currentPage }) {
 
   const importContact = (item) => {
     const { username, name, avatarUrl, longFormDid } = item;
-    resolveDid(longFormDid)
+    const knownContact = getContactByDid({
+      shortFormDid: item.shortFormDid,
+      contacts: contactsRes.data.contacts,
+    });
+    if (knownContact.name !== "Unknown") {
+      return;
+    }
+    return resolveDid(longFormDid)
       .then((res) => {
         console.log(res);
         addContact({
@@ -393,6 +411,22 @@ export default function MainNavigation({ children, currentPage }) {
         );
         console.log("Unable to parse DID while importing contact: ", err);
       });
+  };
+
+  const goToMessage = (item) => {
+    const { shortFormDid, username, avatarUrl } = item;
+    // can't import contact fast enough, so just going to make a shadow contact here
+    setCurrentConversationContact({
+      did: shortFormDid,
+      name: username,
+      metadata: JSON.stringify({
+        avatar: getRandomAvatar(),
+        username,
+        avatarUrl,
+      }),
+    });
+    router.push("/d/chat");
+    importContact(item);
   };
 
   // const saveContactConfirm = (item) => {
@@ -665,6 +699,7 @@ export default function MainNavigation({ children, currentPage }) {
                               <AutocompleteItem
                                 item={item}
                                 importContact={importContact}
+                                goToMessage={goToMessage}
                               />
                             );
                           },

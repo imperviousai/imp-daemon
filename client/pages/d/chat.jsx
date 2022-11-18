@@ -39,6 +39,7 @@ import {
   currentConversationAtom,
   currentConversationContactAtom,
   lightningEnabledAtom,
+  meetingInviteListAtom,
 } from "../../stores/messages";
 import { useAtom } from "jotai";
 import { v4 as uuidv4 } from "uuid";
@@ -65,6 +66,8 @@ import BlockButton from "../../components/contact/BlockButton";
 import { useFetchSettings } from "../../hooks/settings";
 import { useFetchLightningConfig } from "../../hooks/config";
 import TwitterConnected from "../../components/contact/TwitterConnected";
+import ContactsList from "../../components/ContactsList";
+import { useRouter } from "next/router";
 
 const EmojiPicker = dynamic(() => import("../../components/EmojiPicker"), {
   ssr: false,
@@ -283,6 +286,8 @@ const ConversationHeader = ({
   const disconnectPeer = () => {
     currentConversationPeer.peer.destroy();
   };
+  const [, setInviteList] = useAtom(meetingInviteListAtom);
+  const router = useRouter();
 
   const addVideo = () => {
     navigator.mediaDevices
@@ -318,6 +323,11 @@ const ConversationHeader = ({
       return;
     }
     setOpenPayment(true);
+  };
+
+  const goToCall = () => {
+    setInviteList((invited) => [...invited, currentConversationContact]);
+    router.push("/d/meeting");
   };
 
   return (
@@ -443,6 +453,14 @@ const ConversationHeader = ({
                 Connect
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => goToCall()}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+            >
+              <VideoCameraIcon className="h-6 w-6 mr-2" aria-hidden="true" />
+              Meet
+            </button>
 
             <div className="flex items-center">
               <button
@@ -1250,55 +1268,65 @@ export default function Chat() {
           nickname={nickname}
         />
       </div>
-      <div className="flex-1 relative z-0 flex overflow-hidden h-full lg:pr-52 lg:mr-16">
-        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white border-r">
-          {/* Start main area*/}
-          {(currentConversation || currentConversationContact) && (
-            <>
-              <div className="flex flex-col h-full">
-                <div className="flex-none">
-                  <ConversationHeader
-                    setOpenContactPreview={setOpenContactPreview}
-                    setOpenPayment={setOpenPayment}
-                    sendInvite={sendInvite}
-                    activeConversation={activeConversation}
-                    nickname={nickname}
-                  />
+      <div className="flex h-full">
+        <div className="flex-1 relative z-0 flex overflow-hidden w-5/6">
+          <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white border-r">
+            {/* Start main area*/}
+            {(currentConversation || currentConversationContact) && (
+              <>
+                <div className="flex flex-col h-full">
+                  <div className="flex-none">
+                    <ConversationHeader
+                      setOpenContactPreview={setOpenContactPreview}
+                      setOpenPayment={setOpenPayment}
+                      sendInvite={sendInvite}
+                      activeConversation={activeConversation}
+                      nickname={nickname}
+                    />
+                  </div>
+                  <div className="grow flex-1 pl-8 pr-4 overflow-hidden">
+                    <ConversationBody activeConversation={activeConversation} />
+                  </div>
+                  <div className="flex-none">
+                    <ConversationFooter
+                      sendBasicMessage={sendBasicMessage}
+                      myDid={myDid}
+                    />
+                  </div>
                 </div>
-                <div className="grow flex-1 pl-8 pr-4 overflow-hidden">
-                  <ConversationBody activeConversation={activeConversation} />
-                </div>
-                <div className="flex-none">
-                  <ConversationFooter
-                    sendBasicMessage={sendBasicMessage}
-                    myDid={myDid}
-                  />
-                </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
 
-          {/* End main area */}
-        </main>
-        <aside className="hidden relative xl:order-first xl:flex xl:flex-col flex-shrink-0 w-80 border-r border-gray-200 overflow-y-auto">
-          {/* Start secondary column (hidden on smaller screens) */}
-          <NewConversationHeader
-            setToggleNewContact={setToggleNewContact}
-            toggleNewContact={toggleNewContact}
-          />
-          {!toggleNewContact ? (
-            <>
-              <ConversationsHeader />
-              <ListConversations />
-            </>
-          ) : (
-            <ListContacts
+            {/* End main area */}
+          </main>
+          <aside className="hidden relative xl:order-first xl:flex xl:flex-col flex-shrink-0 w-80 border-r border-gray-200 overflow-y-auto">
+            {/* Start secondary column (hidden on smaller screens) */}
+            <NewConversationHeader
               setToggleNewContact={setToggleNewContact}
-              setCurrentConversationContact={setCurrentConversationContact}
+              toggleNewContact={toggleNewContact}
             />
-          )}
-          {/* End secondary column */}
-        </aside>
+            {!toggleNewContact ? (
+              <>
+                <ConversationsHeader />
+                <ListConversations />
+              </>
+            ) : (
+              <ListContacts
+                setToggleNewContact={setToggleNewContact}
+                setCurrentConversationContact={setCurrentConversationContact}
+              />
+            )}
+            {/* End secondary column */}
+          </aside>
+        </div>
+        <div className="flex flex-col w-1/6 border-1 border-l overflow-y-scroll">
+          <div className="flex justify-center py-4">
+            <h2 className="text-sm font-medium text-gray-500 uppercase">
+              Contacts
+            </h2>
+          </div>
+          <ContactsList />
+        </div>
       </div>
     </MainNavigation>
   );

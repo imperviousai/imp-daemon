@@ -129,14 +129,7 @@ jobs:
       - 
         name: Set Up Node
         uses: actions/setup-node@v3
-      # - 
-      #   name: Yarn install
-      #   working-directory: client
-      #   run: yarn
-      # - 
-      #   name: Export the UI
-      #   working-directory: client
-      #   run: yarn export
+
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
@@ -147,3 +140,48 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
+
+  windows_goreleaser:
+    runs-on: windows-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        name: Fetch all tags
+        run: git fetch --force --tags
+      -
+        name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+      -
+        name: Set up certificate environment
+        shell: pwsh
+        env:
+          SSL_USERNAME: ${{ secrets.SSL_USERNAME }}
+          SSL_PASSWORD: ${{ secrets.SSL_PASSWORD }}
+          SSL_TOTP: ${{ secrets.SSL_TOTP }}
+          SSL_CREDENTIAL_ID: ${{ secrets.SSL_CREDENTIAL_ID }}
+        run: |
+          Invoke-WebRequest -Uri https://www.ssl.com/download/codesigntool-for-windows/ -UseBasicParsing -OutFile ..\codesign.zip
+          Expand-Archive -Path ..\codesign.zip -DestinationPath ..\signingDir
+          mkdir ..\signingDir\signed
+          get-childitem -path $env:GITHUB_WORKSPACE\..\signingDir
+
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist --config .goreleaser_windows.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CGO_ENABLED: 1
+          SSL_USERNAME: ${{ secrets.SSL_USERNAME }}
+          SSL_PASSWORD: ${{ secrets.SSL_PASSWORD }}
+          SSL_TOTP: ${{ secrets.SSL_TOTP }}
+          SSL_CREDENTIAL_ID: ${{ secrets.SSL_CREDENTIAL_ID }}

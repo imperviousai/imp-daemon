@@ -9,3 +9,5 @@ export const currentConversationContactAtom = atom();
 export const readMessagesAtom = atomWithStorage("readMessages", []);
 
 export const lightningEnabledAtom = atom(false);
+
+export const meetingInviteListAtom = atom([]);

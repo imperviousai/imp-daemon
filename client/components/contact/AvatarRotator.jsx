@@ -95,7 +95,7 @@ const AvatarRotator = ({ contact }) => {
         {JSON.parse(contact.metadata).username ? (
           <ContactAvatar
             contact={contact}
-            className="h-32 object-cover lg:h-48 pt-5"
+            className="h-32 object-cover lg:h-48"
           />
         ) : (
           <Rotator />

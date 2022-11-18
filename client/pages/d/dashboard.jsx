@@ -8,8 +8,10 @@ import {
   VideoCameraIcon,
   ChatIcon,
   UserIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
 } from "@heroicons/react/solid";
-import uniqBy from "lodash/uniqBy";
+import _ from "lodash";
 import { BsFillLightningChargeFill } from "react-icons/bs";
 import { RiUserSharedFill } from "react-icons/ri";
 import { useRouter } from "next/router";
@@ -44,6 +46,7 @@ import {
 import { useFetchSettings } from "../../hooks/settings";
 import { useFetchLightningConfig } from "../../hooks/config";
 import TwitterConnected from "../../components/contact/TwitterConnected";
+import ContactsList from "../../components/ContactsList";
 
 const pageTitle = "Dashboard";
 
@@ -53,6 +56,19 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
   const { mutate: deleteGroupMessage } = useDeleteGroupMessages();
   const router = useRouter();
   const { data: myDid } = useFetchMyDid();
+  const [isAscending, setIsAscending] = useState(false);
+  const [sortedConversations, setSortedConversations] = useState([]);
+
+  useEffect(() => {
+    if (conversations) {
+      setSortedConversations(conversations);
+    }
+  }, [conversations]);
+
+  const toggleConversations = () => {
+    setIsAscending(!isAscending);
+    setSortedConversations(_.reverse(sortedConversations));
+  };
 
   const goToConversation = (groupId) => {
     setCurrentConversation(groupId);
@@ -92,7 +108,19 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
               Contact
             </th>
             <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <span className="lg:pl-2">Conversations</span>
+              <div className="flex items-center">
+                <span
+                  className="ml-2 flex-none rounded bg-gray-200 text-gray-900 hover:bg-gray-300"
+                  onClick={toggleConversations}
+                >
+                  {isAscending ? (
+                    <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+                  ) : (
+                    <ChevronUpIcon className="h-5 w-5" aria-hidden="true" />
+                  )}
+                </span>
+                <span className="lg:pl-2">Conversations</span>
+              </div>
             </th>
             <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Participants
@@ -104,8 +132,8 @@ const MessagesTable = ({ conversations, unreadMessages }) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">
-          {conversations &&
-            conversations.map(({ groupId, messages }, i) => (
+          {sortedConversations &&
+            sortedConversations.map(({ groupId, messages }, i) => (
               <tr
                 key={i}
                 className={`${
@@ -589,7 +617,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (peers) {
       const connections = peers.filter((p) => p.peer._connected);
-      setConnectedPeers(uniqBy(connections, "metadata.dest"));
+      setConnectedPeers(_.uniqBy(connections, "metadata.dest"));
     }
   }, [peers]);
 
@@ -634,130 +662,140 @@ export default function Dashboard() {
           setOpen={setOpenPayment}
           selectedContact={null}
         />
-        <div className="flex flex-col">
-          <main className="flex-1">
-            {/* Pinned projects */}
-            <div className="px-4 mt-6 sm:px-6 lg:px-8">
-              <h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide">
-                Quick Actions
-              </h2>
-              <ul
-                role="list"
-                className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3 "
-              >
-                <li>
-                  <div className="flex-1 flex items-center pt-2 truncate space-x-6">
-                    <div className="flex flex-col items-center pr-2">
-                      <button
-                        type="button"
-                        onClick={() => router.push("/d/meeting")}
-                        className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      >
-                        <VideoCameraIcon
-                          className="h-5 w-5"
-                          aria-hidden="true"
-                        />
-                      </button>
-                      <p className="text-gray-900 font-medium hover:text-gray-600 text-sm pt-1">
-                        Meet
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <button
-                        type="button"
-                        onClick={() => router.push("/d/chat")}
-                        className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      >
-                        <ChatIcon className="h-5 w-5" aria-hidden="true" />
-                      </button>
-                      <p className="text-gray-900 font-medium hover:text-gray-600 text-sm pt-1">
-                        Message
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <button
-                        type="button"
-                        onClick={() => togglePayment()}
-                        className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      >
-                        <BsFillLightningChargeFill
-                          className="h-5 w-5"
-                          aria-hidden="true"
-                        />
-                      </button>
-                      <p className="text-gray-900 font-medium hover:text-gray-600 text-sm pt-1">
-                        Lightning
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <CopyToClipboard
-                        text={myDidLongFormDocument}
-                        onCopy={() =>
-                          toast.info(
-                            "Copied to clipboard! Share this document!"
-                          )
-                        }
-                      >
+        <div className="flex h-full">
+          <div className="flex flex-col w-5/6">
+            <main className="flex-1">
+              {/* Pinned projects */}
+              <div className="px-4 mt-6 sm:px-6 lg:px-8">
+                <h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide">
+                  Quick Actions
+                </h2>
+                <ul
+                  role="list"
+                  className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4 mt-3 "
+                >
+                  <li>
+                    <div className="flex-1 flex items-center pt-2 truncate space-x-6">
+                      <div className="flex flex-col items-center pr-2">
                         <button
                           type="button"
+                          onClick={() => router.push("/d/meeting")}
                           className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
-                          <RiUserSharedFill
+                          <VideoCameraIcon
                             className="h-5 w-5"
                             aria-hidden="true"
                           />
                         </button>
-                      </CopyToClipboard>
-                      <p className="text-gray-900 font-medium hover:text-gray-600 text-sm pt-1">
-                        Share
-                      </p>
+                        <p className="text-gray-900 font-medium hover:text-gray-600 text-sm pt-1">
+                          Meet
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <button
+                          type="button"
+                          onClick={() => router.push("/d/chat")}
+                          className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                          <ChatIcon className="h-5 w-5" aria-hidden="true" />
+                        </button>
+                        <p className="text-gray-900 font-medium hover:text-gray-600 text-sm pt-1">
+                          Message
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <button
+                          type="button"
+                          onClick={() => togglePayment()}
+                          className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                          <BsFillLightningChargeFill
+                            className="h-5 w-5"
+                            aria-hidden="true"
+                          />
+                        </button>
+                        <p className="text-gray-900 font-medium hover:text-gray-600 text-sm pt-1">
+                          Lightning
+                        </p>
+                      </div>
+                      {/* <div className="flex flex-col items-center">
+                        <CopyToClipboard
+                          text={myDidLongFormDocument}
+                          onCopy={() =>
+                            toast.info(
+                              "Copied to clipboard! Share this document!"
+                            )
+                          }
+                        >
+                          <button
+                            type="button"
+                            className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                          >
+                            <RiUserSharedFill
+                              className="h-5 w-5"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        </CopyToClipboard>
+                        <p className="text-gray-900 font-medium hover:text-gray-600 text-sm pt-1">
+                          Share
+                        </p>
+                      </div> */}
                     </div>
-                  </div>
-                </li>
-                <Overview
-                  title="Messages"
-                  subtitle="Unread Messages"
-                  notificationCount={unreadMessages.total}
-                  setCurrentTable={setCurrentTable}
-                  icon={<ChatAlt2Icon />}
-                />
-                <Overview
-                  title="Notifications"
-                  subtitle="New Notifications"
-                  notificationCount={unreadRequest}
-                  setCurrentTable={setCurrentTable}
-                  icon={<BellIcon />}
-                />
-                <Overview
-                  title="Connected Users"
-                  subtitle="Connected Users"
-                  notificationCount={connectedPeers.length}
-                  setCurrentTable={setCurrentTable}
-                  icon={<UsersIcon />}
-                />
-              </ul>
-            </div>
-
-            {/* Projects table (small breakpoint and up) */}
-            <div className="mt-8 ">
-              <div className="align-middle inline-block min-w-full border-b border-gray-200">
-                {currentTable === "Messages" && (
-                  <MessagesTable
-                    unreadMessages={unreadMessages}
-                    conversations={messages?.conversations}
+                  </li>
+                  <Overview
+                    title="Messages"
+                    subtitle="Unread Messages"
+                    notificationCount={unreadMessages.total}
+                    setCurrentTable={setCurrentTable}
+                    icon={<ChatAlt2Icon />}
                   />
-                )}
-                {currentTable === "Notifications" && (
-                  <NotificationsTable
-                    notifications={messages?.notifications.slice(-20)}
+                  <Overview
+                    title="Notifications"
+                    subtitle="New Notifications"
+                    notificationCount={unreadRequest}
+                    setCurrentTable={setCurrentTable}
+                    icon={<BellIcon />}
                   />
-                )}
-                {currentTable === "Connected Users" && (
-                  <UsersTable peers={connectedPeers} router={router} />
-                )}
+                  <Overview
+                    title="Connected Users"
+                    subtitle="Connected Users"
+                    notificationCount={connectedPeers.length}
+                    setCurrentTable={setCurrentTable}
+                    icon={<UsersIcon />}
+                  />
+                </ul>
               </div>
+
+              {/* Projects table (small breakpoint and up) */}
+              <div className="mt-8 ">
+                <div className="align-middle inline-block min-w-full border-b border-gray-200">
+                  {currentTable === "Messages" && (
+                    <MessagesTable
+                      unreadMessages={unreadMessages}
+                      conversations={messages?.conversations}
+                    />
+                  )}
+                  {currentTable === "Notifications" && (
+                    <NotificationsTable
+                      notifications={messages?.notifications.slice(-20)}
+                    />
+                  )}
+                  {currentTable === "Connected Users" && (
+                    <UsersTable peers={connectedPeers} router={router} />
+                  )}
+                </div>
+              </div>
+            </main>
+          </div>
+          <div className="flex flex-col w-1/6 border-1 border-l">
+            <div className="flex justify-center py-4">
+              <h2 className="text-sm font-medium text-gray-500 uppercase">
+                Contacts
+              </h2>
             </div>
-          </main>
+            <ContactsList />
+          </div>
         </div>
       </>
     </MainNavigation>

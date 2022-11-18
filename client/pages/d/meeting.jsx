@@ -43,6 +43,7 @@ const Meeting = () => {
         openMessaging={openMessaging}
         toggleMessaging={toggleMessaging}
       />
+      {/* TODO: remove this component as it's not needed. Participants is no longer needed.  */}
       <Participants
         peers={peers}
         id={currentVideoCallId}

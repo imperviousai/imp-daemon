@@ -9,6 +9,65 @@ permissions:
   contents: write
 
 jobs:
+  windows_goreleaser:
+    runs-on: windows-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        name: Fetch all tags
+        run: git fetch --force --tags
+      -
+        name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+      -
+        name: Set up certificate environment
+        shell: pwsh
+        env:
+          SSL_USERNAME: ${{ secrets.SSL_USERNAME }}
+          SSL_PASSWORD: ${{ secrets.SSL_PASSWORD }}
+          SSL_TOTP: ${{ secrets.SSL_TOTP }}
+          SSL_CREDENTIAL_ID: ${{ secrets.SSL_CREDENTIAL_ID }}
+        run: |
+          Invoke-WebRequest -Uri https://www.ssl.com/download/codesigntool-for-windows/ -UseBasicParsing -OutFile ..\codesign.zip
+          Expand-Archive -Path ..\codesign.zip -DestinationPath ..\signingDir
+          mkdir ..\signingDir\signed
+          get-childitem -path $env:GITHUB_WORKSPACE\..\signingDir
+
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist --config .goreleaser_windows.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CGO_ENABLED: 1
+          SSL_USERNAME: ${{ secrets.SSL_USERNAME }}
+          SSL_PASSWORD: ${{ secrets.SSL_PASSWORD }}
+          SSL_TOTP: ${{ secrets.SSL_TOTP }}
+          SSL_CREDENTIAL_ID: ${{ secrets.SSL_CREDENTIAL_ID }}
+      # -
+      #   name: Zip Signed Binary
+      #   shell: pwsh
+      #   run: |
+      #     Compress-Archive -Path signingDir\signed\*.exe -DestinationPath $env:GITHUB_WORKSPACE\dist\impervious-windows_windows_amd64_v1\impervious.zip
+      - 
+        name: Upload assets (windows-amd64)
+        uses: actions/upload-artifact@v3
+        with:
+          name: Impervious-windows_amd64
+          # path: /Users/runner/work/imp-daemon/imp-daemon/dist/impervious-macos-amd64_darwin_amd64_v1/impervious
+          path: dist\impervious-windows*\impervious.exe
+
+
+
   goreleaser_mac_amd:
     runs-on: macos-12
     steps:
@@ -167,3 +226,6 @@ jobs:
         with:
           name: Impervious-linux-multi
           path: dist/impervious-linux*/*
+
+  
+

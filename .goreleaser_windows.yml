@@ -1,0 +1,24 @@
+builds:
+  - id: impervious-windows
+    main: ./cmd/impd
+    binary: impervious
+    goos:
+      - windows
+    goarch:
+      - amd64
+    hooks:
+      post: 
+        - cmd:  cmd.exe /c '.\CodeSignTool.bat sign -credential_id={{.Env.SSL_CREDENTIAL_ID}} -username={{.Env.SSL_USERNAME}} -password={{.Env.SSL_PASSWORD}} -totp_secret={{.Env.SSL_TOTP}} -output_dir_path=signed -input_file_path=..\imp-daemon-staging\dist\impervious-windows_windows_amd64_v1/impervious.exe'
+          dir: ..\signingDir
+          output: true
+        - cmd:  cmd.exe /c 'copy signed\impervious.exe ..\imp-daemon-staging\dist\impervious-windows_windows_amd64_v1\impervious.exe'
+          output: true
+          dir: ..\signingDir
+
+archives:
+  - 
+    format: zip
+    name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+checksum:
+  name_template: "{{ .ProjectName }}_windows_checksums.txt"
+  algorithm: sha256

@@ -2,6 +2,7 @@ import { request } from "./axios-utils";
 import { gql } from "@apollo/client";
 import { getApiKey } from "./misc";
 import { getShortFormId } from "./id";
+import _ from "lodash";
 
 // Utility functions for the contacts management
 export const ALGOLIA_ID = "2AT1J9F6CY";
@@ -163,6 +164,21 @@ export const GET_DID_BY_TWITTER = gql`
   }
 `;
 
+export const LIST_DIDS_BY_TWITTER = gql`
+  query listDIDByTwitter($username: String!) {
+    listDIDS(filter: { name: { eq: $username } }, limit: 1000) {
+      items {
+        avatarUrl
+        lastUpdated
+        longFormDid
+        shortFormDid
+        name
+        username
+      }
+    }
+  }
+`;
+
 // getContactByDid will attempt to return a contact associated with the given did. If there is not a saved contact,
 // we will return an unknown contact object instead
 // TODO: perform automatic lookups in algolia for the contact, if the contact is not saved
@@ -197,14 +213,10 @@ export const getContactsByMessage = ({ message, contacts, myDid }) => {
 // getNicknameFromConvo looks through each messages and finds the latest nickname that has been set in the convo history
 export const getNicknameFromConvo = ({ messages, contact }) => {
   let m = messages
-    .filter((m) => getShortFormId(m.data.from) === contact.did)
-    .findLast((m) => {
-      if (m.data.body.metadata) {
-        if (m.data.body.metadata.nickname) {
-          return true;
-        }
-      }
-    });
+    ?.filter((m) => getShortFormId(m.data.from) === contact?.did)
+    ?.reverse()
+    ?.find((m) => (m?.data?.body?.metadata?.nickname ? true : false));
+
   if (m) {
     return m.data.body.metadata.nickname;
   } else {
